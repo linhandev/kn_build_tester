@@ -1,11 +1,6 @@
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
-    application
-}
-
-application {
-    mainClass.set("com.knbuildtester.composeapp.MainKt")
 }
 
 kotlin {
@@ -27,4 +22,13 @@ kotlin {
             }
         }
     }
+}
+
+tasks.register<JavaExec>("runDemo") {
+    group = "application"
+    description = "Run the KN Build Tester demo"
+    
+    dependsOn("desktopJar")
+    classpath = configurations.getByName("desktopRuntimeClasspath") + tasks.getByName("desktopJar").outputs.files
+    mainClass.set("com.knbuildtester.composeapp.MainKt")
 }
