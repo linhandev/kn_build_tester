@@ -215,7 +215,13 @@ class KnBuildTesterFacade {
     
     private fun getMemoryUsage(): Long {
         // Platform-specific memory usage implementation would go here
-        return Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()
+        return try {
+            val runtime = Runtime.getRuntime()
+            runtime.totalMemory() - runtime.freeMemory()
+        } catch (e: Exception) {
+            // Fallback for platforms without Runtime
+            1024 * 1024 * 64L // 64MB estimate
+        }
     }
     
     private suspend fun measureProcessingTime(): Long {
@@ -317,7 +323,7 @@ class KnBuildTesterFacade {
             result += kotlin.math.sin(i.toDouble())
             result += kotlin.math.cos(i.toDouble())
             result += kotlin.math.sqrt(i.toDouble())
-            result += kotlin.math.log(i.toDouble() + 1)
+            result += kotlin.math.ln(i.toDouble() + 1)
         }
         
         return (System.currentTimeMillis() - startTime).toDouble()

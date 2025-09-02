@@ -158,7 +158,7 @@ class DataRepository : Repository<DataEntity, String> {
         
         return entity.copy(
             metadata = processedMetadata,
-            timestamp = System.currentTimeMillis()
+            timestamp = getCurrentTimeMillis()
         )
     }
     
@@ -222,7 +222,7 @@ class DataRepository : Repository<DataEntity, String> {
         return DataEntity(
             id = existing.id,
             name = if (update.name.isNotBlank()) update.name else existing.name,
-            timestamp = System.currentTimeMillis(),
+            timestamp = getCurrentTimeMillis(),
             value = update.value,
             metadata = mergedMetadata
         )
@@ -239,7 +239,7 @@ class DataRepository : Repository<DataEntity, String> {
             val entity = DataEntity(
                 id = "entity_$index",
                 name = "Entity $index",
-                timestamp = System.currentTimeMillis() - Random.nextLong(0, 86400000),
+                timestamp = getCurrentTimeMillis() - Random.nextLong(0, 86400000),
                 value = Random.nextDouble(0.0, 1000.0),
                 metadata = generateComplexMetadata(index)
             )
@@ -397,3 +397,6 @@ private fun getProjectScale(): ProjectScale {
         metadataComplexity = scaleFunctions / 3
     )
 }
+
+// Platform-specific time function
+expect fun getCurrentTimeMillis(): Long
