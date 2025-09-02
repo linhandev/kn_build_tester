@@ -374,7 +374,7 @@ class BusinessLogicService(
     private fun enhanceFeatures(features: List<String>): List<String> {
         val enhanced = features.toMutableList()
         if (Random.nextDouble() > 0.7) {
-            enhanced.add("enhanced_feature_${System.currentTimeMillis()}")
+            enhanced.add("enhanced_feature_${Random.nextInt(100000)}")
         }
         return enhanced
     }
@@ -453,7 +453,7 @@ class BusinessLogicService(
         return DataEntity(
             id = entity.id,
             name = entity.name,
-            timestamp = System.currentTimeMillis(),
+            timestamp = Random.nextLong(1000000000L, 9999999999L),
             value = entity.score,
             metadata = mapOf(
                 "category" to entity.category,
@@ -511,8 +511,8 @@ data class BusinessScale(
 )
 
 private fun getBusinessScale(): BusinessScale {
-    val scaleClasses = System.getProperty("project.scale.classes", "100").toInt()
-    val scaleFunctions = System.getProperty("project.scale.functions", "50").toInt()
+    val scaleClasses = 100
+    val scaleFunctions = 50
     
     return BusinessScale(
         validationStages = scaleFunctions / 10,

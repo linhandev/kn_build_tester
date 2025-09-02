@@ -22,7 +22,7 @@ fun main() {
             val metrics = facade.getPerformanceMetrics()
             println("Total Entities: ${metrics.totalEntities}")
             println("Active Entities: ${metrics.activeEntities}")
-            println("Average Score: ${"%.2f".format(metrics.averageScore)}")
+            println("Average Score: ${(metrics.averageScore * 100).toInt() / 100.0}")
             println("Memory Usage: ${metrics.memoryUsage / 1024 / 1024} MB")
             println("Processing Time: ${metrics.processingTime} ms")
             
@@ -34,8 +34,8 @@ fun main() {
             println("  Successful: ${stressResult.successCount}")
             println("  Failed: ${stressResult.failureCount}")
             println("  Total Duration: ${stressResult.totalDuration} ms")
-            println("  Average Processing Time: ${"%.2f".format(stressResult.averageProcessingTime)} ms")
-            println("  Throughput: ${"%.2f".format(stressResult.throughput)} entities/sec")
+            println("  Average Processing Time: ${(stressResult.averageProcessingTime * 100).toInt() / 100.0} ms")
+            println("  Throughput: ${(stressResult.throughput * 100).toInt() / 100.0} entities/sec")
             
         } else {
             println("✗ Initialization failed: ${initResult.message}")
