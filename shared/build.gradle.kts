@@ -5,6 +5,8 @@ plugins {
 
 kotlin {
     jvm("desktop")
+    androidNativeArm64()
+    iosArm64()
     
     sourceSets {
         val commonMain by getting {

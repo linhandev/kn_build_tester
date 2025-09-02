@@ -5,7 +5,8 @@ plugins {
 
 kotlin {
     jvm("desktop")
-    mingwX64()
+    androidNativeArm64()
+    iosArm64()
     
     sourceSets {
         val commonMain by getting {
@@ -30,7 +31,13 @@ kotlin {
             }
         }
         
-        val mingwX64Main by getting {
+        val androidNativeArm64Main by getting {
+            dependencies {
+                // Platform specific dependencies
+            }
+        }
+        
+        val iosArm64Main by getting {
             dependencies {
                 // Platform specific dependencies
             }
@@ -40,7 +47,7 @@ kotlin {
 
 // Configure shared library exports for native targets
 kotlin.targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> { target ->
-    if (target.name == "mingwX64") {
+    if (target.name == "androidNativeArm64" || target.name == "iosArm64") {
         target.compilations.all {
             compilerOptions.configure {
                 freeCompilerArgs.add("-Xreport-perf")

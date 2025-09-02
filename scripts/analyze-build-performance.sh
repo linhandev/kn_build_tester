@@ -97,8 +97,9 @@ build_target() {
     measure_time "./gradlew ${task} --info --profile" "Frontend_${target}_compilation"
     
     # Measure backend/native compilation if applicable
-    if [[ "$task" == *"mingwX64"* || "$task" == *"native"* ]]; then
-        measure_time "./gradlew ${target}:linkReleaseSharedMingwX64 --info --profile" "Backend_${target}_compilation"
+    if [[ "$task" == *"androidNativeArm64"* || "$task" == *"iosArm64"* || "$task" == *"native"* ]]; then
+        measure_time "./gradlew ${target}:linkReleaseSharedAndroidNativeArm64 --info --profile" "Backend_${target}_Android_compilation"
+        measure_time "./gradlew ${target}:linkReleaseSharedIosArm64 --info --profile" "Backend_${target}_iOS_compilation"
     fi
 }
 
@@ -269,18 +270,26 @@ main() {
     # Step 2: Build all targets with timing
     log "${YELLOW}Building all targets with performance monitoring...${NC}"
     
-    measure_time "./gradlew data-layer:compileKotlinMingwX64 --info --profile" "Data_Layer_Frontend"
-    measure_time "./gradlew business-logic:compileKotlinMingwX64 --info --profile" "Business_Logic_Frontend"  
-    measure_time "./gradlew shared:compileKotlinMingwX64 --info --profile" "Shared_Frontend"
-    measure_time "./gradlew composeApp:compileKotlinMingwX64 --info --profile" "Compose_App_Frontend"
+    measure_time "./gradlew data-layer:compileKotlinAndroidNativeArm64 --info --profile" "Data_Layer_Android_Frontend"
+    measure_time "./gradlew data-layer:compileKotlinIosArm64 --info --profile" "Data_Layer_iOS_Frontend"
+    measure_time "./gradlew business-logic:compileKotlinAndroidNativeArm64 --info --profile" "Business_Logic_Android_Frontend"  
+    measure_time "./gradlew business-logic:compileKotlinIosArm64 --info --profile" "Business_Logic_iOS_Frontend"
+    measure_time "./gradlew shared:compileKotlinAndroidNativeArm64 --info --profile" "Shared_Android_Frontend"
+    measure_time "./gradlew shared:compileKotlinIosArm64 --info --profile" "Shared_iOS_Frontend"
+    measure_time "./gradlew composeApp:compileKotlinAndroidNativeArm64 --info --profile" "Compose_App_Android_Frontend"
+    measure_time "./gradlew composeApp:compileKotlinIosArm64 --info --profile" "Compose_App_iOS_Frontend"
     
     # Step 3: Build native binaries with comprehensive monitoring
     log "${YELLOW}Building native binaries with LLVM monitoring...${NC}"
     
-    measure_time "./gradlew data-layer:linkReleaseSharedMingwX64 --info --profile" "Data_Layer_Backend"
-    measure_time "./gradlew business-logic:linkReleaseSharedMingwX64 --info --profile" "Business_Logic_Backend"
-    measure_time "./gradlew shared:linkReleaseSharedMingwX64 --info --profile" "Shared_Backend"
-    measure_time "./gradlew composeApp:linkReleaseExecutableMingwX64 --info --profile" "Compose_App_Backend"
+    measure_time "./gradlew data-layer:linkReleaseSharedAndroidNativeArm64 --info --profile" "Data_Layer_Android_Backend"
+    measure_time "./gradlew data-layer:linkReleaseSharedIosArm64 --info --profile" "Data_Layer_iOS_Backend"
+    measure_time "./gradlew business-logic:linkReleaseSharedAndroidNativeArm64 --info --profile" "Business_Logic_Android_Backend"
+    measure_time "./gradlew business-logic:linkReleaseSharedIosArm64 --info --profile" "Business_Logic_iOS_Backend"
+    measure_time "./gradlew shared:linkReleaseSharedAndroidNativeArm64 --info --profile" "Shared_Android_Backend"
+    measure_time "./gradlew shared:linkReleaseSharedIosArm64 --info --profile" "Shared_iOS_Backend"
+    measure_time "./gradlew composeApp:linkReleaseExecutableAndroidNativeArm64 --info --profile" "Compose_App_Android_Backend"
+    measure_time "./gradlew composeApp:linkReleaseExecutableIosArm64 --info --profile" "Compose_App_iOS_Backend"
     
     # Step 4: Generate reports
     log "${YELLOW}Generating analysis reports...${NC}"
