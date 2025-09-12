@@ -7,6 +7,12 @@ plugins {
 
 kotlin {
     val nativeTarget = ohosArm64("native") {
+        compilations.all {
+            compilerOptions.configure {
+                freeCompilerArgs.add("-Xsave-llvm-ir-after=LinkBitcodeDependencies")
+                freeCompilerArgs.add("-Xsave-llvm-ir-directory=${getLayout().buildDirectory.get()}")
+            }
+        }
         binaries {
             executable {
                 entryPoint = "main"
