@@ -1,0 +1,3 @@
+headers = hello.h
+package = hello
+linkerOpts = -lhello
