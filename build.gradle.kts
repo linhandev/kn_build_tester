@@ -45,7 +45,6 @@ tasks.register("compileHelloC") {
     val cFile = file("src/nativeInterop/c/hello.c")
     val headerFile = file("src/nativeInterop/c/hello.h")
     val buildDir = layout.buildDirectory.get().asFile
-    val objectFile = File(buildDir, "hello.o")
     val sharedLib = File(buildDir, "libhello.so")
     
     inputs.files(cFile, headerFile)
@@ -54,28 +53,16 @@ tasks.register("compileHelloC") {
     doLast {
         buildDir.mkdirs()
         
-        // First compile to object file
+        // Compile directly to shared library in one step
         project.exec {
             commandLine(
-            clang,
-            "--target=aarch64-linux-ohos",
-            "-c",
-            "-fPIC",
-            cFile.absolutePath,
-            "-o", objectFile.absolutePath,
-            "-I${file("src/nativeInterop/c").absolutePath}"
-          )
-        }
-        
-        
-        // Then create shared library from object file
-        println(layout.buildDirectory.get().asFile.absolutePath)
-        project.exec {
-            commandLine(
-                "$llvmPath/bin/ld.lld",
+                clang,
+                "--target=aarch64-linux-ohos",
                 "-shared",
-                objectFile.absolutePath,
+                "-fPIC",
+                cFile.absolutePath,
                 "-o", sharedLib.absolutePath,
+                "-I${file("src/nativeInterop/c").absolutePath}",
                 "--sysroot", sysrootPath
             )
         }
