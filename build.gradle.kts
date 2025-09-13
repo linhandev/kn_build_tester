@@ -9,7 +9,7 @@ kotlin {
     ohosArm64("ohosArm64") {
         binaries {
             sharedLib {
-                baseName = "k2c"
+                baseName = "c2k"
                 freeCompilerArgs += listOf("-Xexport-kdoc")
             }
         }

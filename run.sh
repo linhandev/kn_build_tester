@@ -13,13 +13,13 @@ cd c-caller
       -I../build/bin/ohosArm64/debugShared \
       -o main main.c \
       -L../build/bin/ohosArm64/debugShared \
-      -lk2c
+      -lc2k
 
 file main
 
 cd -
 
-hdc file send build/bin/ohosArm64/debugShared/libk2c.so /data/
+hdc file send build/bin/ohosArm64/debugShared/libc2k.so /data/
 hdc file send c-caller/main /data/
 hdc shell chmod 777 /data/main
 hdc shell LD_LIBRARY_PATH=/data/ /data/main
