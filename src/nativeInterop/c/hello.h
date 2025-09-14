@@ -3,4 +3,6 @@
 
 int add_numbers(int a, int b);
 
+void c_empty_function();
+
 #endif // HELLO_H
