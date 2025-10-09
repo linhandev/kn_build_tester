@@ -1,6 +1,16 @@
 # project specific
 *.so
 
+# Generated ANTLR4 files (keep grammar sources)
+grammar/*.py
+grammar/*.tokens
+grammar/*.interp
+grammar/__pycache__/
+
+# Python cache
+__pycache__/
+*.pyc
+
 .DS_Store
 .idea/shelf
 /confluence/target
