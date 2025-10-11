@@ -1,5 +1,8 @@
 # project specific
 *.so
+__pycache__/
+*.py[cod]
+*$py.class
 
 .DS_Store
 .idea/shelf
