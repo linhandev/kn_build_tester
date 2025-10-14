@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform") version "2.2.255-SNAPSHOT"
+    kotlin("multiplatform") version "2.0.255-SNAPSHOT"
 }
 
 group = "com.example"
