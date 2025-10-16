@@ -6,16 +6,32 @@ group = "com.example"
 version = "1.0-SNAPSHOT"
 
 kotlin {
-    ohosArm64("ohosArm64") {
+    ohosArm64("withruntime") {
         binaries {
             sharedLib {
-                baseName = "c2k"
-                freeCompilerArgs += listOf("-Xexport-kdoc")
+                baseName = "withruntime"
+                freeCompilerArgs += listOf("-Xbinary=emitRuntime=true", "-Xbinary=splitBCfile=false")
+                
+            }
+        }
+    }
+    
+    ohosArm64("withoutruntime") {
+        binaries {
+            sharedLib {
+                baseName = "withoutruntime"
+                freeCompilerArgs += listOf("-Xbinary=emitRuntime=false", "-Xbinary=splitBCfile=false")
+                linkerOpts("-L/Volumes/disk/git/sample/kn-sample/build/bin/withruntime/debugShared", "-lwithruntime")
             }
         }
     }
     
     sourceSets {
-        val ohosArm64Main by getting
+        val withruntimeMain by getting {
+            dependsOn(getByName("commonMain"))
+        }
+        val withoutruntimeMain by getting {
+            dependsOn(getByName("commonMain"))
+        }
     }
 }
