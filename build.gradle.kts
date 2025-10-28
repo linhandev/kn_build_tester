@@ -6,32 +6,32 @@ group = "com.example"
 version = "1.0-SNAPSHOT"
 
 kotlin {
-    ohosArm64("withruntime") {
+    ohosArm64("bizA") {
         binaries {
             sharedLib {
-                baseName = "withruntime"
+                baseName = "bizA"
                 freeCompilerArgs += listOf("-Xbinary=emitRuntime=true", "-Xbinary=splitBCfile=false")
-                
             }
         }
     }
-    
-    ohosArm64("withoutruntime") {
+
+    ohosArm64("bizB") {
         binaries {
             sharedLib {
-                baseName = "withoutruntime"
-                freeCompilerArgs += listOf("-Xbinary=emitRuntime=false", "-Xbinary=splitBCfile=false")
-                linkerOpts("-L/Volumes/disk/git/sample/kn-sample/build/bin/withruntime/debugShared", "-lwithruntime")
+                baseName = "bizB"
+                freeCompilerArgs += listOf("-Xbinary=emitRuntime=true", "-Xbinary=splitBCfile=false")
             }
         }
     }
     
     sourceSets {
-        val withruntimeMain by getting {
+        val bizAMain by getting {
             dependsOn(getByName("commonMain"))
+            dependsOn(getByName("bizBMain"))
         }
-        val withoutruntimeMain by getting {
+        val bizBMain by getting {
             dependsOn(getByName("commonMain"))
+            // dependsOn(getByName("bizAMain"))
         }
     }
 }
