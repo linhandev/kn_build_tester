@@ -1,6 +1,7 @@
 # project specific
 *.so
-main
+libc2k_api.h
+
 
 .DS_Store
 .idea/shelf
