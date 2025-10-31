@@ -10,7 +10,7 @@ kotlin {
         binaries {
             sharedLib {
                 baseName = "bizA"
-                freeCompilerArgs += listOf("-Xbinary=emitRuntime=true", "-Xbinary=splitBCfile=false")
+                // freeCompilerArgs += listOf("-Xbinary=emitRuntime=true", "-Xbinary=splitBCfile=false")
             }
         }
     }
@@ -19,19 +19,15 @@ kotlin {
         binaries {
             sharedLib {
                 baseName = "bizB"
-                freeCompilerArgs += listOf("-Xbinary=emitRuntime=true", "-Xbinary=splitBCfile=false")
+                // freeCompilerArgs += listOf("-Xbinary=emitRuntime=true", "-Xbinary=splitBCfile=false")
             }
         }
     }
     
     sourceSets {
         val bizAMain by getting {
-            dependsOn(getByName("commonMain"))
             dependsOn(getByName("bizBMain"))
         }
-        val bizBMain by getting {
-            dependsOn(getByName("commonMain"))
-            // dependsOn(getByName("bizAMain"))
-        }
+        val bizBMain by getting { }
     }
 }
