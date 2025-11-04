@@ -1,33 +1,6 @@
 plugins {
-    kotlin("multiplatform") version "2.0.255-SNAPSHOT"
+    kotlin("multiplatform") version "2.0.255-SNAPSHOT" apply false
 }
 
 group = "com.example"
 version = "1.0-SNAPSHOT"
-
-kotlin {
-    ohosArm64("bizA") {
-        binaries {
-            sharedLib {
-                baseName = "bizA"
-                // freeCompilerArgs += listOf("-Xbinary=emitRuntime=true", "-Xbinary=splitBCfile=false")
-            }
-        }
-    }
-
-    ohosArm64("bizB") {
-        binaries {
-            sharedLib {
-                baseName = "bizB"
-                // freeCompilerArgs += listOf("-Xbinary=emitRuntime=true", "-Xbinary=splitBCfile=false")
-            }
-        }
-    }
-    
-    sourceSets {
-        val bizAMain by getting {
-            dependsOn(getByName("bizBMain"))
-        }
-        val bizBMain by getting { }
-    }
-}

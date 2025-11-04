@@ -14,3 +14,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "c2k"
+
+include(":bizA", ":bizB")
