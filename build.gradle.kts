@@ -35,18 +35,3 @@ kotlin {
         val ohosArm64Main by getting
     }
 }
-
-
-arrayOf("debug", "release").forEach { type ->
-    tasks.register<Copy>("publish${type.capitalizeFirst()}BinariesToHarmonyApp") {
-        group = "harmony"
-        dependsOn("link${type.capitalizeFirst()}SharedOhosArm64")
-        into(rootProject.file("harmonyApp"))
-        from("build/bin/ohosArm64/${type}Shared/libc2k_api.h") {
-            into("entry/src/main/cpp/include/")
-        }
-        from(project.file("build/bin/ohosArm64/${type}Shared/libc2k.so")) {
-            into("/entry/libs/arm64-v8a/")
-        }
-    }
-}
