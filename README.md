@@ -1,53 +1,25 @@
-## 一、编译过程
+## 编译过程
 
-### 1. 替换本地 Kotlin 仓库路径
+1. 替换本地 Kotlin 仓库路径
 
-在 `settings.gradle.kts` 中修改 Maven 仓库地址为本地 Kotlin 项目构建产物路径：
+全项目搜索 `/Volumes/disk/git/kmp/parallel-20/`，替换为本地kotlin仓库文件夹路径。共3处，在 setting.gradle.kts 和 gradle.properties 中
 
-```kotlin
-maven("/Volumes/disk/git/kmp/parallel-20/build/repo")
-```
+2. 配置 LLVM Split 工具路径
 
-同时在 `gradle.properties` 文件中设置 Kotlin/Native 的本地目录：
+在 `build.gradle.kts` 文件中，设置 `llvmSplitPath` 为本地 patch 过的 llvm-split路径
 
-```kotlin
-kotlin.native.home=/Volumes/disk/git/kmp/parallel-20/kotlin-native/dist
-```
+3. kotlin代码打so
 
-该路径应指向你本地构建完成的 Kotlin/Native目录。
-
-### 2. 配置 LLVM Split 工具路径
-
-在 `build.gradle.kts` 文件中，设置 `llvmSplitPath` 为你本地已 patch 过的 LLVM 分割工具路径。例如：
-
-```kotlin
-binaryOption("llvmSplitPath", "/Volumes/disk/git/llvm/third_party_llvm-project/build-used-02/bin/llvm-split")
-```
-
-此路径对应 LLVM 源码编译后的 `llvm-split` 可执行文件，用于控制 Bitcode 文件拆分逻辑。
-
-### 3. 构建并发布至 Harmony 平台
-
-在项目根目录的终端中执行以下命令：
+kotlin项目根目录执行
 
 ```
 ./gradlew publishReleaseBinariesToHarmonyApp
 ```
 
-随后打开 **DevEco-Studio**，在 IDE 中运行应用，将 App 发布至 HarmonyOS 手机进行测试。
+完成后用 DevEcoStudio 打开 harmonyApp 目录，sync，（如果真机执行添加签名，模拟器不需要），打包，发送真机或模拟器运行
 
+## 运行现象与参数说明
 
-
-## 二、运行现象与参数说明
-
-在 `build.gradle.kts` 文件中可通过如下配置控制 Bitcode 拆分策略：
-
-```
-binaryOption("splitBCfile", "2")
-```
-
-| 参数值            | 启动表现                       | 说明                                       |
-| ----------------- | ------------------------------ | ------------------------------------------ |
-| `splitBCfile = 1` | 点击首页文字，正常切换至下一屏 | 应用运行稳定，无异常                       |
-| `splitBCfile = 2` | 点击首页文字后触发崩溃         | 疑似 LLVM 拆分文件在链接或符号合并阶段异常 |
-
+`build.gradle.kts` 配置 
+- splitBCfile 为 2 启用并行化，链接选项添加 -z now后，点击 Welcome 应用崩溃
+- splitBCfile 为 1 或 不加链接选项 -z now，就只要没有同时开启并行化和-z now，点击首页 Welcome，显示正常切换成 Hello World，hilog正常打印`implementedFunction returns 1`。
