@@ -23,9 +23,9 @@ kotlin {
         }
         compilations.getByName("main") {
             cinterops {
-                val san_test by creating {
-                    defFile(file("src/nativeMain/cinterop/san_test.def"))
-                    includeDirs(file("harmonyApp/entry/src/main/cpp/include"))
+                val znow_test by creating {
+                    defFile(file("src/nativeMain/cinterop/znow_test.def"))
+                    includeDirs(file("znow-test"))
                 }
             }
         }

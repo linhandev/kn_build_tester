@@ -1,0 +1,2 @@
+package = znowTest
+headers = znow_test.h

@@ -1,6 +1,7 @@
 # project specific
 *.so
 libc2k_api.h
+main
 
 
 .DS_Store
