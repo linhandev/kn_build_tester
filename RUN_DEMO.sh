@@ -5,7 +5,7 @@
 
 set -e
 
-PROJECT_DIR="/home/runner/work/kn_samples/kn_samples"
+PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$PROJECT_DIR"
 
 echo "╔══════════════════════════════════════════════════════════╗"

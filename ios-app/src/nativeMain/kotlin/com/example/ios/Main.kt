@@ -1,7 +1,7 @@
 package com.example.ios
 
 import com.example.caller.CallerApi
-import com.example.dep.*
+import com.example.dep.greetUser
 
 fun main() {
     println("=== Kotlin Native Partial Linkage Demo ===")
