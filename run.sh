@@ -18,6 +18,9 @@ mv dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.broken dep-lib/src/c
 mv dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.kt dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.broken
 mv dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.kt.bk dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.kt
 
+echo "Building app without any partial linkage setting, expecting success..."
+./gradlew :app:clean :app:linkDebugExecutableMacosArm64 --console=plain --rerun-tasks --refresh-dependencies
+
 echo "Building app with partial linkage disabled (expected failure)..."
 if ./gradlew -PpartialLinkMode=disable :app:clean :app:linkDebugExecutableMacosArm64 --console=plain --rerun-tasks --refresh-dependencies; then
   echo "Partial linkage disabled build unexpectedly succeeded"
