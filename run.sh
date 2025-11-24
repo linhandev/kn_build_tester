@@ -26,10 +26,10 @@ echo "Building app without any partial linkage setting, expecting success..."
 
 echo "Building app with partial linkage disabled (expected failure)..."
 if ./gradlew -PpartialLinkMode=disable :app:clean :app:linkDebugExecutableMacosArm64 --console=plain --rerun-tasks --refresh-dependencies; then
-  echo "Partial linkage disabled build unexpectedly succeeded"
+  echo "❌ Partial linkage disabled build unexpectedly succeeded"
   exit 1
 else
-  echo "Partial linkage disabled build failed as expected"
+  echo "✅ Partial linkage disabled build failed as expected"
 fi
 
 echo "Building app with partial linkage enabled (expected success)..."

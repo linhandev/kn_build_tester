@@ -6,6 +6,8 @@ This repository demonstrates Kotlin/Native's **partial linkage** feature and how
 
 Partial linkage is a Kotlin/Native compiler feature introduced to handle binary incompatibility issues during library evolution. It allows the compilation/linking process to continue with warnings when some symbols are missing or incompatible, rather than failing immediately. When partial linkage is enabled (by default it's enabled), the missing symbols would cause a log (default to warning) during build, and cause a crash during runtime, instead of causing build failure.
 
+Check out this kotlin conf video detailing the pl feature https://www.youtube.com/watch?v=ERHMsRvIQPQ
+
 ### Problems Partial Linkage Helps Address
 
 Based on research and testing, partial linkage helps circumvent a bunch of missing stuff issue during compilation:
