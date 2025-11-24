@@ -1,9 +1,9 @@
 buildscript {
-    extra["kotlinVersion"] = "1.9.20"
+    extra["kotlinVersion"] = "2.0.21"
 }
 
 plugins {
-    kotlin("multiplatform") version "1.9.20" apply false
+    kotlin("multiplatform") version "2.0.21" apply false
 }
 
 allprojects {

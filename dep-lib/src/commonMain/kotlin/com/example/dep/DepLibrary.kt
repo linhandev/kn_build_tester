@@ -2,7 +2,7 @@ package com.example.dep
 
 /**
  * Initial version of the dependency library.
- * This represents the "stable" API that caller-lib depends on.
+ * caller-lib is compatible with this version of dep and wont be updated.
  */
 
 class UserData(val name: String, val age: Int)

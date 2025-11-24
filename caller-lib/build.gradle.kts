@@ -1,14 +1,15 @@
 plugins {
     kotlin("multiplatform")
+    `maven-publish`
 }
 
+group = "com.example"
+version = "1.0.0"
+
 kotlin {
-    // iOS targets (for macOS hosts)
-    iosArm64()
-    iosSimulatorArm64()
-    
-    // Linux target (for testing on Linux hosts)
-    linuxX64()
+    macosArm64 {
+        compilations["main"].compilerOptions.options.freeCompilerArgs.add("-Xpartial-linkage=enable")
+    }
     
     sourceSets {
         val commonMain by getting {
@@ -16,5 +17,11 @@ kotlin {
                 implementation(project(":dep-lib"))
             }
         }
+    }
+}
+
+publishing {
+    repositories {
+        mavenLocal()
     }
 }

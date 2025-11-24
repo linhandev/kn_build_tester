@@ -1,7 +1,6 @@
-package com.example.ios
+package com.example
 
 import com.example.caller.CallerApi
-import com.example.dep.greetUser
 
 fun main() {
     println("=== Kotlin Native Partial Linkage Demo ===")
@@ -33,11 +32,6 @@ fun main() {
     val libInfo = api.getLibraryInfo()
     println("  Result: $libInfo")
     println()
-    
-    // Direct usage of dep-lib
-    println("Test 5: Direct dep-lib usage")
-    val directGreeting = greetUser("Charlie")
-    println("  Result: $directGreeting")
     
     println()
     println("=== All tests completed successfully! ===")
