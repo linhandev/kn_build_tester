@@ -42,7 +42,9 @@ kn-partial-linkage-demo/
 
 ## Building and Running
 
-Investigate [./run.sh](./run.sh) for detailed running process. In essence
+Investigate [./run.sh](./run.sh) for detailed running process. 
+
+In essence
 
 1. build compatable dep and caller klib with no issue
 2. introduce a bunch of breaking changes in dep.klib, rebuild only dep.klib
