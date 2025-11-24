@@ -30,6 +30,8 @@ echo "Building app with partial linkage enabled (expected success)..."
 ./gradlew -PpartialLinkMode=enable :app:clean :app:linkDebugExecutableMacosArm64 --console=plain --rerun-tasks --refresh-dependencies
 
 echo "Running macOS kexe (will crash on missing symbols)..."
-./app/build/bin/macosArm64/debugExecutable/app.kexe || echo ""
-echo
-echo "✅ Runtime crash confirms missing symbols - partial linkage allowed build but not execution"
+if ./app/build/bin/macosArm64/debugExecutable/app.kexe; then
+  echo "❌ Application should crash at runtime yet it didn't!"
+else
+  echo "✅ Runtime crash confirms missing symbols - partial linkage allowed build but not execution"
+fi

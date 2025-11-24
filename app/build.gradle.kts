@@ -15,6 +15,7 @@ kotlin {
                 val partialLinkMode = project.findProperty("partialLinkMode") as? String
                 if (partialLinkMode != null) {
                     freeCompilerArgs += listOf("-Xpartial-linkage=$partialLinkMode")
+                    freeCompilerArgs += listOf("-Xpartial-linkage-loglevel=warning")
                 }
             }
         }
