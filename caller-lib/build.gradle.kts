@@ -8,7 +8,7 @@ version = "1.0.0"
 
 kotlin {
     macosArm64 {
-        compilations["main"].compilerOptions.options.freeCompilerArgs.add("-Xpartial-linkage=enable")
+        compilations["main"].compilerOptions.options.freeCompilerArgs.add("-Xpartial-linkage-loglevel=warning")
     }
     
     sourceSets {
