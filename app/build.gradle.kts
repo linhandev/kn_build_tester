@@ -27,7 +27,6 @@ kotlin {
         val nativeMain by creating {
             dependsOn(commonMain)
             dependencies {
-                implementation("com.example:dep-lib:1.0.0")
                 implementation("com.example:caller-lib:1.0.0")
             }
         }

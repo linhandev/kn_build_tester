@@ -8,10 +8,10 @@ cd "$ROOT_DIR"
 ./gradlew --stop
 ./gradlew clean
 
-echo "Publishing compatible dep-lib and caller-lib klibs to mavenLocal..."
+echo "👀 Publishing compatible dep-lib and caller-lib klibs to mavenLocal..."
 ./gradlew :dep-lib:publishToMavenLocal :caller-lib:publishToMavenLocal --console=plain --rerun-tasks
 
-echo "Updating dep-lib to introduce ABI-incompatible change..."
+echo "👀 Updating dep-lib to introduce ABI-incompatible change..."
 mv dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.kt dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.kt.bk
 mv dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.broken dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.kt
 ./gradlew :dep-lib:publishToMavenLocal --console=plain --rerun-tasks
@@ -21,10 +21,10 @@ mv dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.kt.bk dep-lib/src/co
 # now caller-lib has call to non-existent symbols in dep-lib
 # testing the default, pl = enable, pl = disable behaviors
 
-echo "Building app without any partial linkage setting, expecting success..."
+echo "👀 Building app without any partial linkage setting, expecting success..."
 ./gradlew :app:clean :app:linkDebugExecutableMacosArm64 --console=plain --rerun-tasks --refresh-dependencies
 
-echo "Building app with partial linkage disabled (expected failure)..."
+echo "👀 Building app with partial linkage disabled (expected failure)..."
 if ./gradlew -PpartialLinkMode=disable :app:clean :app:linkDebugExecutableMacosArm64 --console=plain --rerun-tasks --refresh-dependencies; then
   echo "❌ Partial linkage disabled build unexpectedly succeeded"
   exit 1
@@ -32,10 +32,10 @@ else
   echo "✅ Partial linkage disabled build failed as expected"
 fi
 
-echo "Building app with partial linkage enabled (expected success)..."
+echo "👀 Building app with partial linkage enabled (expected success)..."
 ./gradlew -PpartialLinkMode=enable :app:clean :app:linkDebugExecutableMacosArm64 --console=plain --rerun-tasks --refresh-dependencies
 
-echo "Running macOS kexe (will crash on missing symbols)..."
+echo "👀 Running macOS kexe (will crash on missing symbols)..."
 if ./app/build/bin/macosArm64/debugExecutable/app.kexe; then
   echo "❌ Application should crash at runtime yet it didn't!"
 else
