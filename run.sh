@@ -4,14 +4,15 @@ set -ex
 
 rm -rf build/bin/
 
+KONAN_DATA_DIR=${KONAN_DATA_DIR:-$(realpath ~/.konan)}
 BUILD_MODE=release
 BUILD_MODE_CAPITALIZED=$(echo ${BUILD_MODE} | awk '{print toupper(substr($0,1,1)) substr($0,2)}')
 
 ./gradlew link${BUILD_MODE_CAPITALIZED}SharedOhosArm64 --rerun-tasks
 
 cd c-caller
-/Users/user/.konan/dependencies/llvm-19.1.7-aarch64-macos-ohos-2/bin/clang++ \
-      --sysroot /Users/user/.konan/dependencies/sysroot-ohos-aarch64-5.0.11.110 \
+${KONAN_DATA_DIR}/dependencies/llvm-19.1.7-aarch64-macos-ohos-2/bin/clang++ \
+      --sysroot ${KONAN_DATA_DIR}/dependencies/sysroot-ohos-aarch64-5.0.11.110 \
       --target=aarch64-linux-ohos \
       -fPIC -pthread \
       -Wall -Wextra -std=c++17 \
