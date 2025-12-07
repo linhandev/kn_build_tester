@@ -1,31 +1,37 @@
 #!/bin/bash
 
-set -ex
+# set -ex
 
-rm -rf build/bin/
+echo "Cleaning..."
+./gradlew clean
 
-KONAN_DATA_DIR=${KONAN_DATA_DIR:-$(realpath ~/.konan)}
-BUILD_MODE=release
-BUILD_MODE_CAPITALIZED=$(echo ${BUILD_MODE} | awk '{print toupper(substr($0,1,1)) substr($0,2)}')
+echo "----------------------------------------------------------------"
+echo "Building WITHOUT caches (kotlin.native.cacheKind=none)..."
+echo "----------------------------------------------------------------"
+./gradlew :app:linkDebugExecutableOhosArm64 -Pkotlin.native.cacheKind=none
 
-./gradlew link${BUILD_MODE_CAPITALIZED}SharedOhosArm64 --rerun-tasks
+if [ $? -eq 0 ]; then
+    echo "Build WITHOUT caches SUCCEEDED."
+    echo "Running on device..."
+    hdc file send app/build/bin/ohosArm64/debugExecutable/app.kexe /data/local/tmp/
+    hdc shell chmod 777 /data/local/tmp/app.kexe
+    hdc shell /data/local/tmp/app.kexe
+else
+    echo "Build WITHOUT caches FAILED."
+fi
 
-cd c-caller
-${KONAN_DATA_DIR}/dependencies/llvm-19.1.7-aarch64-macos-ohos-2/bin/clang++ \
-      --sysroot ${KONAN_DATA_DIR}/dependencies/sysroot-ohos-aarch64-5.0.11.110 \
-      --target=aarch64-linux-ohos \
-      -fPIC -pthread \
-      -Wall -Wextra -std=c++17 \
-      -I../build/bin/ohosArm64/${BUILD_MODE}Shared \
-      -o main main.cpp \
-      -L../build/bin/ohosArm64/${BUILD_MODE}Shared \
-      -lc2k
+echo "----------------------------------------------------------------"
+echo "Building WITH static caches (kotlin.native.cacheKind=static)..."
+echo "----------------------------------------------------------------"
+./gradlew clean
+./gradlew :app:linkDebugExecutableOhosArm64 -Pkotlin.native.cacheKind=static
 
-file main
-
-cd -
-
-hdc file send build/bin/ohosArm64/${BUILD_MODE}Shared/libc2k.so /data/local/tmp/
-hdc file send c-caller/main /data/local/tmp/
-hdc shell chmod 777 /data/local/tmp/main
-hdc shell LD_LIBRARY_PATH=/data/local/tmp/ /data/local/tmp/main
+if [ $? -eq 0 ]; then
+    echo "Build WITH static caches SUCCEEDED."
+    echo "Running on device..."
+    hdc file send app/build/bin/ohosArm64/debugExecutable/app.kexe /data/local/tmp/
+    hdc shell chmod 777 /data/local/tmp/app.kexe
+    hdc shell /data/local/tmp/app.kexe
+else
+    echo "Build WITH static caches FAILED."
+fi

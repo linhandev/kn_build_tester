@@ -14,3 +14,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "c2k"
+
+include("m1", "m2", "app")
+
