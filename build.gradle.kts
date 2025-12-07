@@ -11,7 +11,6 @@ kotlin {
         binaries {
             sharedLib {
                 baseName = "c2k"
-                freeCompilerArgs += listOf("-Xexport-kdoc")
             }
         }
     }
