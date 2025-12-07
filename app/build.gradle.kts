@@ -9,6 +9,8 @@ kotlin {
                 entryPoint = "pkg.main"
                 freeCompilerArgs += listOf("-g")
             }
+            sharedLib {
+            }
         }
     }
     
