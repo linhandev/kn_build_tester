@@ -8,7 +8,7 @@ echo "Cleaning..."
 echo "----------------------------------------------------------------"
 echo "Building WITHOUT caches (kotlin.native.cacheKind=none)..."
 echo "----------------------------------------------------------------"
-./gradlew :app:linkDebugExecutableOhosArm64 -Pkotlin.native.cacheKind=none
+./gradlew :app:linkDebugExecutableOhosArm64 -Pkotlin.native.cacheKind=none --info
 
 if [ $? -eq 0 ]; then
     echo "Build WITHOUT caches SUCCEEDED."

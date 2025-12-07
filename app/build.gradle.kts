@@ -7,6 +7,7 @@ kotlin {
         binaries {
             executable {
                 entryPoint = "pkg.main"
+                freeCompilerArgs += listOf("-g")
             }
         }
     }
