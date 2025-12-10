@@ -10,8 +10,8 @@ repositories {
 kotlin {
     macosArm64 {
         binaries {
-            executable {
-                entryPoint = "com.example.main"
+            sharedLib {
+                baseName = "app"
                 val partialLinkMode = project.findProperty("partialLinkMode") as? String
                 if (partialLinkMode != null) {
                     freeCompilerArgs += listOf("-Xpartial-linkage=$partialLinkMode")
@@ -28,6 +28,7 @@ kotlin {
             dependsOn(commonMain)
             dependencies {
                 implementation("com.example:caller-lib:1.0.0")
+                implementation(project(":src-lib"))
             }
         }
         

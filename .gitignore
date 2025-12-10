@@ -1,5 +1,6 @@
 # project specific
 *.so
+runner
 
 .DS_Store
 .idea/shelf

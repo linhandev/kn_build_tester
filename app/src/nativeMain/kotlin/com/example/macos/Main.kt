@@ -1,9 +1,18 @@
 package com.example
 
 import com.example.caller.CallerApi
+import com.example.src.getSrcMessage
+import kotlin.experimental.ExperimentalNativeApi
+import kotlin.native.CName
 
-fun main() {
+@OptIn(ExperimentalNativeApi::class)
+@CName("run_demo")
+fun runDemo() {
     println("=== Kotlin Native Partial Linkage Demo ===")
+    println()
+    
+    // Test Src Lib
+    println("Test Src: ${getSrcMessage()}")
     println()
     
     // Create API instance

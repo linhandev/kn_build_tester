@@ -22,10 +22,10 @@ mv dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.kt.bk dep-lib/src/co
 # testing the default, pl = enable, pl = disable behaviors
 
 echo "👀 Building app without any partial linkage setting, expecting success..."
-./gradlew :app:clean :app:linkDebugExecutableMacosArm64 --console=plain --rerun-tasks --refresh-dependencies
+./gradlew :app:clean :app:linkDebugSharedMacosArm64 --console=plain --rerun-tasks --refresh-dependencies
 
 echo "👀 Building app with partial linkage disabled (expected failure)..."
-if ./gradlew -PpartialLinkMode=disable :app:clean :app:linkDebugExecutableMacosArm64 --console=plain --rerun-tasks --refresh-dependencies; then
+if ./gradlew -PpartialLinkMode=disable :app:clean :app:linkDebugSharedMacosArm64 --console=plain --rerun-tasks --refresh-dependencies; then
   echo "❌ Partial linkage disabled build unexpectedly succeeded"
   exit 1
 else
@@ -33,10 +33,12 @@ else
 fi
 
 echo "👀 Building app with partial linkage enabled (expected success)..."
-./gradlew -PpartialLinkMode=enable :app:clean :app:linkDebugExecutableMacosArm64 --console=plain --rerun-tasks --refresh-dependencies
+./gradlew -PpartialLinkMode=enable :app:clean :app:linkDebugSharedMacosArm64 --console=plain --rerun-tasks --refresh-dependencies
 
-echo "👀 Running macOS kexe (will crash on missing symbols)..."
-if ./app/build/bin/macosArm64/debugExecutable/app.kexe; then
+echo "👀 Compiling and running C caller (will crash on missing symbols)..."
+clang -o runner c-caller/main.c -I app/build/bin/macosArm64/debugShared -L app/build/bin/macosArm64/debugShared -lapp -rpath app/build/bin/macosArm64/debugShared
+
+if ./runner; then
   echo "❌ Application should crash at runtime yet it didn't!"
 else
   echo "✅ Runtime crash confirms missing symbols - partial linkage allowed build but not execution"
