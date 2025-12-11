@@ -14,7 +14,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project(":dep-lib"))
+                implementation("com.example:dep-lib:1.0.0")
             }
         }
     }

@@ -1,3 +1,4 @@
+package com.example.dep
 
 /* updated version of dep, introducing many uncompatable changes */
 
@@ -21,4 +22,15 @@ object ConfigHelper {
     // fun getConfigValue(): String {
     //     return "config-value"
     // }
+}
+
+
+abstract class Abstract {
+    abstract fun method1()
+    abstract fun method2()
+}
+
+interface Interface {
+    abstract fun method1()
+    abstract fun method2()
 }

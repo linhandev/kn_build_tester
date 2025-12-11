@@ -9,6 +9,11 @@ kotlin {
     macosArm64()
     
     sourceSets {
-        val commonMain by getting
+        val commonMain by getting 
+        val nativeMain by creating {
+            dependencies {
+                implementation("com.example:caller-lib:1.0.0")
+            }
+        }
     }
 }

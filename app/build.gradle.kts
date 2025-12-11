@@ -13,6 +13,19 @@ kotlin {
                     freeCompilerArgs += listOf("-Xpartial-linkage-loglevel=warning")
                 }
             }
+            executable {
+                entryPoint = "com.example.main"
+                val partialLinkMode = project.findProperty("partialLinkMode") as? String
+                if (partialLinkMode != null) {
+                    freeCompilerArgs += listOf("-Xpartial-linkage=$partialLinkMode")
+                    freeCompilerArgs += listOf("-Xpartial-linkage-loglevel=warning")
+                }
+            }
+            executable("plCheck") {
+                entryPoint = "com.example.main"
+                freeCompilerArgs += listOf("-produce", "header_cache", "-Xpartial-linkage=enable", "-Xpartial-linkage-loglevel=error")
+                project.extensions.extraProperties.set("kotlin.native.cacheKind", "none")
+            }
         }
     }
     
@@ -22,7 +35,6 @@ kotlin {
         val nativeMain by creating {
             dependsOn(commonMain)
             dependencies {
-                implementation("com.example:caller-lib:1.0.0")
                 implementation(project(":src-lib"))
             }
         }

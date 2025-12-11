@@ -26,3 +26,13 @@ object ConfigHelper {
         return "config-value"
     }
 }
+
+abstract class Abstract {
+    abstract fun method1()
+    // abstract fun method2()
+}
+
+interface Interface {
+    abstract fun method1()
+    // abstract fun method2()
+}

@@ -29,3 +29,15 @@ class CallerApi {
         return "Caller using dep-lib ${ConfigHelper.VERSION}: ${ConfigHelper.getConfigValue()}"
     }
 }
+
+class NonAbstract : Abstract() {
+    override fun method1() {
+        println("NonAbstract method1 implementation")
+    }
+}
+
+class Implementation : Interface {
+    override fun method1() {
+        println("Implementation method1 implementation")
+    }
+}
