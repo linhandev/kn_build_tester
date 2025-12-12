@@ -19,7 +19,7 @@ package com.tencent.compose.sample.mainpage
 
 import com.tencent.compose.sample.LinearGradientLine
 import com.tencent.compose.sample.MultiTouches
-import com.tencent.compose.sample.mainpage.sectionItem.BouncingBallsApp
+import com.tencent.compose.sample.ball.BouncingBallsApp
 import com.tencent.compose.sample.mainpage.sectionItem.CalculatorPage
 import com.tencent.compose.sample.data.DisplayItem
 import com.tencent.compose.sample.data.DisplaySection

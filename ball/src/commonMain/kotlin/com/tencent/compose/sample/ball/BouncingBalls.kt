@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.tencent.compose.sample.mainpage.sectionItem
+package com.tencent.compose.sample.ball
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -50,7 +50,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import com.tencent.compose.sample.mainpage.sectionItem.BouncingBall.Companion.setCount
+import com.tencent.compose.sample.ball.BouncingBall.Companion.setCount
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.max
@@ -75,7 +75,7 @@ private var areaWidth = 0
 private var areaHeight = 0
 
 @Composable
-internal fun BouncingBallsApp(initialBallsCount: Int = 10) {
+fun BouncingBallsApp(initialBallsCount: Int = 10) {
     val items = remember {
         val list = mutableStateListOf<BouncingBall>()
         list.addAll(generateSequence {

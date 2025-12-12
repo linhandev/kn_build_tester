@@ -51,3 +51,4 @@ dependencyResolutionManagement {
 
 include(":composeApp")
 include(":calculator")
+include(":ball")

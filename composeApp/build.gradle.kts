@@ -87,6 +87,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.atomicFu)
             implementation(project(":calculator"))
+            implementation(project(":ball"))
         }
 
         val ohosArm64Main by getting {
