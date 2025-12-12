@@ -21,8 +21,8 @@ kotlin {
                     freeCompilerArgs += listOf("-Xpartial-linkage-loglevel=warning")
                 }
             }
-            executable("plCheck") {
-                entryPoint = "com.example.main"
+            sharedLib("plCheck") {
+                // entryPoint = "com.example.main"
                 freeCompilerArgs += listOf("-produce", "header_cache", "-Xpartial-linkage=enable", "-Xpartial-linkage-loglevel=error")
                 project.extensions.extraProperties.set("kotlin.native.cacheKind", "none")
             }
