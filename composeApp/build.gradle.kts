@@ -86,6 +86,7 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.atomicFu)
+            implementation(project(":calculator"))
         }
 
         val ohosArm64Main by getting {

@@ -50,3 +50,4 @@ dependencyResolutionManagement {
 }
 
 include(":composeApp")
+include(":calculator")

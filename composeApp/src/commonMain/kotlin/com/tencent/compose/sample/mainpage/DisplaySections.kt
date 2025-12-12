@@ -20,6 +20,7 @@ package com.tencent.compose.sample.mainpage
 import com.tencent.compose.sample.LinearGradientLine
 import com.tencent.compose.sample.MultiTouches
 import com.tencent.compose.sample.mainpage.sectionItem.BouncingBallsApp
+import com.tencent.compose.sample.mainpage.sectionItem.CalculatorPage
 import com.tencent.compose.sample.data.DisplayItem
 import com.tencent.compose.sample.data.DisplaySection
 import com.tencent.compose.sample.mainpage.sectionItem.CarouselTransition
@@ -95,7 +96,8 @@ internal fun displaySections(): List<DisplaySection> {
                 DisplayItem("Bouncing Balls", Res.drawable.balls) { BouncingBallsApp() },
                 DisplayItem("Falling Balls", Res.drawable.falling) { FallingBalls() },
                 DisplayItem("DropdownMenu", Res.drawable.menu) { DropdownMenu() },
-                DisplayItem("GradientLine", Res.drawable.gradient) { LinearGradientLine() }
+                DisplayItem("GradientLine", Res.drawable.gradient) { LinearGradientLine() },
+                DisplayItem("Calculator", Res.drawable.simple_text) { CalculatorPage() }
             )
         )
     )

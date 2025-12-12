@@ -293,6 +293,9 @@ typedef struct {
                   libkn_KInt (*com_tencent_compose_sample_mainpage_sectionItem_DropdownItem$stableprop_getter______________)();
                   libkn_KInt (*com_tencent_compose_sample_mainpage_sectionItem_Game$stableprop_getter______________)();
                   libkn_KInt (*com_tencent_compose_sample_mainpage_sectionItem_PieceData$stableprop_getter______________)();
+                  libkn_KInt (*com_tencent_compose_sample_mainpage_sectionItem_DropdownItem$stableprop_getter_______________)();
+                  libkn_KInt (*com_tencent_compose_sample_mainpage_sectionItem_Game$stableprop_getter_______________)();
+                  libkn_KInt (*com_tencent_compose_sample_mainpage_sectionItem_PieceData$stableprop_getter_______________)();
                 } sectionItem;
               } mainpage;
               void* (*get_nativeResourceManager)();
