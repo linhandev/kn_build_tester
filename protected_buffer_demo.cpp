@@ -30,8 +30,6 @@ enum class ProtectionType {
     Overflow
 };
 
-#define PAGE_SIZE 16384 // 16KB for macOS ARM64. Standard Linux is often 4096.
-
 class ProtectedBuffer {
 private:
     void* actual_start = nullptr;
@@ -42,15 +40,17 @@ public:
     ProtectedBuffer(size_t size, ProtectionType type) {
         if (size == 0) return;
 
+        size_t page_size = sysconf(_SC_PAGESIZE);
+
         // Calculate pages needed for data
-        size_t data_pages = (size + PAGE_SIZE - 1) / PAGE_SIZE;
+        size_t data_pages = (size + page_size - 1) / page_size;
         
         // We need at least one guard page unless NoGuard is requested.
         size_t total_pages = data_pages;
         if (type != ProtectionType::NoGuard) {
             total_pages += 1;
         }
-        actual_size = total_pages * PAGE_SIZE;
+        actual_size = total_pages * page_size;
 
         // Use actual_start directly
         actual_start = mmap(NULL, actual_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
@@ -63,7 +63,7 @@ public:
         if (type == ProtectionType::Overflow) {
             // Layout: [ DATA ... ] [ GUARD ]
             // Guard is the LAST page(s).
-            guard_page = (char*)actual_start + (data_pages * PAGE_SIZE);
+            guard_page = (char*)actual_start + (data_pages * page_size);
             
             // User pointer is calculated such that it ends at guard_page
             user_start = (char*)guard_page - size;
@@ -74,7 +74,7 @@ public:
             guard_page = actual_start;
             
             // User pointer is the start of the second page (or just after guard)
-            user_start = (char*)actual_start + PAGE_SIZE;
+            user_start = (char*)actual_start + page_size;
         } else { // NoGuard
             // Layout: [ DATA ... ]
             // Just page aligned user data.
@@ -83,7 +83,7 @@ public:
 
         // Protect the guard page if needed
         if (type != ProtectionType::NoGuard) {
-            if (mprotect(guard_page, PAGE_SIZE, PROT_NONE) == -1) {
+            if (mprotect(guard_page, page_size, PROT_NONE) == -1) {
                 munmap(actual_start, actual_size);
                 throw std::runtime_error("mprotect failed");
             }
@@ -175,7 +175,7 @@ int main() {
         printf("Legal access at 0 and size-1 OK.\n");
 
         // Illegal access (Logical overflow)
-        // Since this is NoGuard, and size (64) < PAGE_SIZE (4096), this memory IS accessible.
+        // Since this is NoGuard, and size (64) < page size, this memory IS accessible.
         // Without manual ASan poisoning, this should NOT crash and NOT be detected.
         printf("Attempting logical overflow at size (should NOT crash)...\n");
         if (sigsetjmp(jump_buffer, 1) == 0) {
