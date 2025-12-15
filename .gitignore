@@ -1,4 +1,5 @@
 # project specific
+protected_buffer_demo
 *.so
 
 .DS_Store
