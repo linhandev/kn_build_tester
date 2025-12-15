@@ -12,12 +12,15 @@ For a requested `user_size`, the allocator calculates the total memory required 
 
 1.  **Data Pages**: Calculates the number of pages needed to hold `user_size`.
     $$ \text{Data Pages} = \lceil \frac{\text{user\_size}}{\text{PAGE\_SIZE}} \rceil $$
-2.  **Total Size**: Adds one extra page for the Guard Page.
-    $$ \text{Total Size} = (\text{Data Pages} + 1) \times \text{PAGE\_SIZE} $$
+2.  **Total Size**:
+    *   **With Guard**: Adds one extra page for the Guard Page.
+        $$ \text{Total Size} = (\text{Data Pages} + 1) \times \text{PAGE\_SIZE} $$
+    *   **No Guard**: Allocates only the necessary data pages.
+        $$ \text{Total Size} = \text{Data Pages} \times \text{PAGE\_SIZE} $$
 
 ### Protection Modes
 
-The class supports two protection modes, specified during construction:
+The class supports three protection modes, specified during construction:
 
 #### 1. Overflow Protection
 Detects access beyond the end of the allocated buffer (e.g., `buffer[size]`).
@@ -32,6 +35,13 @@ Detects access before the beginning of the allocated buffer (e.g., `buffer[-1]`)
 *   **Layout**: `[ Guard Page (PROT_NONE) ] [ Data Pages ... ]`
 *   **Placement**: The user data is **left-aligned** immediately following the Guard Page.
 *   **Result**: The byte immediately preceding the user data (`user_ptr - 1`) falls exactly at the end of the Guard Page. Accessing it triggers a `SIGSEGV` or `SIGBUS`.
+
+#### 3. NoGuard Protection
+Allocates page-aligned memory without any guard pages.
+
+*   **Layout**: `[ Data Pages ... ]`
+*   **Placement**: The user data is **page-aligned** (starts at the beginning of the allocated region).
+*   **Result**: Standard `mmap` allocation. No special protection against out-of-bounds access (unless it hits unmapped memory by chance).
 
 ## Usage
 
@@ -50,6 +60,13 @@ Detects access before the beginning of the allocated buffer (e.g., `buffer[-1]`)
     ProtectedBuffer buf(64, ProtectionType::Underflow);
     void* ptr = buf.get();
     // ptr[-1] will crash
+}
+
+// No Guard
+{
+    ProtectedBuffer buf(64, ProtectionType::NoGuard);
+    void* ptr = buf.get();
+    // Standard allocation
 }
 ```
 

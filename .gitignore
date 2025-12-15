@@ -1,6 +1,8 @@
 # project specific
 protected_buffer_demo
+protected_buffer_demo_asan
 *.so
+*.dSYM/
 
 .DS_Store
 .idea/shelf
