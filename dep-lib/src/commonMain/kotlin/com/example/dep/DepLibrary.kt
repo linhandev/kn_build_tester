@@ -19,6 +19,10 @@ fun processUserData(data: UserData): String {
     return "User: ${data.name}, Age: ${data.age}"
 }
 
+fun sendNotification(message: String): String {
+    return "Notification: $message"
+}
+
 object ConfigHelper {
     const val VERSION = "1.0.0"
     

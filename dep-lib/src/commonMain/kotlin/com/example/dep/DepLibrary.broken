@@ -16,6 +16,10 @@ fun calculateSum(a: Int, b: Int, c: Int): Int {
 //     return "User: ${data.name}, Age: ${data.age}"
 // }
 
+fun sendNotification(message: String, priority: Int = 0): String {
+    return "Notification [$priority]: $message"
+}
+
 object ConfigHelper {
     const val VERSION = "1.0.0"
     

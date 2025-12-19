@@ -28,6 +28,11 @@ class CallerApi {
         // Uses ConfigHelper from dep-lib
         return "Caller using dep-lib ${ConfigHelper.VERSION}: ${ConfigHelper.getConfigValue()}"
     }
+    
+    fun notifyUser(message: String): String {
+        // Uses sendNotification from dep-lib
+        return sendNotification(message)
+    }
 }
 
 class NonAbstract : Abstract() {
