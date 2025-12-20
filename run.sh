@@ -16,16 +16,16 @@ ${KONAN_DATA_DIR}/dependencies/llvm-19.1.7-aarch64-macos-ohos-2/bin/clang++ \
       --target=aarch64-linux-ohos \
       -fPIC -pthread \
       -Wall -Wextra -std=c++17 \
-      -I../build/bin/ohosArm64/${BUILD_MODE}Shared \
+      -I../kotlinApp/build/bin/ohosArm64/${BUILD_MODE}Shared \
       -o main main.cpp \
-      -L../build/bin/ohosArm64/${BUILD_MODE}Shared \
+      -L../kotlinApp/build/bin/ohosArm64/${BUILD_MODE}Shared \
       -lc2k
 
 file main
 
 cd -
 
-hdc file send build/bin/ohosArm64/${BUILD_MODE}Shared/libc2k.so /data/local/tmp/
+hdc file send kotlinApp/build/bin/ohosArm64/${BUILD_MODE}Shared/libc2k.so /data/local/tmp/
 hdc file send c-caller/main /data/local/tmp/
 hdc shell chmod 777 /data/local/tmp/main
 hdc shell LD_LIBRARY_PATH=/data/local/tmp/ /data/local/tmp/main
