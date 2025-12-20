@@ -24,7 +24,7 @@ mv dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.kt.bk dep-lib/src/co
 echo "👀 Building app without any partial linkage setting, expecting success..."
 ./gradlew :app:clean :app:linkDebugSharedOhosArm64 --console=plain --rerun-tasks --refresh-dependencies
 
-./gradlew :app:clean :app:linkPlCheckDebugSharedOhosArm64 --console=plain --rerun-tasks --refresh-dependencies
+./gradlew :app:clean :app:linkCheckDebugSharedOhosArm64 --console=plain --rerun-tasks --refresh-dependencies
 
 exit 0
 
@@ -37,7 +37,7 @@ else
 fi
 
 echo "👀 Running check task, expecting failure..."
-if ./gradlew :app:linkPlCheckDebugExecutableOhosArm64 --console=plain --rerun-tasks --refresh-dependencies; then
+if ./gradlew :app:linkCheckDebugExecutableOhosArm64 --console=plain --rerun-tasks --refresh-dependencies; then
   echo "❌ Check task unexpectedly succeeded"
   exit 1
 else

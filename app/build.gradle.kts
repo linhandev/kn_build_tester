@@ -23,7 +23,6 @@ kotlin {
             }
             sharedLib("check") {
                 freeCompilerArgs += listOf("-produce", "header_cache", "-Xpartial-linkage=enable", "-Xpartial-linkage-loglevel=error")
-                project.extensions.extraProperties["kotlin.native.cacheKind.macosArm64"] = "none"
             }
         }
     }
@@ -39,7 +38,6 @@ kotlin {
             }
             sharedLib("check") {
                 freeCompilerArgs += listOf("-produce", "header_cache", "-Xpartial-linkage=enable", "-Xpartial-linkage-loglevel=error", "-opt")
-                project.extensions.extraProperties["kotlin.native.cacheKind.ohosArm64"] = "none"
             }
         }
     }
