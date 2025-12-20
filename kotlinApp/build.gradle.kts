@@ -18,11 +18,10 @@ kotlin {
 }
 
 arrayOf("debug", "release").forEach { type ->
-    tasks.register<Copy>("startHarmonyApp${type.capitalize()}") {
+    fun normalizeDir(dir: String) = dir.trim('/', '\\')
+    val publishTask = tasks.register<Copy>("publish${type.capitalize()}BinariesToHarmonyApp") {
         group = "harmony"
         dependsOn("link${type.capitalize()}SharedOhosArm64")
-
-        notCompatibleWithConfigurationCache("Uses project.exec and file() at execution time")
 
         val harmonyAppDir: String by project
         val harmonyAppEntryModuleDir: String by project
@@ -31,15 +30,18 @@ arrayOf("debug", "release").forEach { type ->
         val absoluteHarmonyAppDir = if (File(harmonyAppDir).isAbsolute) harmonyAppDir else
             rootProject.file(harmonyAppDir).absolutePath
 
-        fun normalizeDir(dir: String) = dir.trim('/', '\\')
         val entryDir = normalizeDir(harmonyAppEntryModuleDir)
         val headerSubDir = normalizeDir(hFileDir)
         val soSubDir = normalizeDir(soFileDir)
-        val libBase = "c2k"
-        val headerSrc = file("build/bin/ohosArm64/${type}Shared/lib${libBase}_api.h")
-        val soSrc = file("build/bin/ohosArm64/${type}Shared/lib${libBase}.so")
-        val headerDest = file("$absoluteHarmonyAppDir/$entryDir/$headerSubDir/lib${libBase}_api.h")
-        val soDest = file("$absoluteHarmonyAppDir/$entryDir/$soSubDir/lib${libBase}.so")
+
+        val binDir = file("build/bin/ohosArm64/${type}Shared")
+        val soSrc = binDir.listFiles { f -> f.isFile && f.extension == "so" }?.singleOrNull()
+            ?: throw GradleException("Expected exactly one .so in ${binDir.absolutePath}")
+        val headerSrc = binDir.listFiles { f -> f.isFile && f.name.endsWith("_api.h") }?.singleOrNull()
+            ?: throw GradleException("Expected exactly one *_api.h in ${binDir.absolutePath}")
+
+        val headerDest = file("$absoluteHarmonyAppDir/$entryDir/$headerSubDir/${headerSrc.name}")
+        val soDest = file("$absoluteHarmonyAppDir/$entryDir/$soSubDir/${soSrc.name}")
 
         into(rootProject.file(absoluteHarmonyAppDir))
         from(headerSrc) { into("$entryDir/$headerSubDir") }
@@ -49,13 +51,25 @@ arrayOf("debug", "release").forEach { type ->
         outputs.files(headerDest, soDest)
 
         doFirst {
-            if (!headerSrc.exists() || !soSrc.exists()) {
-                throw GradleException("Native artifacts not found. Expected $headerSrc and $soSrc. Did link${type.capitalize()}SharedOhosArm64 finish?")
+            if (!binDir.exists()) {
+                throw GradleException("Native bin dir missing: ${binDir.absolutePath}. Run link${type.capitalize()}SharedOhosArm64 first.")
             }
             if (!File(absoluteHarmonyAppDir).exists()) {
                 throw GradleException("Harmony app dir does not exist: $absoluteHarmonyAppDir (check harmonyAppDir in gradle.properties)")
             }
         }
+    }
+
+    tasks.register("startHarmonyApp${type.capitalize()}") {
+        group = "harmony"
+        dependsOn(publishTask)
+        notCompatibleWithConfigurationCache("Uses project.exec and file() at execution time")
+        outputs.upToDateWhen { false }
+
+        val harmonyAppDir: String by project
+        val harmonyAppEntryModuleDir: String by project
+        val absoluteHarmonyAppDir = if (File(harmonyAppDir).isAbsolute) harmonyAppDir else
+            rootProject.file(harmonyAppDir).absolutePath
 
         doLast {
             val appJsonContent = file("$absoluteHarmonyAppDir/AppScope/app.json5").readText()
@@ -124,7 +138,7 @@ arrayOf("debug", "release").forEach { type ->
             ))
 
             println("=== Step 4: Install HAP to device via hdc ===")
-            val hapDir = File("$absoluteHarmonyAppDir/$entryDir/build/default/outputs/default")
+            val hapDir = File("$absoluteHarmonyAppDir/${normalizeDir(harmonyAppEntryModuleDir)}/build/default/outputs/default")
             val signedHap = File(hapDir, "entry-default-signed.hap")
             val unsignedHap = File(hapDir, "entry-default-unsigned.hap")
             val hapFile = when {
