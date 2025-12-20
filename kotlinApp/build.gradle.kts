@@ -33,15 +33,13 @@ arrayOf("debug", "release").forEach { type ->
         val binDir = tasks.getByName(buildTaskName).outputs.files.single()
         val soSrc = binDir.resolve("lib${baseName}.so")
         val headerSrc = binDir.resolve("lib${baseName}_api.h")
-        val soDest = file("$soFileDst/${soSrc.name}")
-        val headerDest = file("$hFileDst/${headerSrc.name}")
 
         into(rootProject.file(harmonyAppDir))
-        from(headerSrc) { into(headerDest) }
-        from(soSrc) { into(soDest) }
+        from(headerSrc) { into(hFileDst) }
+        from(soSrc) { into(soFileDst) }
 
         inputs.files(binDir)
-        outputs.files(headerDest, soDest)
+        outputs.upToDateWhen { false }
     }
 
     tasks.register("startHarmonyApp${type.capitalize()}") {
