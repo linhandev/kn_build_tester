@@ -1,5 +1,13 @@
 #include "napi/native_api.h"
 
+extern "C" void run_asan_test();
+
+static napi_value TestAsan(napi_env env, napi_callback_info info)
+{
+    run_asan_test();
+    return nullptr;
+}
+
 static napi_value Add(napi_env env, napi_callback_info info)
 {
     size_t argc = 2;
@@ -30,7 +38,8 @@ EXTERN_C_START
 static napi_value Init(napi_env env, napi_value exports)
 {
     napi_property_descriptor desc[] = {
-        { "add", nullptr, Add, nullptr, nullptr, nullptr, napi_default, nullptr }
+        { "add", nullptr, Add, nullptr, nullptr, nullptr, napi_default, nullptr },
+        { "testAsan", nullptr, TestAsan, nullptr, nullptr, nullptr, napi_default, nullptr }
     };
     napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc);
     return exports;

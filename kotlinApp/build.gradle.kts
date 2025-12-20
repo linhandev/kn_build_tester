@@ -9,6 +9,13 @@ fun String.capitalize() = replaceFirstChar { it.uppercase() }
 
 kotlin {
     ohosArm64 {
+        compilations.getByName("main") {
+            cinterops {
+                val asan by creating {
+                    includeDirs(rootProject.file("harmonyApp/entry/src/main/cpp/include"))
+                }
+            }
+        }
         binaries {
             sharedLib {
                 baseName = "c2k"

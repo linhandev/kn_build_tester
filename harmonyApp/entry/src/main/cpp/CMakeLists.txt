@@ -11,5 +11,8 @@ endif()
 include_directories(${NATIVERENDER_ROOT_PATH}
                     ${NATIVERENDER_ROOT_PATH}/include)
 
-add_library(entry SHARED napi_init.cpp)
-target_link_libraries(entry PUBLIC libace_napi.z.so)
+add_library(c2k SHARED IMPORTED)
+set_target_properties(c2k PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/arm64-v8a/libc2k.so)
+
+add_library(entry SHARED napi_init.cpp asan.cpp)
+target_link_libraries(entry PUBLIC libace_napi.z.so c2k)

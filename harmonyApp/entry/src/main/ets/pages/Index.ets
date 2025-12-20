@@ -15,6 +15,11 @@ struct Index {
         Text(this.message)
           .fontSize($r('app.float.page_text_font_size'))
           .fontWeight(FontWeight.Bold)
+        Button("Run ASan Test")
+          .onClick(() => {
+            hilog.info(0x0000, 'testTag', 'Running ASan Test');
+            testNapi.testAsan();
+          })
       }
       .width('100%')
     }

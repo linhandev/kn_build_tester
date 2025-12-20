@@ -64,6 +64,7 @@ typedef struct {
   libc2k_KNativePtr pinned;
 } libc2k_kref_kotlin_ULong;
 
+extern void run_asan_test();
 extern libc2k_KInt subtract_numbers(libc2k_KInt a, libc2k_KInt b);
 
 typedef struct {
@@ -101,7 +102,9 @@ typedef struct {
   struct {
     struct {
       void (*main)();
+      void (*runAsanTestWrapper)();
       libc2k_KInt (*subtractNumbers)(libc2k_KInt a, libc2k_KInt b);
+      void (*runAsanTest)();
     } root;
   } kotlin;
 } libc2k_ExportedSymbols;
