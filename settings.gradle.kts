@@ -14,7 +14,6 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
         mavenLocal()
         maven("https://mirrors.tencent.com/nexus/repository/maven-tencent/")

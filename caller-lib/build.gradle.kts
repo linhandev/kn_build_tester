@@ -7,9 +7,9 @@ group = "com.example"
 version = "1.0.0"
 
 kotlin {
-    macosArm64 {
-        compilations["main"].compilerOptions.options.freeCompilerArgs.add("-Xpartial-linkage-loglevel=warning")
-    }
+    macosArm64()
+    ohosArm64()
+    iosArm64()
     
     sourceSets {
         val commonMain by getting {

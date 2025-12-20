@@ -21,26 +21,34 @@ kotlin {
                     freeCompilerArgs += listOf("-Xpartial-linkage-loglevel=warning")
                 }
             }
-            sharedLib("plCheck") {
-                // entryPoint = "com.example.main"
+            sharedLib("check") {
                 freeCompilerArgs += listOf("-produce", "header_cache", "-Xpartial-linkage=enable", "-Xpartial-linkage-loglevel=error")
-                project.extensions.extraProperties.set("kotlin.native.cacheKind", "none")
+                project.extensions.extraProperties["kotlin.native.cacheKind.macosArm64"] = "none"
+            }
+        }
+    }
+    ohosArm64 {
+        binaries {
+            sharedLib {
+                baseName = "app"
+                val partialLinkMode = project.findProperty("partialLinkMode") as? String
+                if (partialLinkMode != null) {
+                    freeCompilerArgs += listOf("-Xpartial-linkage=$partialLinkMode")
+                    freeCompilerArgs += listOf("-Xpartial-linkage-loglevel=warning")
+                }
+            }
+            sharedLib("check") {
+                freeCompilerArgs += listOf("-produce", "header_cache", "-Xpartial-linkage=enable", "-Xpartial-linkage-loglevel=error", "-opt")
+                project.extensions.extraProperties["kotlin.native.cacheKind.ohosArm64"] = "none"
             }
         }
     }
     
     sourceSets {
-        val commonMain by getting
-
-        val nativeMain by creating {
-            dependsOn(commonMain)
+        val commonMain by getting {
             dependencies {
                 implementation(project(":src-lib"))
             }
-        }
-        
-        val macosArm64Main by getting {
-            dependsOn(nativeMain)
         }
     }
 }

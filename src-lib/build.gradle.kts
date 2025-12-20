@@ -7,6 +7,8 @@ version = "1.0.0"
 
 kotlin {
     macosArm64()
+    ohosArm64()
+    iosArm64()
     
     sourceSets {
         val commonMain by getting 
