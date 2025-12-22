@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+
 import kotlinx.cinterop.*
 import asan.*
 
@@ -10,12 +12,22 @@ actual fun runAsanTest() {
     
     // Initialize
     for (i in 0 until size) {
-        buffer[i] = i.toByte()
+        buffer[i] = 0.toByte()
     }
     
+    // Create another string in the heap
+    val maybeCanary = nativeHeap.allocArray<ByteVar>(size)
+    for (i in 0 until size) {
+        maybeCanary[i] = 0.toByte()
+    }
+    println("Canary string before triggering overflow: ${maybeCanary.toKString()}")
+
     println("Kotlin: Calling C function to overflow by $overflow bytes")
     trigger_overflow(buffer, size, overflow)
     
+    println("Canary string after triggering overflow: ${maybeCanary.toKString()}")
+
     println("Kotlin: Freeing memory")
     nativeHeap.free(buffer)
+    nativeHeap.free(maybeCanary)
 }

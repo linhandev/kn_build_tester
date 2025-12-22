@@ -9,7 +9,6 @@ expect fun runAsanTest()
 
 @CName("run_asan_test")
 fun runAsanTestWrapper() {
-    println("Kotlin: runAsanTestWrapper called")
     runAsanTest()
 }
 
