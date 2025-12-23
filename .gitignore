@@ -1,6 +1,8 @@
 # project specific
 *.so
 main
+*.a
+*.o
 
 .DS_Store
 .idea/shelf

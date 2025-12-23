@@ -11,6 +11,28 @@ BUILD_MODE_CAPITALIZED=$(echo ${BUILD_MODE} | awk '{print toupper(substr($0,1,1)
 
 SYSROOT="/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot"
 
+# Build the static library for add
+cd src/nativeInterop/add
+"${KONAN_DATA_DIR}/dependencies/llvm-1201-macos-aarch64/bin/clang++" \
+      --sysroot "${SYSROOT}" \
+      --target=aarch64-linux-ohos \
+      -fPIC \
+      -c add.cpp -o add.o
+"${KONAN_DATA_DIR}/dependencies/llvm-1201-macos-aarch64/bin/llvm-ar" rcs libadd.a add.o
+"${KONAN_DATA_DIR}/dependencies/llvm-1201-macos-aarch64/bin/llvm-ranlib" libadd.a
+cd -
+
+# Build the static library for multiply
+cd multiply/src/nativeInterop/multiply
+"${KONAN_DATA_DIR}/dependencies/llvm-1201-macos-aarch64/bin/clang++" \
+      --sysroot "${SYSROOT}" \
+      --target=aarch64-linux-ohos \
+      -fPIC \
+      -c multiply.cpp -o multiply.o
+"${KONAN_DATA_DIR}/dependencies/llvm-1201-macos-aarch64/bin/llvm-ar" rcs libmultiply.a multiply.o
+"${KONAN_DATA_DIR}/dependencies/llvm-1201-macos-aarch64/bin/llvm-ranlib" libmultiply.a
+cd -
+
 # Build the shared library with Gradle (keep wrapper for now).
 ./gradlew link"${BUILD_MODE_CAPITALIZED}"SharedOhosArm64 --rerun-tasks
 

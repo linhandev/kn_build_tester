@@ -1,0 +1,4 @@
+package = add
+headers = add.h
+staticLibraries = libadd.a
+libraryPaths = src/nativeInterop/add

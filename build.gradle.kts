@@ -9,6 +9,17 @@ version = "1.0-SNAPSHOT"
 
 kotlin {
     ohosArm64("ohosArm64") {
+        compilations.getByName("main") {
+            cinterops {
+                val add by creating {
+                    defFile("src/nativeInterop/add/add.def")
+                    includeDirs("src/nativeInterop/add")
+                }
+            }
+            defaultSourceSet.dependencies {
+                implementation(project(":multiply"))
+            }
+        }
         binaries {
             sharedLib {
                 baseName = "c2k"

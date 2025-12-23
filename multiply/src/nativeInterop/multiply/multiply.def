@@ -1,0 +1,5 @@
+package = multiply
+headers = multiply.h
+staticLibraries = libmultiply.a
+libraryPaths = src/nativeInterop/multiply
+
