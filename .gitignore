@@ -3,6 +3,7 @@
 main
 *.a
 *.o
+main_ios_sim
 
 .DS_Store
 .idea/shelf

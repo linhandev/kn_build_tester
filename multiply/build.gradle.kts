@@ -22,4 +22,20 @@ kotlin {
             }
         }
     }
+    
+    iosSimulatorArm64("iosSimulatorArm64") {
+        compilations.getByName("main") {
+            cinterops {
+                create("multiplyciopkg") {
+                    defFile("src/nativeInterop/multiply/multiply.def")
+                    includeDirs("src/nativeInterop/multiply")
+                }
+            }
+        }
+        binaries {
+            framework {
+                baseName = "multiply"
+            }
+        }
+    }
 }
