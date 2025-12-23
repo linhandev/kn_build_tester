@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-int multiply(int a, int b);
+int multiplycfun(int a, int b);
 
 #ifdef __cplusplus
 }

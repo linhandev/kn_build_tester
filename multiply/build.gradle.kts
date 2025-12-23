@@ -10,7 +10,22 @@ kotlin {
     ohosArm64("ohosArm64") {
         compilations.getByName("main") {
             cinterops {
-                create("multiply") {
+                create("multiplyciopkg") {
+                    defFile("src/nativeInterop/multiply/multiply.def")
+                    includeDirs("src/nativeInterop/multiply")
+                }
+            }
+        }
+        binaries {
+            sharedLib {
+                baseName = "multiply"
+            }
+        }
+    }
+    linuxX64("linuxX64") {
+        compilations.getByName("main") {
+            cinterops {
+                create("multiplyciopkg") {
                     defFile("src/nativeInterop/multiply/multiply.def")
                     includeDirs("src/nativeInterop/multiply")
                 }

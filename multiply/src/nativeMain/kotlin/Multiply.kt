@@ -2,9 +2,9 @@
 
 package multiply
 
-import multiply.multiply
+import multiplyciopkg.multiplycfun
 
 @CName("multiply_numbers")
 fun multiplyNumbers(a: Int, b: Int): Int {
-    return multiply.multiply(a, b)
+    return multiplycfun(a, b)
 }
