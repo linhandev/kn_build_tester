@@ -1,5 +1,6 @@
 plugins {
-    // kotlin("multiplatform") version "2.0.255-SNAPSHOT"
+//    kotlin("multiplatform") version "2.0.255-SNAPSHOT"
+//    kotlin("multiplatform") version "2.2.0-ohos-06"
     kotlin("multiplatform") version "2.0.21-KBA-013"
 }
 
@@ -13,9 +14,5 @@ kotlin {
                 baseName = "c2k"
             }
         }
-    }
-    
-    sourceSets {
-        val ohosArm64Main by getting
     }
 }
