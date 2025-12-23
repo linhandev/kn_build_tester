@@ -11,13 +11,13 @@ kotlin {
     ohosArm64("ohosArm64") {
         compilations.getByName("main") {
             cinterops {
-                val add by creating {
+                create("add") {
                     defFile("src/nativeInterop/add/add.def")
                     includeDirs("src/nativeInterop/add")
                 }
             }
             defaultSourceSet.dependencies {
-                implementation(project(":multiply"))
+                implementation("com.example:multiply:1.0-SNAPSHOT")
             }
         }
         binaries {

@@ -4,6 +4,7 @@ pluginManagement {
         maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
         gradlePluginPortal()
         mavenCentral()
+        mavenLocal()
     }
 }
 
@@ -12,6 +13,7 @@ dependencyResolutionManagement {
         maven("https://kmp-ohos-test.obs.cn-south-1.myhuaweicloud.com/maven")
         maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
         mavenCentral()
+        mavenLocal()
     }
 }
 

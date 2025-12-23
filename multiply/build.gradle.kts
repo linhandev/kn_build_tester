@@ -1,5 +1,6 @@
 plugins {
     kotlin("multiplatform") version "2.0.21-KBA-013"
+    `maven-publish`
 }
 
 group = "com.example"
@@ -9,7 +10,7 @@ kotlin {
     ohosArm64("ohosArm64") {
         compilations.getByName("main") {
             cinterops {
-                val multiply by creating {
+                create("multiply") {
                     defFile("src/nativeInterop/multiply/multiply.def")
                     includeDirs("src/nativeInterop/multiply")
                 }

@@ -33,6 +33,9 @@ cd multiply/src/nativeInterop/multiply
 "${KONAN_DATA_DIR}/dependencies/llvm-1201-macos-aarch64/bin/llvm-ranlib" libmultiply.a
 cd -
 
+# Publish the multiply klib to local Maven
+./gradlew :multiply:publishToMavenLocal
+
 # Build the shared library with Gradle (keep wrapper for now).
 ./gradlew link"${BUILD_MODE_CAPITALIZED}"SharedOhosArm64 --rerun-tasks
 
