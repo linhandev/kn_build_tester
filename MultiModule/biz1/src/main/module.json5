@@ -1,0 +1,26 @@
+{
+  "module": {
+    "name": "biz1",
+    "type": "feature",
+    "description": "$string:module_desc",
+    "mainElement": "Biz1Ability",
+    "deviceTypes": [
+      "phone"
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "pages": "$profile:main_pages",
+    "abilities": [
+      {
+        "name": "Biz1Ability",
+        "srcEntry": "./ets/biz1ability/Biz1Ability.ets",
+        "description": "$string:Biz1Ability_desc",
+        "icon": "$media:layered_image",
+        "label": "$string:Biz1Ability_label",
+        "startWindowIcon": "$media:startIcon",
+        "startWindowBackground": "$color:start_window_background",
+        "exported": true
+      }
+    ]
+  }
+}

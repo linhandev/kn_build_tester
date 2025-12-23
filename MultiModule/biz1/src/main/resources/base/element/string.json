@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "Biz1Ability_desc",
+      "value": "description"
+    },
+    {
+      "name": "Biz1Ability_label",
+      "value": "label"
+    }
+  ]
+}

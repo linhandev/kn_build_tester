@@ -1,0 +1,5 @@
+{
+  "libbiz1.so": {
+    "source": "src/mock/Libbiz1.mock.ets"
+  }
+}
