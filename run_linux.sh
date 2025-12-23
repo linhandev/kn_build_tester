@@ -30,7 +30,7 @@ cd -
 # Publish the multiply klib to local Maven
 ./gradlew :multiply:publishToMavenLocal
 
-rm -rf /Users/hl/git/kmp/KuiklyBase-kotlin/kotlin-native/dist/klib/cache/linux_x64-gSTATIC-pl/com.example*
+# rm -rf /path/to/kotlin/kotlin-native/dist/klib/cache/linux_x64-gSTATIC-pl/com.example*
 # Build the shared library with Gradle
 ./gradlew link"${BUILD_MODE_CAPITALIZED}"SharedLinuxX64 --rerun-tasks
 
