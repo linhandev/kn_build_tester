@@ -5,13 +5,16 @@ function customPlugin(): HvigorPlugin {
   return {
     pluginId: 'customPlugin',
     apply(node: HvigorNode) {
-      // 插件主体
-      console.log('hello customPlugin!');
+      console.log(process.env.config)
+      // Only print if not in module mode (config does not contain "module")
+      if (!process.env.config?.includes('"module"')) {
+        console.log('hello customPlugin!');
+      }
     }
   }
 }
 
 export default {
   system: appTasks, /* Built-in plugin of Hvigor. It cannot be modified. */
-  plugins: [customPlugin()]       /* Custom plugin to extend the functionality of Hvigor. */
+  plugins: [customPlugin()] /* Custom plugin to extend the functionality of Hvigor. */
 }
