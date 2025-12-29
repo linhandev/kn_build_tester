@@ -7,27 +7,26 @@ import asan.*
 actual fun runAsanTest() {
     val size = 10
     val overflow = 1000
-    println("Kotlin: Allocating $size bytes on native heap")
-    val buffer = nativeHeap.allocArray<ByteVar>(size)
     
-    // Initialize
-    for (i in 0 until size) {
-        buffer[i] = 0.toByte()
-    }
+    // Create ByteArray on Kotlin heap (not native heap)
+    val buffer = ByteArray(size) { 'A'.code.toByte() }
+    println("Kotlin: Created ByteArray on Kotlin heap, size: $size")
     
-    // Create another string in the heap
-    val maybeCanary = nativeHeap.allocArray<ByteVar>(size)
-    for (i in 0 until size) {
-        maybeCanary[i] = 0.toByte()
-    }
-    println("Canary string before triggering overflow: ${maybeCanary.toKString()}")
-
+    // Create another object nearby on Kotlin heap (potential canary/victim)
+    val canary = ByteArray(size) { 'C'.code.toByte() }
+    println("Canary before overflow: ${canary.decodeToString()}")
+    
     println("Kotlin: Calling C function to overflow by $overflow bytes")
-    trigger_overflow(buffer, size, overflow)
-    
-    println("Canary string after triggering overflow: ${maybeCanary.toKString()}")
+    canary.usePinned { pinned ->
+        println("pinned address ${pinned.addressOf(0)}")
+    }
 
-    println("Kotlin: Freeing memory")
-    nativeHeap.free(buffer)
-    nativeHeap.free(maybeCanary)
+    // Pin ByteArray to get pointer to actual Kotlin heap memory (not a copy)
+    buffer.usePinned { pinned ->
+        println("pinned address ${pinned.addressOf(0)}")
+        trigger_overflow(pinned.addressOf(0), size, overflow)
+    }
+
+    println("Kotlin: Buffer after overflow: ${buffer.decodeToString()}")
+    println("Canary after overflow: ${canary.decodeToString()}")
 }
