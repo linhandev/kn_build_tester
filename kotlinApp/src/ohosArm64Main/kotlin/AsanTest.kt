@@ -5,28 +5,25 @@ import asan.*
 
 @OptIn(ExperimentalForeignApi::class)
 actual fun runAsanTest() {
-    val size = 10
-    val overflow = 1000
-    
-    // Create ByteArray on Kotlin heap (not native heap)
-    val buffer = ByteArray(size) { 'A'.code.toByte() }
-    println("Kotlin: Created ByteArray on Kotlin heap, size: $size")
-    
-    // Create another object nearby on Kotlin heap (potential canary/victim)
-    val canary = ByteArray(size) { 'C'.code.toByte() }
-    println("Canary before overflow: ${canary.decodeToString()}")
-    
-    println("Kotlin: Calling C function to overflow by $overflow bytes")
-    canary.usePinned { pinned ->
-        println("pinned address ${pinned.addressOf(0)}")
+    val a = 1 / 0
+    fun recurse(level: Int) {
+        if (level < 64) {
+            recurse(level + 1)
+        } else {
+            // Stay at level 64 and create throwables in a loop
+            val startTime = kotlin.system.getTimeNanos()
+            for (i in 0..3000) {
+                val throwable = Throwable("Test exception at iteration $i")
+                val stackTraceString = throwable.stackTraceToString()
+                // Process stacktrace (e.g., print or analyze)
+                println("Iteration $i: Stack trace:\n$stackTraceString")
+            }
+            val endTime = kotlin.system.getTimeNanos()
+            val durationNanos = endTime - startTime
+            val durationMillis = durationNanos / 1_000_000.0
+            val durationSeconds = durationNanos / 1_000_000_000.0
+            println("For loop timing: ${durationNanos} ns (${durationMillis} ms, ${durationSeconds} s)")
+        }
     }
-
-    // Pin ByteArray to get pointer to actual Kotlin heap memory (not a copy)
-    buffer.usePinned { pinned ->
-        println("pinned address ${pinned.addressOf(0)}")
-        trigger_overflow(pinned.addressOf(0), size, overflow)
-    }
-
-    println("Kotlin: Buffer after overflow: ${buffer.decodeToString()}")
-    println("Canary after overflow: ${canary.decodeToString()}")
+    recurse(0)
 }

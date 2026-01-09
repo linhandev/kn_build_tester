@@ -19,7 +19,11 @@ kotlin {
         binaries {
             sharedLib {
                 baseName = "c2k"
-                freeCompilerArgs += "-g"
+                freeCompilerArgs += "-Xadd-light-debug=enable"
+                freeCompilerArgs += "-Xallocator=custom"
+                freeCompilerArgs += "-Xbinary=stripDebugInfoFromNativeLibs=false"
+                freeCompilerArgs += "-Xbinary=sourceInfoType=libbacktrace"
+                linkerOpts += "-lhilog_ndk.z"
             }
         }
     }
@@ -179,3 +183,5 @@ arrayOf("debug", "release").forEach { type ->
         }
     }
 }
+
+tasks.getByName("linkDebugSharedOhosArm64")?.outputs?.upToDateWhen { false }
