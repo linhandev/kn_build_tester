@@ -1,8 +1,20 @@
-import { hilog } from '@kit.PerformanceAnalysisKit';
+import { hilog, hidebug } from '@kit.PerformanceAnalysisKit';
 import testNapi from 'libentry.so';
 
 const DOMAIN = 0x0000;
 hilog.info(DOMAIN, 'testTag', 'Test NAPI 2 + 3 = %{public}d', testNapi.add(2, 3));
+
+let options: hidebug.GwpAsanOptions = {
+  alwaysEnabled: true,
+  sampleRate: 1,
+  maxSimutaneousAllocations: 1000,
+};
+
+try {
+  hidebug.enableGwpAsanGrayscale(options)
+} catch (error) {
+  // TODO: Implement error handling.
+}
 
 @Entry
 @Component
