@@ -1,14 +1,15 @@
 # Agent Instructions: Building C/C++ Programs for OHOS (OpenHarmony)
 
-This document provides comprehensive instructions for building C/C++ programs targeting OHOS devices, including code coverage setup.
+This document provides instructions for building and running C/C++ programs targeting OHOS devices.
 
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
-2. [Key Paths and Locations](#key-paths-and-locations)
-3. [Build Process](#build-process)
-4. [Code Coverage Options](#code-coverage-options)
-5. [Device Deployment](#device-deployment)
-6. [Coverage Report Generation](#coverage-report-generation)
+2. [Device Connection Check](#device-connection-check)
+3. [Key Paths and Locations](#key-paths-and-locations)
+4. [Target Architecture Detection](#target-architecture-detection)
+5. [Build Process](#build-process)
+6. [Device Deployment](#device-deployment)
+7. [Common Issues and Solutions](#common-issues-and-solutions)
 
 ## Prerequisites
 
@@ -17,13 +18,37 @@ This document provides comprehensive instructions for building C/C++ programs ta
 - OHOS device connected via USB or network
 - `hdc` tool available (OHOS Device Connector, similar to Android's `adb`)
 
+## Device Connection Check
+
+Before building and deploying, verify that an OHOS device is connected:
+
+```bash
+hdc list targets
+```
+
+This command will list all connected devices. If no devices are shown, ensure:
+- Device is connected via USB or network
+- Device is in developer mode
+- HDC service is running (try `hdc kill` then `hdc start` if needed)
+
 ## Key Paths and Locations
 
 ### Clang Compiler Location
+
+There are two common locations for the Clang compiler:
+
+**Option 1: DevEco Studio LLVM**
+```bash
+/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang++
+```
+
+**Option 2: Konan Dependencies**
 ```bash
 ~/.konan/dependencies/llvm-1201-macos-aarch64/bin/clang++
 ```
-**Note**: Version number (1201) may vary. Check your `~/.konan/dependencies/` directory for the actual version.
+**Note**: Version number (1201) may vary. Check your `~/.konan/dependencies/` directory for the actual version. If this version doesn't exist, a version that can cross compile to OHOS target typically comes with "ohos" in the folder name.
+
+**Important**: If the user doesn't specify which Clang to use, ask them whether they want to use the DevEco Studio version or the Konan version.
 
 ### Sysroot Location
 ```bash
@@ -39,30 +64,42 @@ This document provides comprehensive instructions for building C/C++ programs ta
 
 ### Clang Runtime Libraries
 ```bash
-/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/lib/clang/15.0.4/lib/aarch64-linux-ohos
+/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/lib/clang/15.0.4/lib/<TARGET_ARCH>
 ```
-This directory contains runtime libraries that need to be linked with `-L` flag.
+This directory contains runtime libraries that need to be linked with `-L` flag. Replace `<TARGET_ARCH>` with the appropriate architecture (see [Target Architecture Detection](#target-architecture-detection)).
 
-### Target Architecture
-- **Target**: `aarch64-linux-ohos`
-- **Architecture**: ARM64 (aarch64)
-- **OS**: OpenHarmony (OHOS)
+## Target Architecture Detection
+
+OHOS supports two architectures:
+
+- **x86_64-linux-ohos**: Used for x86 emulators
+- **aarch64-linux-ohos**: Used for ARM64 emulators and real devices
+
+To determine which architecture your device uses, run:
+
+```bash
+hdc shell uname -a
+```
+
+This will output system information including the architecture. Use the appropriate target architecture in your build commands:
+- For x86 emulators: `-target x86_64-linux-ohos`
+- For ARM64 emulators and real devices: `-target aarch64-linux-ohos`
 
 ## Build Process
 
 ### Basic Build Command Structure
 
 ```bash
-~/.konan/dependencies/llvm-1201-macos-aarch64/bin/clang++ \
+clang++ \
   --sysroot /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot \
-  -O3 \
-  -fomit-frame-pointer \
   source.cpp \
-  -target aarch64-linux-ohos \
-  -L/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/lib/clang/15.0.4/lib/aarch64-linux-ohos \
+  -target <TARGET_ARCH> \
+  -L/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/lib/clang/15.0.4/lib/<TARGET_ARCH> \
   -resource-dir /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/lib/clang/15.0.4 \
   -o output
 ```
+
+Replace `<TARGET_ARCH>` with either `x86_64-linux-ohos` or `aarch64-linux-ohos` based on your device (see [Target Architecture Detection](#target-architecture-detection)).
 
 ### Multi-Stage Build (IR -> Object -> Executable)
 
@@ -73,10 +110,8 @@ For better control and debugging, split the build into stages:
 clang++ \
   --sysroot <SYSROOT> \
   -emit-llvm -S \
-  -O3 \
-  -fomit-frame-pointer \
   source.cpp \
-  -target aarch64-linux-ohos \
+  -target <TARGET_ARCH> \
   -resource-dir <RESOURCE_DIR> \
   -o source.ll
 ```
@@ -86,9 +121,7 @@ clang++ \
 clang++ \
   --sysroot <SYSROOT> \
   -c source.ll \
-  -O3 \
-  -fomit-frame-pointer \
-  -target aarch64-linux-ohos \
+  -target <TARGET_ARCH> \
   -resource-dir <RESOURCE_DIR> \
   -o source.o
 ```
@@ -97,10 +130,8 @@ clang++ \
 ```bash
 clang++ \
   --sysroot <SYSROOT> \
-  -O3 \
-  -fomit-frame-pointer \
   source.o \
-  -target aarch64-linux-ohos \
+  -target <TARGET_ARCH> \
   -L<CLANG_LIB_DIR> \
   -resource-dir <RESOURCE_DIR> \
   -o executable
@@ -109,56 +140,9 @@ clang++ \
 ### Important Compiler Flags
 
 - `--sysroot <PATH>`: Specifies the system root directory
-- `-target aarch64-linux-ohos`: Target architecture and OS
+- `-target <TARGET_ARCH>`: Target architecture and OS (either `x86_64-linux-ohos` or `aarch64-linux-ohos`)
 - `-resource-dir <PATH>`: Clang resource directory
 - `-L<PATH>`: Library search path (for runtime libraries)
-- `-O3`: Optimization level
-- `-fomit-frame-pointer`: Omit frame pointer for smaller code
-
-## Code Coverage Options
-
-### Option 1: LLVM GCOV (Traditional)
-
-**Build Flags:**
-- `-fprofile-arcs`: Generate arc profiling information
-- `-ftest-coverage`: Generate coverage data files (.gcda, .gcno)
-
-**Example:**
-```bash
-clang++ \
-  --sysroot <SYSROOT> \
-  -fprofile-arcs -ftest-coverage \
-  source.cpp \
-  -target aarch64-linux-ohos \
-  -L<CLANG_LIB_DIR> \
-  -resource-dir <RESOURCE_DIR> \
-  -o executable
-```
-
-**Output Files:**
-- `source.gcno`: Graph file (generated at compile time)
-- `source.gcda`: Data file (generated at runtime)
-
-### Option 2: Source-based Code Coverage (LLVM)
-
-**Build Flags:**
-- `-fprofile-instr-generate`: Generate instrumentation for profiling
-- `-fcoverage-mapping`: Generate coverage mapping information
-
-**Example:**
-```bash
-clang++ \
-  --sysroot <SYSROOT> \
-  -fprofile-instr-generate -fcoverage-mapping \
-  source.cpp \
-  -target aarch64-linux-ohos \
-  -L<CLANG_LIB_DIR> \
-  -resource-dir <RESOURCE_DIR> \
-  -o executable
-```
-
-**Output Files:**
-- `default.profraw`: Raw profiling data (generated at runtime)
 
 ## Device Deployment
 
@@ -193,83 +177,33 @@ hdc shell chmod 777 <device_path>
 
 ### Deployment Workflow
 
-1. **Build executable** (with coverage flags)
-2. **Send to device:**
+1. **Check device connection:**
+   ```bash
+   hdc list targets
+   ```
+
+2. **Determine target architecture:**
+   ```bash
+   hdc shell uname -a
+   ```
+
+3. **Build executable** for the target architecture
+
+4. **Send to device:**
    ```bash
    hdc file send main /data/local/tmp/main
    ```
-3. **Set permissions:**
+
+5. **Set permissions:**
    ```bash
    hdc shell chmod 777 /data/local/tmp/main
    ```
-4. **Run executable:**
+
+6. **Run executable:**
    ```bash
    hdc shell LD_LIBRARY_PATH=/data/local/tmp/ /data/local/tmp/main
    ```
    **Note**: Set `LD_LIBRARY_PATH` if you need to load libraries from a specific location.
-
-5. **Retrieve coverage data:**
-   - For GCOV: `hdc file recv /data/local/tmp/main.gcda ./main.gcda`
-   - For Source-based: `hdc file recv /data/local/tmp/default.profraw ./default.profraw`
-
-### GCOV Path Redirection
-
-For GCOV coverage, use environment variables to control where coverage files are written:
-
-```bash
-GCOV_PREFIX=/data/local/tmp GCOV_PREFIX_STRIP=99 /data/local/tmp/main
-```
-
-- `GCOV_PREFIX`: Base path for coverage files
-- `GCOV_PREFIX_STRIP`: Number of path components to strip from build path
-
-## Coverage Report Generation
-
-### GCOV Reports
-
-**Using llvm-cov (recommended):**
-```bash
-llvm-cov gcov source.cpp \
-  -format=html \
-  -output-dir=coverage_report
-```
-
-**Using traditional gcov:**
-```bash
-gcov source.cpp
-# Generates source.cpp.gcov
-```
-
-### Source-based Coverage Reports
-
-1. **Merge profraw files:**
-   ```bash
-   llvm-profdata merge -sparse default.profraw -o default.profdata
-   ```
-
-2. **Generate HTML report:**
-   ```bash
-   llvm-cov show executable \
-     -instr-profile=default.profdata \
-     -format=html \
-     -output-dir=coverage_report \
-     source.cpp
-   ```
-
-3. **Generate text report:**
-   ```bash
-   llvm-cov show executable \
-     -instr-profile=default.profdata \
-     -format=text \
-     source.cpp > coverage.txt
-   ```
-
-4. **Generate summary:**
-   ```bash
-   llvm-cov report executable \
-     -instr-profile=default.profdata \
-     source.cpp
-   ```
 
 ## Common Issues and Solutions
 
@@ -277,49 +211,47 @@ gcov source.cpp
 **Solution**: Verify DevEco Studio installation path and SDK location.
 
 ### Issue: Library linking errors
-**Solution**: Ensure `-L` flag points to correct clang runtime library directory.
-
-### Issue: Coverage files not generated
-**Solution**: 
-- Ensure executable exits normally (not killed)
-- Check file permissions on device
-- Verify coverage flags were used during compilation
-- For GCOV, use `GCOV_PREFIX` and `GCOV_PREFIX_STRIP` environment variables
+**Solution**: Ensure `-L` flag points to correct clang runtime library directory matching your target architecture.
 
 ### Issue: HDC connection failed
 **Solution**:
 - Check USB connection or network settings
 - Verify device is in developer mode
 - Try `hdc kill` then `hdc start`
+- Run `hdc list targets` to verify device is detected
 
-### Issue: Version mismatch in source-based coverage
-**Solution**: Ensure LLVM versions match between device and host, or generate reports on the device.
+### Issue: Wrong target architecture
+**Solution**: 
+- Use `hdc shell uname -a` to determine the device architecture
+- Ensure the `-target` flag matches the device architecture
+- Ensure the `-L` library path points to the correct architecture directory
 
 ## Example: Complete Workflow
 
 ```bash
-# 1. Build with coverage
-./gcov.sh
-# or
-./sourcebased.sh
+# 1. Check device connection
+hdc list targets
 
-# 2. Deploy to device
-./deploy.sh gcov
-# or
-./deploy.sh sourcebased
+# 2. Determine architecture
+hdc shell uname -a
 
-# 3. Generate report (run build script again)
-./gcov.sh
-# or
-./sourcebased.sh
+# 3. Build (example for aarch64)
+clang++ \
+  --sysroot /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot \
+  main.cpp \
+  -target aarch64-linux-ohos \
+  -L/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/lib/clang/15.0.4/lib/aarch64-linux-ohos \
+  -resource-dir /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/lib/clang/15.0.4 \
+  -o main
 
-# 4. View report
-cat main.cpp.gcov  # For GCOV
-open coverage_report_sourcebased/index.html  # For source-based
+# 4. Deploy and run
+hdc file send main /data/local/tmp/main
+hdc shell chmod 777 /data/local/tmp/main
+hdc shell /data/local/tmp/main
 ```
 
 ## Additional Resources
 
 - OHOS Native Development Documentation
-- LLVM Code Coverage Documentation
 - DevEco Studio User Guide
+- For code coverage instructions, see [CODE_COVERAGE_INSTRUCTIONS.md](CODE_COVERAGE_INSTRUCTIONS.md)

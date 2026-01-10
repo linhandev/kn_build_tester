@@ -9,24 +9,19 @@ This repository demonstrates two code coverage methods for C++ programs targetin
 
 ### GCOV Coverage Demo
 ```bash
-./gcov.sh              # Build with GCOV coverage support
-./deploy.sh gcov        # Deploy to OHOS device and run
-./gcov.sh               # Run again to generate coverage report (after deploy)
+./gcov.sh              # Complete process: Build -> Deploy -> Generate Report
 ```
 
 ### Source-based Coverage Demo
 ```bash
-./sourcebased.sh        # Build with source-based coverage support
-./deploy.sh sourcebased # Deploy to OHOS device and run
-./sourcebased.sh        # Run again to generate coverage report (after deploy)
+./sourcebased.sh       # Complete process: Build -> Deploy -> Generate Report
 ```
 
 ## Files
 
 - `main.cpp` - Sample C++ program with if-else, switch, and function calls
-- `gcov.sh` - Build script for GCOV coverage (IR -> .o -> exe) + report generation
-- `sourcebased.sh` - Build script for source-based coverage (IR -> .o -> exe) + report generation
-- `deploy.sh` - Common deployment script (accepts gcov|sourcebased)
+- `gcov.sh` - Complete GCOV coverage workflow (Build -> Deploy -> Generate Report)
+- `sourcebased.sh` - Complete source-based coverage workflow (Build -> Deploy -> Generate Report)
 - `AGENT_INSTRUCTIONS.md` - Comprehensive build instructions
 
 ## Build Process
@@ -162,8 +157,8 @@ See [AGENT_INSTRUCTIONS.md](AGENT_INSTRUCTIONS.md) for detailed instructions on:
 
 - Paths in build scripts assume default DevEco Studio installation
 - Adjust paths in build scripts if your installation differs
-- Ensure OHOS device is connected before running `deploy.sh`
+- Ensure OHOS device is connected before running the scripts
 - Coverage data files are generated on the device during execution
 - The LLVM IR files (`main_gcov.ll`, `main_sourcebased.ll`) demonstrate instrumentation at the IR level
 - Each mode uses separate intermediate files and executables to avoid conflicts
-- Report generation is integrated into the build scripts - run the build script again after deployment to generate reports
+- Each script performs the complete workflow: build, deploy, and generate reports in one run

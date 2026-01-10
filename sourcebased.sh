@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Source-based Code Coverage Build Script for OHOS
-# Build process: IR -> .o -> exe, then generate report if coverage data exists
+# Full process: Build -> Deploy -> Generate Report
 
 set -e
 
@@ -22,6 +22,11 @@ PROFRAW_FILE="default_sourcebased.profraw"
 PROFDATA_FILE="default_sourcebased.profdata"
 REPORT_DIR="coverage_report_sourcebased"
 
+DEVICE_PATH="/data/local/tmp"
+DEVICE_EXE="$DEVICE_PATH/$EXE_FILE"
+DEVICE_PROFRAW="$DEVICE_PATH/default_sourcebased.profraw"
+
+echo "=== BUILD PHASE ==="
 echo "=== Step 1: Emit IR with Source-based coverage instrumentation ==="
 "$CLANG_PATH" \
   --sysroot "$SYSROOT" \
@@ -59,9 +64,29 @@ echo "Executable: $EXE_FILE"
 echo "IR file: $IR_FILE (contains source-based coverage instrumentation)"
 echo "Object file: $OBJ_FILE"
 
+echo ""
+echo "=== DEPLOY PHASE ==="
+echo "=== Deploying to OHOS device ==="
+
+# Send executable to device
+hdc file send "$EXE_FILE" "$DEVICE_EXE"
+hdc shell chmod 777 "$DEVICE_EXE"
+
+echo "=== Running on device ==="
+hdc shell "cd $DEVICE_PATH && LD_LIBRARY_PATH=$DEVICE_PATH LLVM_PROFILE_FILE=$DEVICE_PROFRAW $DEVICE_EXE 20 4"
+
+echo "=== Copying coverage data files from device ==="
+hdc file recv "$DEVICE_PROFRAW" ./"$PROFRAW_FILE" 2>/dev/null || echo "Note: profraw file may not exist yet"
+if [ -f "$PROFRAW_FILE" ]; then
+    echo "Successfully copied $PROFRAW_FILE"
+else
+    echo "Warning: profraw file not found on device"
+fi
+
+echo ""
+echo "=== REPORT GENERATION PHASE ==="
 # Generate report if coverage data exists
 if [ -f "$PROFRAW_FILE" ]; then
-    echo ""
     echo "=== Generating Source-based Coverage Report ==="
     
     # Merge profraw files into profdata
@@ -111,6 +136,8 @@ if [ -f "$PROFRAW_FILE" ]; then
     echo "Text report: $REPORT_DIR/coverage.txt"
     echo "Summary: $REPORT_DIR/summary.txt"
 else
-    echo ""
-    echo "Note: Coverage data not found. Run './deploy.sh sourcebased' to generate coverage data."
+    echo "Warning: Coverage data ($PROFRAW_FILE) not found. Report generation skipped."
 fi
+
+echo ""
+echo "=== Complete ==="
