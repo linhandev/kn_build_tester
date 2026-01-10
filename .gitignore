@@ -1,6 +1,25 @@
 # project specific
 *.so
 
+# Coverage build artifacts
+main
+main.o
+main.ll
+main_gcov
+main_gcov.o
+main_gcov.ll
+main_sourcebased
+main_sourcebased.o
+main_sourcebased.ll
+*.gcda
+*.gcno
+*.gcov
+*.profraw
+*.profdata
+coverage_report/
+coverage_report_gcov/
+coverage_report_sourcebased/
+
 .DS_Store
 .idea/shelf
 /confluence/target
