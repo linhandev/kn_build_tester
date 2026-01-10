@@ -43,10 +43,10 @@ int main(int argc, char* argv[]) {
     int result2 = calculate(x, y, '-');
     int result3 = calculate(x, y, '*');
     int result4 = calculate(x, y, '/');
-    int result5 = calculate(x, y, '%'); // Invalid operator
+    // int result5 = calculate(x, y, '%'); // Invalid operator
     
     std::cout << "Results: " << result1 << " " << result2 << " " 
-              << result3 << " " << result4 << " " << result5 << std::endl;
+              << result3 << " " << result4 << std::endl;
     
     return 0;
 }

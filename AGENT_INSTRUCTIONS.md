@@ -1,6 +1,6 @@
 # Agent Instructions: Building C/C++ Programs for OHOS (OpenHarmony)
 
-This document provides instructions for building and running C/C++ programs targeting OHOS devices.
+This document provides instructions for building and running C/C++ programs targeting OHOS devices. Update this if during execution more information concering this topic is learned and can be useful for future llvm sessions.
 
 ## Table of Contents
 1. [Prerequisites](#prerequisites)

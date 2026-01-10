@@ -26,7 +26,6 @@ DEVICE_EXE="$DEVICE_PATH/$EXE_FILE"
 DEVICE_GCDA="$DEVICE_PATH/main_gcov.gcda"
 DEVICE_GCNO="$DEVICE_PATH/main_gcov.gcno"
 
-echo "=== BUILD PHASE ==="
 echo "=== Step 1: Emit IR with GCOV instrumentation ==="
 "$CLANG_PATH" \
   --sysroot "$SYSROOT" \
