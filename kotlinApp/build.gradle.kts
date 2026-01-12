@@ -19,7 +19,8 @@ kotlin {
         binaries {
             sharedLib {
                 baseName = "c2k"
-                freeCompilerArgs += "-g"
+                freeCompilerArgs += "-Xadd-light-debug=enable"
+                freeCompilerArgs += listOf("-Xbinary=coverage=true", "-Xtemporary-files-dir=/tmp/inspect")
             }
         }
     }

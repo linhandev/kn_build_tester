@@ -1,0 +1,12 @@
+*.kexe
+*.so
+*.gcno
+*.gcda
+*.gcov
+test
+*.o
+*.bc
+*.ll
+c_driver
+coverage/
+libktdemo_api.h

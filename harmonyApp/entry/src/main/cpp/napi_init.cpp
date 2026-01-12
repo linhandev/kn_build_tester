@@ -1,10 +1,14 @@
 #include "napi/native_api.h"
+#include <cstdlib>
 
 extern "C" void run_asan_test();
+
+extern "C" void __gcov_dump(void);
 
 static napi_value TestAsan(napi_env env, napi_callback_info info)
 {
     run_asan_test();
+    __gcov_dump();
     return nullptr;
 }
 
