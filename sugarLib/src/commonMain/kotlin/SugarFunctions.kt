@@ -61,6 +61,8 @@ inline fun <reified T> processType(value: Any): String {
 // Main caller function that calls the callee with syntactic sugar
 // Intentionally only runs some branches to test coverage reporting
 fun complexSugarFunction(): String {
+    val typeMatch = processType<Int>(42)
+
     // Only call extension function with long string (skip short path)
     val longStr = "hello".processWithExtension()
     
@@ -72,9 +74,6 @@ fun complexSugarFunction(): String {
     
     // Only call when with sealed class - Success branch only (skip Error and Loading)
     val successResult = processResult(Result.Success(42))
-    
-    // Only call inline reified with matching type (skip else branch)
-    val typeMatch = processType<Int>(42)
     
     return buildString {
         appendLine("Extension: $longStr")

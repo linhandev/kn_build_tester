@@ -3,7 +3,7 @@
 #include "include/libc2k_api.h"
 
 extern "C" void __gcov_dump(void) __attribute__((weak));
-extern "C" void __gcov_reset(void) __attribute__((weak));
+// extern "C" void __gcov_reset(void) __attribute__((weak));
 
 static napi_value TestGcov(napi_env env, napi_callback_info info)
 {
@@ -11,9 +11,9 @@ static napi_value TestGcov(napi_env env, napi_callback_info info)
     if (__gcov_dump) {
         __gcov_dump();
     }
-    if (__gcov_reset) {
-        __gcov_reset();
-    }
+    // if (__gcov_reset) {
+    //     __gcov_reset();
+    // }
      return nullptr;
 }
 

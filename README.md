@@ -12,8 +12,17 @@ cp -f ../kotlinApp/**/**.gcno . && \
 cp -f ../harmonyApp/entry/.cxx/**/*.gcno . && \
 rm -rf temp && \
 mkdir temp && \
-python -m gcovr --html --html-details --output temp/coverage.html --root .. --gcov-ignore-errors=all . && \
+python -m gcovr --html --html-details --output temp/coverage.html --root .. \
+  --gcov-ignore-errors=source_not_found \
+  --gcov-ignore-errors=output_error \
+  --gcov-ignore-errors=no_working_dir_found . && \
 cd ..
+
+python -m gcovr --json --root .. \
+  --gcov-ignore-errors=source_not_found \
+  --gcov-ignore-errors=output_error \
+  --gcov-ignore-errors=no_working_dir_found .
+
 ```
 
 ## Quick Start
@@ -53,5 +62,6 @@ cd kotlin
 - `QUICK_START_GCOV.md` - 10-line HAP setup
 - `GCOV_FLUSH_SOLUTION.md` - Why manual flush is needed
 - `COMPLETE_ANSWER.md` - LLVM source analysis
+- `GCOVR_ERRORS_EXPLAINED.md` - Explanation of gcovr error types and when to ignore them
 
 See `kotlin/README.md` for standalone demo details.
