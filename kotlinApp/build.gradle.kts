@@ -15,6 +15,9 @@ kotlin {
                     includeDirs(rootProject.file("harmonyApp/entry/src/main/cpp/include"))
                 }
             }
+            dependencies {
+                implementation("com.example:switchLib:1.0-SNAPSHOT")
+            }
         }
         binaries {
             sharedLib {

@@ -1,5 +1,16 @@
 # Kotlin Native GCOV Code Coverage Samples
 
+```shell
+./gradlew :switchLib:publishToMavenLocal --rerun-tasks
+hdc uninstall com.example.nativecppdemo; ./gradlew startHarmonyAppDebug --rerun-tasks
+
+rm -rf gcov && \
+hdc file recv /data/app/el2/100/base/com.example.nativecppdemo/files/gcov/ . && \
+cd gcov && \
+cp -f ../**/*.gcno . && \
+ rm -rf temp; mkdir temp; python -m gcovr --html --html-details --output temp/coverage.html --root .. --gcov-ignore-errors=all . ; cd ..
+```
+
 ## Quick Start
 
 ### Standalone Executable

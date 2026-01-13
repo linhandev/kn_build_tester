@@ -1,9 +1,9 @@
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 
-import kotlinx.cinterop.*
-import gcov.*
+// import gcov.*
+import com.example.switchlib.processValue
+import com.example.switchlib.processValueNoNewLine
 
-@OptIn(ExperimentalForeignApi::class)
 actual fun runGcovTest() {
     val size = 10
     val overflow = 1000
@@ -12,5 +12,9 @@ actual fun runGcovTest() {
     } else {
         println("overflow wins")
     }
-    gcov.test_gcov_c()
+    // gcov.test_gcov_c()
+
+    // Test the switchLib dependency
+    processValue()
+    processValueNoNewLine()
 }

@@ -1,8 +1,11 @@
 #include "include/gcov.h"
 #include <stdio.h>
+#include <cstdlib>
 
 void test_gcov_c() {
-    switch (1) {
+    int value = rand() % 3;
+    
+    switch (value) {
         case 1:
             printf("1\n");
             break;
@@ -14,4 +17,3 @@ void test_gcov_c() {
             break;
     }
 }
-
