@@ -3,7 +3,8 @@
 #include <cstdlib>
 
 void test_gcov_c() {
-    int value = rand() % 3;
+    // int value = rand() % 3;
+    int value = 2;
     
     switch (value) {
         case 1:

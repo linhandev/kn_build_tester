@@ -20,3 +20,4 @@ rootProject.name = "c2k"
 
 include("kotlinApp")
 include("switchLib")
+include("sugarLib")

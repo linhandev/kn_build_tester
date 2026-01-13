@@ -1,9 +1,11 @@
-@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
-// import gcov.*
+import gcov.*
 import com.example.switchlib.processValue
-import com.example.switchlib.processValueNoNewLine
+import com.example.switchlib.processValueCond
+import com.example.sugarlib.complexSugarFunction
 
+@kotlinx.cinterop.ExperimentalForeignApi
 actual fun runGcovTest() {
     val size = 10
     val overflow = 1000
@@ -12,9 +14,12 @@ actual fun runGcovTest() {
     } else {
         println("overflow wins")
     }
-    // gcov.test_gcov_c()
+    gcov.test_gcov_c()
 
     // Test the switchLib dependency
     processValue()
-    processValueNoNewLine()
+    processValueCond()
+    
+    // Test the sugarLib dependency with complex syntactic sugar
+    complexSugarFunction()
 }

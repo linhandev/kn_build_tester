@@ -2,13 +2,18 @@
 
 ```shell
 ./gradlew :switchLib:publishToMavenLocal --rerun-tasks
-hdc uninstall com.example.nativecppdemo; ./gradlew startHarmonyAppDebug --rerun-tasks
 
+hdc uninstall com.example.nativecppdemo; ./gradlew startHarmonyAppDebug --rerun-tasks && \
+sleep 2 && \
 rm -rf gcov && \
 hdc file recv /data/app/el2/100/base/com.example.nativecppdemo/files/gcov/ . && \
 cd gcov && \
-cp -f ../**/*.gcno . && \
- rm -rf temp; mkdir temp; python -m gcovr --html --html-details --output temp/coverage.html --root .. --gcov-ignore-errors=all . ; cd ..
+cp -f ../kotlinApp/**/**.gcno . && \
+cp -f ../harmonyApp/entry/.cxx/**/*.gcno . && \
+rm -rf temp && \
+mkdir temp && \
+python -m gcovr --html --html-details --output temp/coverage.html --root .. --gcov-ignore-errors=all . && \
+cd ..
 ```
 
 ## Quick Start
