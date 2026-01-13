@@ -1,10 +1,10 @@
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 
 import kotlinx.cinterop.*
-import asan.*
+import gcov.*
 
 @OptIn(ExperimentalForeignApi::class)
-actual fun runAsanTest() {
+actual fun runGcovTest() {
     val size = 10
     val overflow = 1000
     if (size > overflow) {
@@ -12,4 +12,5 @@ actual fun runAsanTest() {
     } else {
         println("overflow wins")
     }
+    gcov.test_gcov_c()
 }

@@ -5,11 +5,11 @@ fun subtractNumbers(a: Int, b: Int): Int {
     return a - b
 }
 
-expect fun runAsanTest()
+expect fun runGcovTest()
 
-@CName("run_asan_test")
-fun runAsanTestWrapper() {
-    runAsanTest()
+@CName("run_gcov_test")
+fun runGcovTestWrapper() {
+    runGcovTest()
 }
 
 fun main() {

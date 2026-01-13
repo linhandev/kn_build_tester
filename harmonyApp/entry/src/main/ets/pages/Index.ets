@@ -15,10 +15,10 @@ struct Index {
         Text(this.message)
           .fontSize($r('app.float.page_text_font_size'))
           .fontWeight(FontWeight.Bold)
-        Button("Run ASan Test")
+        Button("Run Gcov Test")
           .onClick(() => {
-            hilog.info(0x0000, 'testTag', 'Running ASan Test');
-            testNapi.testAsan();
+            hilog.info(0x0000, 'testTag', 'Running Gcov Test');
+            testNapi.testGcov();
           })
       }
       .width('100%')

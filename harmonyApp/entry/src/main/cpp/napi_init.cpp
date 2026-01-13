@@ -1,14 +1,15 @@
 #include "napi/native_api.h"
 #include <cstdlib>
+#include "include/libc2k_api.h"
 
-extern "C" void run_asan_test();
+extern "C" void __gcov_dump(void) __attribute__((weak));
 
-extern "C" void __gcov_dump(void);
-
-static napi_value TestAsan(napi_env env, napi_callback_info info)
+static napi_value TestGcov(napi_env env, napi_callback_info info)
 {
-    run_asan_test();
-    __gcov_dump();
+    run_gcov_test();
+    if (__gcov_dump) {
+        __gcov_dump();
+    }
     return nullptr;
 }
 
@@ -43,7 +44,7 @@ static napi_value Init(napi_env env, napi_value exports)
 {
     napi_property_descriptor desc[] = {
         { "add", nullptr, Add, nullptr, nullptr, nullptr, napi_default, nullptr },
-        { "testAsan", nullptr, TestAsan, nullptr, nullptr, nullptr, napi_default, nullptr }
+        { "testGcov", nullptr, TestGcov, nullptr, nullptr, nullptr, napi_default, nullptr }
     };
     napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc);
     return exports;

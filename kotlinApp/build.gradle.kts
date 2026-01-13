@@ -11,7 +11,7 @@ kotlin {
     ohosArm64 {
         compilations.getByName("main") {
             cinterops {
-                val asan by creating {
+                val gcov by creating {
                     includeDirs(rootProject.file("harmonyApp/entry/src/main/cpp/include"))
                 }
             }

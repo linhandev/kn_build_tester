@@ -1,0 +1,20 @@
+# Build artifacts
+*.ll
+*.o
+*.gcno
+*.gcda
+*.profraw
+*.profdata
+*.gcov
+
+# Executables
+main_gcov
+main_sourcebased
+
+# Coverage report directories
+coverage_report_gcov/
+coverage_report_sourcebased/
+
+# Temporary files created during report generation
+main.gcno
+main.gcda
