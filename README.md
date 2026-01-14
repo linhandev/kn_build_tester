@@ -3,12 +3,12 @@
 ```shell
 ./gradlew :switchLib:publishToMavenLocal --rerun-tasks
 
-hdc uninstall com.example.nativecppdemo; ./gradlew startHarmonyAppDebug --rerun-tasks && \
+hdc uninstall com.example.nativecppdemo; ./gradlew startHarmonyAppRelease --rerun-tasks --profile && \
 sleep 2 && \
 rm -rf gcov && \
 hdc file recv /data/app/el2/100/base/com.example.nativecppdemo/files/gcov/ . && \
 cd gcov && \
-cp -f ../kotlinApp/**/**.gcno . && \
+cp -f ../libc2k.gcno . && \
 cp -f ../harmonyApp/entry/.cxx/**/*.gcno . && \
 rm -rf temp && \
 mkdir temp && \

@@ -17,7 +17,7 @@ kotlin {
             }
             dependencies {
                 implementation("com.example:switchLib:1.0-SNAPSHOT")
-                implementation("com.example:sugarLib:1.0-SNAPSHOT")
+                implementation(project(":sugarLib"))
             }
         }
         binaries {

@@ -9,15 +9,6 @@ version = "1.0-SNAPSHOT"
 kotlin {
     ohosArm64 {
         compilations.getByName("main") {
-            compilerOptions.configure {
-                freeCompilerArgs.add("-Xklib-enable-signature-clash-checks=false")
-            }
         }
-    }
-}
-
-publishing {
-    repositories {
-        mavenLocal()
     }
 }
