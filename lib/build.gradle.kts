@@ -17,6 +17,9 @@ kotlin {
 
 publishing {
     repositories {
-        mavenLocal()
+        maven {
+            name = "local"
+            url = uri("${rootProject.projectDir}/repo")
+        }
     }
 }

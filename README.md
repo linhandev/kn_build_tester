@@ -6,7 +6,7 @@ A minimal example demonstrating how metadata klib is used during compilation in 
 
 ```
 .
-├── lib/                        # Library module (published to mavenLocal)
+├── lib/                        # Library module (published to ./repo/)
 │   ├── build.gradle.kts
 │   └── src/commonMain/kotlin/com/example/lib/Lib.kt
 ├── app/                        # App module (depends on published lib)
@@ -14,6 +14,7 @@ A minimal example demonstrating how metadata klib is used during compilation in 
 │   └── src/commonMain/kotlin/com/example/app/App.kt
 ├── c-caller/                   # C code that calls Kotlin shared library
 │   └── main.c
+├── repo/                       # Local maven repository (gitignored)
 ├── build.gradle.kts            # Root build config
 └── settings.gradle.kts         # Project settings
 ```
@@ -22,13 +23,13 @@ A minimal example demonstrating how metadata klib is used during compilation in 
 
 ### 1. Publishing lib
 
-When `lib` is published to mavenLocal:
+When `lib` is published:
 
 ```bash
-./gradlew :lib:publishToMavenLocal
+./gradlew :lib:publishAllPublicationsToLocalRepository
 ```
 
-**Three types of artifacts are created:**
+**Three types of artifacts are created in `./repo/`:**
 
 | Artifact | Purpose |
 |----------|---------|
@@ -56,86 +57,79 @@ The `.knm` file contains **serialized Kotlin declarations** (classes, functions,
 
 ### 3. When app compiles
 
+Normal build chain for producing binaries:
+
 ```bash
-./gradlew :app:compileKotlinOhosArm64
+./gradlew :app:linkAppDebugSharedOhosArm64 --dry-run
+# :app:compileKotlinOhosArm64
+# :app:linkAppDebugSharedOhosArm64
 ```
 
-Gradle does the following:
+**The metadata klib is NOT used in this chain.** It uses only the platform klib:
 
-1. **Resolves dependency** `com.example:lib:1.0.0`
-2. **For commonMain compilation**: Uses the **metadata klib** from `lib-1.0.0.jar` to understand lib's API
-3. **For platform compilation**: Uses the **platform klib** `lib-ohosarm64-1.0.0.klib` which has actual IR
+```
+compileKotlinOhosArm64 → uses lib-ohosarm64-1.0.0.klib (platform klib)
+linkAppDebugSharedOhosArm64 → uses lib-ohosarm64-1.0.0.klib (platform klib)
+```
 
-### 4. Why Metadata Klib Matters
+### 4. When Metadata Klib IS Used
 
-| Stage | What's Used | Why |
-|-------|-------------|-----|
-| **IDE/Analysis** | Metadata klib | Fast API resolution without compiling all platforms |
-| **commonMain compile** | Metadata klib | Validates API usage in common code |
-| **Platform compile** | Platform klib | Links actual IR for final binary |
-| **Final link** | Platform klib | Produces .so/.framework with real code |
+The metadata klib is used in these scenarios:
 
-## Build & Run
+| When | Task/Tool | What Uses Metadata Klib |
+|------|-----------|------------------------|
+| **IDE linting** | IntelliJ/Android Studio | Continuous - as you type in commonMain |
+| **Explicit metadata compile** | `compileCommonMainKotlinMetadata` | Only when manually run |
+| **Publishing** | `allMetadataJar` | When publishing library |
 
-### 1. Publish lib
+**Key insight:** The `compileCommonMainKotlinMetadata` task is **NOT** part of the normal build chain. It's a separate task for:
+- IDE code completion and navigation
+- Error highlighting in commonMain code
+- Validating API usage without compiling all platforms
+
+### 5. Build Chain Comparison
+
+**Normal build (produces binary):**
+```
+Source → compileKotlinOhosArm64 → linkAppDebugSharedOhosArm64 → libapp.so
+              ↓                           ↓
+         platform klib              platform klib
+```
+
+**Metadata compilation (for IDE/tooling):**
+```
+Source → compileCommonMainKotlinMetadata → metadata klib
+              ↓
+         metadata klib from dependencies
+```
+
+## Run Demo
+
 ```bash
-./gradlew :lib:publishToMavenLocal
+./run.sh
 ```
 
-### 2. Build app shared library for OHOS
-```bash
-./gradlew :app:linkAppDebugSharedOhosArm64
-```
+This script:
+1. Publishes lib to `./repo/`
+2. Compiles app commonMain (shows metadata klib usage)
+3. Builds app shared library for ohosArm64 (uses platform klib)
+4. Builds c-caller
+5. Deploys and runs on OHOS device
 
-### 3. Build C caller
-```bash
-/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang \
-  --sysroot /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot \
-  -target aarch64-linux-ohos \
-  -I app/build/bin/ohosArm64/appDebugShared \
-  c-caller/main.c \
-  -L app/build/bin/ohosArm64/appDebugShared \
-  -lapp \
-  -o c-caller/main
-```
-
-### 4. Deploy and run on OHOS device
-```bash
-hdc file send c-caller/main /data/local/tmp/main
-hdc file send app/build/bin/ohosArm64/appDebugShared/libapp.so /data/local/tmp/libapp.so
-hdc shell chmod 777 /data/local/tmp/main
-hdc shell "LD_LIBRARY_PATH=/data/local/tmp /data/local/tmp/main"
-```
-
-Expected output:
-```
-C Caller: Starting Kotlin demo...
-
-C Caller: Calling runDemo() directly:
-Created user: User(name=Alice, age=30)
-Greeting: Hello, Alice! You are 30 years old.
-Lib info: lib v1.0.0
-Calculator: 10 + 20 = 30, 5 * 6 = 30
-
-C Caller: Demo finished.
-```
-
-## Inspecting Metadata
+## Inspecting Artifacts
 
 ### View metadata klib declarations
 ```bash
-# Extract and inspect the metadata
-unzip -p ~/.m2/repository/com/example/lib/1.0.0/lib-1.0.0.jar commonMain/default/manifest
+unzip -p repo/com/example/lib/1.0.0/lib-1.0.0.jar commonMain/default/manifest
 ```
 
 ### View project structure metadata
 ```bash
-unzip -p ~/.m2/repository/com/example/lib/1.0.0/lib-1.0.0.jar META-INF/kotlin-project-structure-metadata.json
+unzip -p repo/com/example/lib/1.0.0/lib-1.0.0.jar META-INF/kotlin-project-structure-metadata.json
 ```
 
 ### Use klib tool to dump metadata
 ```bash
-# If you have kotlin-native installed
 ~/.konan/kotlin-native-*/bin/klib dump-metadata <path-to-klib>
 ```
 
@@ -143,8 +137,8 @@ unzip -p ~/.m2/repository/com/example/lib/1.0.0/lib-1.0.0.jar META-INF/kotlin-pr
 
 | Task | Description |
 |------|-------------|
-| `compileCommonMainKotlinMetadata` | Compiles commonMain to metadata klib |
+| `compileCommonMainKotlinMetadata` | Compiles commonMain to metadata klib (for IDE/tooling) |
 | `compileKotlinOhosArm64` | Compiles to platform klib for ohosArm64 |
 | `linkAppDebugSharedOhosArm64` | Links shared library for ohosArm64 |
 | `allMetadataJar` | Creates JAR with all metadata klibs |
-| `publishToMavenLocal` | Publishes all artifacts to ~/.m2 |
+| `publishAllPublicationsToLocalRepository` | Publishes all artifacts to ./repo/ |

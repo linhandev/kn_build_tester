@@ -13,6 +13,7 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
+        maven(rootProject.projectDir.resolve("repo").toURI())
         mavenLocal()
         maven("https://mirrors.tencent.com/nexus/repository/maven-tencent/")
         maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
