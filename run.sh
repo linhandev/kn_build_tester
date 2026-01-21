@@ -2,19 +2,14 @@
 set -e
 
 echo "=== Kotlin Native Metadata Klib Demo ==="
-echo ""
 
 # Step 1: Publish lib to mavenLocal
 echo ">>> Step 1: Publishing lib to mavenLocal..."
 ./gradlew :lib:publishToMavenLocal --quiet
-echo "    Done."
-echo ""
 
 # Step 2: Build app shared library for ohosArm64
 echo ">>> Step 2: Building app shared library for ohosArm64..."
 ./gradlew :app:linkAppDebugSharedOhosArm64 --quiet
-echo "    Done."
-echo ""
 
 # Step 3: Build c-caller
 echo ">>> Step 3: Building c-caller for OHOS aarch64..."
@@ -28,8 +23,6 @@ echo ">>> Step 3: Building c-caller for OHOS aarch64..."
   -L app/build/bin/ohosArm64/appDebugShared \
   -lapp \
   -o c-caller/main
-echo "    Done."
-echo ""
 
 # Step 4: Check device connection
 echo ">>> Step 4: Checking OHOS device connection..."
@@ -40,20 +33,13 @@ if ! hdc list targets | grep -q .; then
 fi
 DEVICE=$(hdc list targets | head -1)
 echo "    Found device: $DEVICE"
-echo ""
 
 # Step 5: Deploy to device
 echo ">>> Step 5: Deploying to device..."
 hdc file send c-caller/main /data/local/tmp/main
 hdc file send app/build/bin/ohosArm64/appDebugShared/libapp.so /data/local/tmp/libapp.so
 hdc shell chmod 777 /data/local/tmp/main
-echo "    Done."
-echo ""
 
 # Step 6: Run on device
 echo ">>> Step 6: Running on OHOS device..."
-echo "----------------------------------------"
 hdc shell "cd /data/local/tmp && LD_LIBRARY_PATH=. ./main"
-echo "----------------------------------------"
-echo ""
-echo "=== Demo Complete ==="
