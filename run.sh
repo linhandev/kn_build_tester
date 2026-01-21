@@ -1,65 +1,59 @@
 #!/bin/bash
+set -e
 
-set -euo pipefail
+echo "=== Kotlin Native Metadata Klib Demo ==="
+echo ""
 
-ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
-cd "$ROOT_DIR"
+# Step 1: Publish lib to mavenLocal
+echo ">>> Step 1: Publishing lib to mavenLocal..."
+./gradlew :lib:publishToMavenLocal --quiet
+echo "    Done."
+echo ""
 
-./gradlew --stop
-./gradlew clean
+# Step 2: Build app shared library for ohosArm64
+echo ">>> Step 2: Building app shared library for ohosArm64..."
+./gradlew :app:linkAppDebugSharedOhosArm64 --quiet
+echo "    Done."
+echo ""
 
-echo "👀 Publishing compatible dep-lib and caller-lib klibs to mavenLocal..."
-./gradlew :dep-lib:publishToMavenLocal :caller-lib:publishToMavenLocal --console=plain --rerun-tasks
+# Step 3: Build c-caller
+echo ">>> Step 3: Building c-caller for OHOS aarch64..."
+/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang \
+  --sysroot /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot \
+  -target aarch64-linux-ohos \
+  -L/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/lib/clang/15.0.4/lib/aarch64-linux-ohos \
+  -resource-dir /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/lib/clang/15.0.4 \
+  -I app/build/bin/ohosArm64/appDebugShared \
+  c-caller/main.c \
+  -L app/build/bin/ohosArm64/appDebugShared \
+  -lapp \
+  -o c-caller/main
+echo "    Done."
+echo ""
 
-echo "👀 Updating dep-lib to introduce ABI-incompatible change..."
-mv dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.kt dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.kt.bk
-mv dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.broken dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.kt
-./gradlew :dep-lib:publishToMavenLocal --console=plain --rerun-tasks
-mv dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.kt dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.broken
-mv dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.kt.bk dep-lib/src/commonMain/kotlin/com/example/dep/DepLibrary.kt
-
-# now caller-lib has call to non-existent symbols in dep-lib
-# testing the default, pl = enable, pl = disable behaviors
-
-echo "👀 Building app without any partial linkage setting, expecting success..."
-./gradlew :app:clean :app:linkDebugSharedMacosArm64 --console=plain --rerun-tasks --refresh-dependencies
-
-echo "👀 Building app with partial linkage disabled, expecting failure..."
-if ./gradlew -PpartialLinkMode=disable :app:clean :app:linkDebugSharedMacosArm64 --console=plain --rerun-tasks --refresh-dependencies; then
-  echo "❌ Partial linkage disabled build unexpectedly succeeded"
-  exit 1
-else
-  echo "✅ Partial linkage disabled build failed as expected"
+# Step 4: Check device connection
+echo ">>> Step 4: Checking OHOS device connection..."
+if ! hdc list targets | grep -q .; then
+    echo "    ERROR: No OHOS device connected!"
+    echo "    Please connect a device and try again."
+    exit 1
 fi
+DEVICE=$(hdc list targets | head -1)
+echo "    Found device: $DEVICE"
+echo ""
 
-echo "👀 Running check task, expecting failure..."
-if ./gradlew :app:linkPlCheckDebugExecutableMacosArm64 --console=plain --rerun-tasks --refresh-dependencies; then
-  echo "❌ Check task unexpectedly succeeded"
-  exit 1
-else
-  echo "✅ Check task failed as expected"
-fi
+# Step 5: Deploy to device
+echo ">>> Step 5: Deploying to device..."
+hdc file send c-caller/main /data/local/tmp/main
+hdc file send app/build/bin/ohosArm64/appDebugShared/libapp.so /data/local/tmp/libapp.so
+hdc shell chmod 777 /data/local/tmp/main
+echo "    Done."
+echo ""
 
-echo "👀 Building app with partial linkage enabled (expected success)..."
-./gradlew -PpartialLinkMode=enable :app:clean :app:linkDebugSharedMacosArm64 --console=plain --rerun-tasks --refresh-dependencies
-
-echo "👀 Compiling and running C caller (will crash on missing symbols)..."
-clang -o runner c-caller/main.c -I app/build/bin/macosArm64/debugShared -L app/build/bin/macosArm64/debugShared -lapp -rpath app/build/bin/macosArm64/debugShared
-
-if ./runner; then
-  echo "❌ Application should crash at runtime yet it didn't!"
-else
-  echo "✅ Runtime crash confirms missing symbols - partial linkage allowed build but not execution"
-fi
-
-echo "👀 Building standalone executable with partial linkage enabled..."
-./gradlew -PpartialLinkMode=enable :app:linkDebugExecutableMacosArm64 --console=plain --rerun-tasks
-
-echo "👀 Running standalone executable (will crash on missing symbols)..."
-if ./app/build/bin/macosArm64/debugExecutable/app.kexe; then
-  echo "❌ Application should crash at runtime yet it didn't!"
-else
-  echo "✅ Runtime crash confirms missing symbols"
-fi
-
-echo "✅ All tests passed"
+# Step 6: Run on device
+echo ">>> Step 6: Running on OHOS device..."
+echo "----------------------------------------"
+hdc shell "cd /data/local/tmp && LD_LIBRARY_PATH=. ./main"
+echo "----------------------------------------"
+echo ""
+echo "=== Demo Complete ==="

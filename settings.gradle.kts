@@ -1,8 +1,6 @@
-rootProject.name = "kn-partial-linkage-demo"
+rootProject.name = "metadata-klib-demo"
 
-include(":dep-lib")
-include(":caller-lib")
-include(":src-lib")
+include(":lib")
 include(":app")
 
 pluginManagement {

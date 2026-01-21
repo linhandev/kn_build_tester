@@ -2,42 +2,22 @@ plugins {
     kotlin("multiplatform")
 }
 
+group = "com.example"
+version = "1.0.0"
+
 kotlin {
-    macosArm64 {
+    ohosArm64 {
         binaries {
-            sharedLib {
+            sharedLib("app") {
                 baseName = "app"
-                val partialLinkMode = project.findProperty("partialLinkMode") as? String
-                if (partialLinkMode != null) {
-                    freeCompilerArgs += listOf("-Xpartial-linkage=$partialLinkMode")
-                    freeCompilerArgs += listOf("-Xpartial-linkage-loglevel=warning")
-                }
-            }
-            executable {
-                entryPoint = "com.example.main"
-                val partialLinkMode = project.findProperty("partialLinkMode") as? String
-                if (partialLinkMode != null) {
-                    freeCompilerArgs += listOf("-Xpartial-linkage=$partialLinkMode")
-                    freeCompilerArgs += listOf("-Xpartial-linkage-loglevel=warning")
-                }
-            }
-            sharedLib("check") {
-                freeCompilerArgs += listOf("-produce", "header_cache", "-Xpartial-linkage=enable", "-Xpartial-linkage-loglevel=error")
             }
         }
     }
-    ohosArm64 {
+    
+    iosArm64 {
         binaries {
-            sharedLib {
-                baseName = "app"
-                val partialLinkMode = project.findProperty("partialLinkMode") as? String
-                if (partialLinkMode != null) {
-                    freeCompilerArgs += listOf("-Xpartial-linkage=$partialLinkMode")
-                    freeCompilerArgs += listOf("-Xpartial-linkage-loglevel=warning")
-                }
-            }
-            sharedLib("check") {
-                freeCompilerArgs += listOf("-produce", "header_cache", "-Xpartial-linkage=enable", "-Xpartial-linkage-loglevel=error", "-opt")
+            framework {
+                baseName = "App"
             }
         }
     }
@@ -45,7 +25,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project(":src-lib"))
+                implementation("com.example:lib:1.0.0")
             }
         }
     }

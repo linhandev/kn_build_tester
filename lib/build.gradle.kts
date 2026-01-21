@@ -7,7 +7,6 @@ group = "com.example"
 version = "1.0.0"
 
 kotlin {
-    macosArm64()
     ohosArm64()
     iosArm64()
     
