@@ -27,6 +27,11 @@ jobs:
           echo "=== clang --version ==="
           ./llvm-19-x86_64-macos-essentials-75/bin/clang --version
 
+      - name: Show embedded source (repo + commit) from binary
+        run: |
+          echo "=== Embedded version string (from binary) ==="
+          strings ./llvm-19-x86_64-macos-essentials-75/bin/clang | grep -E 'clang version [0-9].*\(https://github\.com' || true
+
   clang-version-macos-arm:
     name: LLVM Clang (macOS ARM64)
     runs-on: macos-15  # aarch64 Apple Silicon
@@ -45,6 +50,11 @@ jobs:
         run: |
           echo "=== clang --version ==="
           ./llvm-19-aarch64-macos-essentials-79/bin/clang --version
+
+      - name: Show embedded source (repo + commit) from binary
+        run: |
+          echo "=== Embedded version string (from binary) ==="
+          strings ./llvm-19-aarch64-macos-essentials-79/bin/clang | grep -E 'clang version [0-9].*\(https://github\.com' || true
 
   clang-version-linux:
     name: LLVM Clang (Linux x86_64)
@@ -65,16 +75,10 @@ jobs:
           echo "=== clang --version ==="
           ./llvm-19-x86_64-linux-essentials-103/bin/clang --version
 
-      - name: Show source/git info if present in package
+      - name: Show embedded source (repo + commit) from binary
         run: |
-          # Git repo/commit is embedded at build time; Linux build may not include it.
-          # Check for VERSION/README and any repo/commit strings in the binary.
-          echo "=== Package version/source metadata ==="
-          for f in llvm-19-x86_64-linux-essentials-103/VERSION llvm-19-x86_64-linux-essentials-103/README* llvm-19-x86_64-linux-essentials-103/version.txt 2>/dev/null; do
-            [ -f "$f" ] && echo "--- $f ---" && cat "$f"
-          done
-          echo "--- strings in clang binary (github/Kotlin/llvm-project) ---"
-          strings ./llvm-19-x86_64-linux-essentials-103/bin/clang | grep -E 'github\.com|Kotlin/llvm-project|[0-9a-f]{40}' || echo "(none found - Linux package was built without git revision in binary)"
+          echo "=== Embedded version string (from binary) ==="
+          strings ./llvm-19-x86_64-linux-essentials-103/bin/clang | grep -E 'clang version [0-9].*\(https://github\.com' || true
 
   clang-version-windows:
     name: LLVM Clang (Windows x86_64)
@@ -94,3 +98,10 @@ jobs:
         run: |
           Write-Host "=== clang --version ==="
           .\llvm-19-x86_64-windows-essentials-134\bin\clang.exe --version
+
+      - name: Show embedded source (repo + commit) from binary
+        run: |
+          Write-Host "=== Embedded version string (from binary) ==="
+          $bytes = [System.IO.File]::ReadAllBytes("$PWD\llvm-19-x86_64-windows-essentials-134\bin\clang.exe")
+          $str = [System.Text.Encoding]::ASCII.GetString($bytes)
+          ($str -split '\x00') | Where-Object { $_ -match 'clang version \d+\.\d+\.\d+ \(https://github\.com' } | ForEach-Object { Write-Host $_ }
