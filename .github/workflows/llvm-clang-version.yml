@@ -65,6 +65,17 @@ jobs:
           echo "=== clang --version ==="
           ./llvm-19-x86_64-linux-essentials-103/bin/clang --version
 
+      - name: Show source/git info if present in package
+        run: |
+          # Git repo/commit is embedded at build time; Linux build may not include it.
+          # Check for VERSION/README and any repo/commit strings in the binary.
+          echo "=== Package version/source metadata ==="
+          for f in llvm-19-x86_64-linux-essentials-103/VERSION llvm-19-x86_64-linux-essentials-103/README* llvm-19-x86_64-linux-essentials-103/version.txt 2>/dev/null; do
+            [ -f "$f" ] && echo "--- $f ---" && cat "$f"
+          done
+          echo "--- strings in clang binary (github/Kotlin/llvm-project) ---"
+          strings ./llvm-19-x86_64-linux-essentials-103/bin/clang | grep -E 'github\.com|Kotlin/llvm-project|[0-9a-f]{40}' || echo "(none found - Linux package was built without git revision in binary)"
+
   clang-version-windows:
     name: LLVM Clang (Windows x86_64)
     runs-on: windows-latest
