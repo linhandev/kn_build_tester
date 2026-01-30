@@ -27,6 +27,25 @@ jobs:
           echo "=== clang --version ==="
           ./llvm-19-x86_64-macos-essentials-75/bin/clang --version
 
+  clang-version-macos-arm:
+    name: LLVM Clang (macOS ARM64)
+    runs-on: macos-15  # aarch64 Apple Silicon
+    steps:
+      - name: Download LLVM
+        run: |
+          curl -sL -o llvm.tar.gz "https://download.jetbrains.com/kotlin/native/resources/llvm/19-aarch64-macos/llvm-19-aarch64-macos-essentials-79.tar.gz"
+          echo "Downloaded $(ls -la llvm.tar.gz)"
+
+      - name: Extract LLVM
+        run: |
+          tar -xzf llvm.tar.gz
+          ls -la llvm-19-aarch64-macos-essentials-79/
+
+      - name: Run clang --version
+        run: |
+          echo "=== clang --version ==="
+          ./llvm-19-aarch64-macos-essentials-79/bin/clang --version
+
   clang-version-linux:
     name: LLVM Clang (Linux x86_64)
     runs-on: ubuntu-latest
