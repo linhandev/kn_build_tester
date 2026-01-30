@@ -1,0 +1,27 @@
+name: LLVM Clang version
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  clang-version:
+    runs-on: macos-15-intel  # x86_64 macOS runner
+    steps:
+      - name: Download LLVM
+        run: |
+          curl -sL -o llvm.tar.gz "https://download.jetbrains.com/kotlin/native/resources/llvm/19-x86_64-macos/llvm-19-x86_64-macos-essentials-75.tar.gz"
+          echo "Downloaded $(ls -la llvm.tar.gz)"
+
+      - name: Extract LLVM
+        run: |
+          tar -xzf llvm.tar.gz
+          ls -la llvm-19-x86_64-macos-essentials-75/
+
+      - name: Run clang --version
+        run: |
+          echo "=== clang --version ==="
+          ./llvm-19-x86_64-macos-essentials-75/bin/clang --version
