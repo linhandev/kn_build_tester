@@ -24,10 +24,21 @@ jobs:
           ls -la llvm-19-x86_64-macos-essentials-75/
           echo ""
           echo "=== clang --version ==="
-          ./llvm-19-x86_64-macos-essentials-75/bin/clang --version
+          CLANG_OUT=$(./llvm-19-x86_64-macos-essentials-75/bin/clang --version 2>&1)
+          echo "$CLANG_OUT"
           echo ""
           echo "=== Embedded version string (from binary) ==="
-          strings ./llvm-19-x86_64-macos-essentials-75/bin/clang | grep -E 'clang version [0-9].*\(https://github\.com' || true
+          STRINGS_OUT=$(strings ./llvm-19-x86_64-macos-essentials-75/bin/clang | grep -E 'clang version [0-9].*\(https://github\.com' || true)
+          echo "$STRINGS_OUT"
+          {
+            echo "## LLVM Clang (macOS x86_64)"
+            echo ""
+            echo "### clang --version"
+            echo '```' && echo "$CLANG_OUT" && echo '```'
+            echo ""
+            echo "### Embedded version string (from binary)"
+            echo '```' && echo "$STRINGS_OUT" && echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
   clang-version-macos-arm:
     name: LLVM Clang (macOS ARM64)
@@ -45,10 +56,21 @@ jobs:
           ls -la llvm-19-aarch64-macos-essentials-79/
           echo ""
           echo "=== clang --version ==="
-          ./llvm-19-aarch64-macos-essentials-79/bin/clang --version
+          CLANG_OUT=$(./llvm-19-aarch64-macos-essentials-79/bin/clang --version 2>&1)
+          echo "$CLANG_OUT"
           echo ""
           echo "=== Embedded version string (from binary) ==="
-          strings ./llvm-19-aarch64-macos-essentials-79/bin/clang | grep -E 'clang version [0-9].*\(https://github\.com' || true
+          STRINGS_OUT=$(strings ./llvm-19-aarch64-macos-essentials-79/bin/clang | grep -E 'clang version [0-9].*\(https://github\.com' || true)
+          echo "$STRINGS_OUT"
+          {
+            echo "## LLVM Clang (macOS ARM64)"
+            echo ""
+            echo "### clang --version"
+            echo '```' && echo "$CLANG_OUT" && echo '```'
+            echo ""
+            echo "### Embedded version string (from binary)"
+            echo '```' && echo "$STRINGS_OUT" && echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
   clang-version-linux:
     name: LLVM Clang (Linux x86_64)
@@ -66,10 +88,21 @@ jobs:
           ls -la llvm-19-x86_64-linux-essentials-103/
           echo ""
           echo "=== clang --version ==="
-          ./llvm-19-x86_64-linux-essentials-103/bin/clang --version
+          CLANG_OUT=$(./llvm-19-x86_64-linux-essentials-103/bin/clang --version 2>&1)
+          echo "$CLANG_OUT"
           echo ""
           echo "=== Embedded version string (from binary) ==="
-          strings ./llvm-19-x86_64-linux-essentials-103/bin/clang | grep -E 'clang version [0-9].*\(https://github\.com' || true
+          STRINGS_OUT=$(strings ./llvm-19-x86_64-linux-essentials-103/bin/clang | grep -E 'clang version [0-9].*\(https://github\.com' || true)
+          echo "$STRINGS_OUT"
+          {
+            echo "## LLVM Clang (Linux x86_64)"
+            echo ""
+            echo "### clang --version"
+            echo '```' && echo "$CLANG_OUT" && echo '```'
+            echo ""
+            echo "### Embedded version string (from binary)"
+            echo '```' && echo "$STRINGS_OUT" && echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
   clang-version-windows:
     name: LLVM Clang (Windows x86_64)
@@ -86,9 +119,13 @@ jobs:
           Get-ChildItem llvm-19-x86_64-windows-essentials-134
           Write-Host ""
           Write-Host "=== clang --version ==="
-          .\llvm-19-x86_64-windows-essentials-134\bin\clang.exe --version
+          $CLANG_OUT = .\llvm-19-x86_64-windows-essentials-134\bin\clang.exe --version 2>&1 | Out-String
+          Write-Host $CLANG_OUT
           Write-Host ""
           Write-Host "=== Embedded version string (from binary) ==="
           $bytes = [System.IO.File]::ReadAllBytes("$PWD\llvm-19-x86_64-windows-essentials-134\bin\clang.exe")
           $str = [System.Text.Encoding]::ASCII.GetString($bytes)
-          ($str -split '\x00') | Where-Object { $_ -match 'clang version \d+\.\d+\.\d+ \(https://github\.com' } | ForEach-Object { Write-Host $_ }
+          $STRINGS_OUT = ($str -split '\x00') | Where-Object { $_ -match 'clang version \d+\.\d+\.\d+ \(https://github\.com' }
+          $STRINGS_OUT = $STRINGS_OUT -join "`n"
+          Write-Host $STRINGS_OUT
+          "## LLVM Clang (Windows x86_64)", "", "### clang --version", '```', $CLANG_OUT.Trim(), '```', "", "### Embedded version string (from binary)", '```', $STRINGS_OUT, '```' | Add-Content -Path $env:GITHUB_STEP_SUMMARY
