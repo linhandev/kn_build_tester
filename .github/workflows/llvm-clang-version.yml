@@ -8,8 +8,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  clang-version:
-    runs-on: macos-15-intel  # x86_64 macOS runner
+  clang-version-macos:
+    name: LLVM Clang (macOS x86_64)
+    runs-on: macos-15-intel  # x86_64 macOS
     steps:
       - name: Download LLVM
         run: |
@@ -25,3 +26,41 @@ jobs:
         run: |
           echo "=== clang --version ==="
           ./llvm-19-x86_64-macos-essentials-75/bin/clang --version
+
+  clang-version-linux:
+    name: LLVM Clang (Linux x86_64)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download LLVM
+        run: |
+          curl -sL -o llvm.tar.gz "https://download.jetbrains.com/kotlin/native/resources/llvm/19-x86_64-linux/llvm-19-x86_64-linux-essentials-103.tar.gz"
+          echo "Downloaded $(ls -la llvm.tar.gz)"
+
+      - name: Extract LLVM
+        run: |
+          tar -xzf llvm.tar.gz
+          ls -la llvm-19-x86_64-linux-essentials-103/
+
+      - name: Run clang --version
+        run: |
+          echo "=== clang --version ==="
+          ./llvm-19-x86_64-linux-essentials-103/bin/clang --version
+
+  clang-version-windows:
+    name: LLVM Clang (Windows x86_64)
+    runs-on: windows-latest
+    steps:
+      - name: Download LLVM
+        run: |
+          Invoke-WebRequest -Uri "https://download.jetbrains.com/kotlin/native/resources/llvm/19-x86_64-windows/llvm-19-x86_64-windows-essentials-134.zip" -OutFile llvm.zip -UseBasicParsing
+          Get-Item llvm.zip
+
+      - name: Extract LLVM
+        run: |
+          Expand-Archive -Path llvm.zip -DestinationPath .
+          Get-ChildItem llvm-19-x86_64-windows-essentials-134
+
+      - name: Run clang --version
+        run: |
+          Write-Host "=== clang --version ==="
+          .\llvm-19-x86_64-windows-essentials-134\bin\clang.exe --version
