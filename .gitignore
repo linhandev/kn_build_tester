@@ -15,6 +15,23 @@
 /android-studio/sdk
 out/
 /tmp
+
+# OHOS API protection demos — build outputs
+not_protected/out/
+weak/main_weak
+weak/main_weak_l
+weak/main_weak_zlazy
+weak/main_weak_znow
+weak/main_strong
+weak/main_call_then_dlopen
+weak/main_dlopen_then_call
+weak/dump
+dlsym/main_dlsym
+dlsym/main_dlsym_lazy
+dlsym/main_direct_znow
+combined/main_combined
+default_z/z_default
+default_z/z_lazy
 /intellij
 workspace.xml
 *.versionsBackup
