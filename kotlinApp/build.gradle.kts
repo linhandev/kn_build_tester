@@ -184,3 +184,5 @@ arrayOf("debug", "release").forEach { type ->
         }
     }
 }
+
+tasks.findByName("linkDebugSharedOhosArm64")?.outputs?.upToDateWhen { false }
