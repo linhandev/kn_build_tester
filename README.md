@@ -3,7 +3,11 @@
 ```shell
 ./gradlew :switchLib:publishToMavenLocal --rerun-tasks
 
-hdc uninstall com.example.nativecppdemo; ./gradlew startHarmonyAppRelease --rerun-tasks --profile && \
+clear
+hdc uninstall com.example.nativecppdemo \ 
+./gradlew clean \
+./gradlew --stop \ 
+./gradlew startHarmonyAppDebug --rerun-tasks --profile && \
 sleep 2 && \
 rm -rf gcov && \
 hdc file recv /data/app/el2/100/base/com.example.nativecppdemo/files/gcov/ . && \
