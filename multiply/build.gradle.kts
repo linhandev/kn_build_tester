@@ -38,3 +38,13 @@ kotlin {
         }
     }
 }
+
+val inRepoMaven = File(rootProject.rootDir, "maven-repo")
+publishing {
+    repositories {
+        maven {
+            name = "inRepo"
+            url = uri(inRepoMaven.toURI())
+        }
+    }
+}

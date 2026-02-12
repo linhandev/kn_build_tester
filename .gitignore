@@ -3,6 +3,7 @@
 main
 *.a
 *.o
+maven-repo/
 
 .DS_Store
 .idea/shelf

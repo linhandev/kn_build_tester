@@ -27,8 +27,8 @@ cd multiply/src/nativeInterop/multiply
 "${KONAN_DATA_DIR}/dependencies/llvm-11.1.0-aarch64-macos-essentials-60/bin/llvm-ar" rcs libmultiply.a multiply.o
 cd -
 
-# Publish the multiply klib to local Maven
-./gradlew :multiply:publishToMavenLocal
+# Publish the multiply klib to in-repo Maven (maven-repo/ in project root)
+./gradlew :multiply:publishAllPublicationsToInRepoRepository
 
 rm -rf /Users/hl/git/kmp/KuiklyBase-kotlin/kotlin-native/dist/klib/cache/linux_x64-gSTATIC-pl/com.example*
 # Build the shared library with Gradle

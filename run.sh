@@ -1,14 +1,16 @@
 #!/bin/bash
 
 set -euo pipefail
-set -x
+# set -x
+
+PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "${PROJECT_ROOT}"
 
 rm -rf build/bin/
 
 KONAN_DATA_DIR=${KONAN_DATA_DIR:-$(realpath ~/.konan)}
 BUILD_MODE=debug
 BUILD_MODE_CAPITALIZED=$(echo ${BUILD_MODE} | awk '{print toupper(substr($0,1,1)) substr($0,2)}')
-
 SYSROOT="/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot"
 
 # Build the static library for add
@@ -31,11 +33,9 @@ cd multiply/src/nativeInterop/multiply
 "${KONAN_DATA_DIR}/dependencies/llvm-11.1.0-aarch64-macos-essentials-60/bin/llvm-ar" rcs libmultiply.a multiply.o
 cd -
 
-# Publish the multiply klib to local Maven
-./gradlew :multiply:publishToMavenLocal
+# Publish multiply subproject (OHOS only) to in-repo Maven; run.sh is for OHOS testing
+./gradlew :multiply:publishOhosArm64PublicationToInRepoRepository
 
-rm -rf /Users/hl/git/kmp/KuiklyBase-kotlin/kotlin-native/dist/klib/cache/ohos_arm64-gSTATIC-pl/com.example*
-# Build the shared library with Gradle (keep wrapper for now).
 ./gradlew link"${BUILD_MODE_CAPITALIZED}"SharedOhosArm64 --rerun-tasks
 
 cd c-caller
@@ -64,4 +64,4 @@ hdc shell LD_LIBRARY_PATH=/data/local/tmp/ /data/local/tmp/main
 hdc shell file /data/local/tmp/libc2k.so
 hdc shell file /data/local/tmp/main
 
-nm /Users/hl/git/sample/kn_samples/build/bin/ohosArm64/debugShared/libc2k.so | grep multiplycfun
+nm "${PROJECT_ROOT}/build/bin/ohosArm64/${BUILD_MODE}Shared/libc2k.so" | grep multiplycfun

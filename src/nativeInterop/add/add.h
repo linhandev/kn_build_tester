@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-int add(int a, int b);
+int addcfun(int a, int b);
 
 #ifdef __cplusplus
 }
