@@ -10,6 +10,7 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
+        maven(rootDir.resolve("maven-repo").toURI())
         maven("https://kmp-ohos-test.obs.cn-south-1.myhuaweicloud.com/maven")
         maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
         mavenCentral()
@@ -19,4 +20,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "c2k"
 
-include("multiply")
+include("add")

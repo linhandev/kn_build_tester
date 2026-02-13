@@ -1,6 +1,0 @@
-package = multiplyciopkg
-headers = multiply.h
-staticLibraries = libmultiply.a
-libraryPaths = src/nativeInterop/multiply
-# used to demonstrate how linker options get passed to final linking
-linkerOpts = -L/garbage/search/path
