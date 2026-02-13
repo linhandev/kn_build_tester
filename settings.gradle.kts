@@ -1,16 +1,23 @@
 pluginManagement {
     repositories {
-        maven("/Users/user/git/kmp/KuiklyBase-kotlin/build/repo")
+        maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
+        maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
         gradlePluginPortal()
         mavenCentral()
+        mavenLocal()
     }
 }
 
 dependencyResolutionManagement {
     repositories {
-        maven("/Users/user/git/kmp/KuiklyBase-kotlin/build/repo")
+        maven(rootDir.resolve("maven-repo").toURI())
+        maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
+        maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
         mavenCentral()
+        mavenLocal()
     }
 }
 
-rootProject.name = "k2c"
+rootProject.name = "c2k"
+
+include("add")

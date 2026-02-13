@@ -1,25 +1,61 @@
 #!/bin/bash
 
-set -ex
+set -euo pipefail
 
-./gradlew linkDebugSharedOhosArm64
+PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "${PROJECT_ROOT}"
 
-cd c-caller
-/Users/user/.konan/dependencies/llvm-19.1.7-aarch64-macos-ohos-2/bin/clang \
-      --sysroot /Users/user/.konan/dependencies/sysroot-ohos-aarch64-5.0.11.110 \
+DEVECO_SDK="/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native"
+LLVM_BIN="${DEVECO_SDK}/llvm/bin"
+SYSROOT="${DEVECO_SDK}/sysroot"
+BUILD_MODE=release
+BUILD_MODE_CAPITALIZED=$(echo ${BUILD_MODE} | awk '{print toupper(substr($0,1,1)) substr($0,2)}')
+
+# Build the static library for add (used by the published cinterop klib)
+cd add/src/nativeInterop/add
+"${LLVM_BIN}/clang" \
+      --sysroot "${SYSROOT}" \
       --target=aarch64-linux-ohos \
-      -fPIC -pthread \
-      -Wall -Wextra -std=c99 \
-      -I../build/bin/ohosArm64/debugShared \
-      -o main main.c \
-      -L../build/bin/ohosArm64/debugShared \
-      -lk2c
-
-file main
-
+      -O3 -fPIC \
+      -ffunction-sections -fdata-sections \
+      -c add.c -o add.o
+"${LLVM_BIN}/llvm-ar" rcs libadd.a add.o
 cd -
 
-hdc file send build/bin/ohosArm64/debugShared/libk2c.so /data/
-hdc file send c-caller/main /data/
-hdc shell chmod 777 /data/main
-hdc shell LD_LIBRARY_PATH=/data/ /data/main
+# Publish add (cinterop klib + Kotlin) to in-repo Maven
+./gradlew :add:publishOhosArm64PublicationToProjectRepoRepository
+
+# Build the KN shared library (libc2k.so)
+./gradlew link"${BUILD_MODE_CAPITALIZED}"SharedOhosArm64 --rerun-tasks
+
+# # Release: strip .symtab (keeps .dynsym so the .so still loads)
+# SO_PATH="build/bin/ohosArm64/${BUILD_MODE}Shared/libc2k.so"
+# if [ "$BUILD_MODE" = "release" ] && [ -f "$SO_PATH" ]; then
+#   "${LLVM_BIN}/llvm-strip" --strip-unneeded "$SO_PATH"
+# fi
+
+# Build the C driver that links to libc2k.so
+cd c-caller
+"${LLVM_BIN}/clang" \
+      --sysroot "${SYSROOT}" \
+      --target=aarch64-linux-ohos \
+      -fPIC -pthread \
+      -Wall -Wextra -std=c11 \
+      -isystem "${SYSROOT}/usr/include" \
+      -isystem "${SYSROOT}/usr/include/aarch64-linux-ohos" \
+      -I"${SYSROOT}/include" \
+      -I../build/bin/ohosArm64/${BUILD_MODE}Shared \
+      -o main main.c \
+      -L../build/bin/ohosArm64/${BUILD_MODE}Shared \
+      -lc2k
+cd -
+
+# Deploy and run on OHOS device
+hdc shell "rm -rf /data/local/tmp/*"
+hdc file send build/bin/ohosArm64/${BUILD_MODE}Shared/libc2k.so /data/local/tmp/
+hdc file send c-caller/main /data/local/tmp/
+hdc shell chmod 777 /data/local/tmp/main
+hdc shell LD_LIBRARY_PATH=/data/local/tmp/ /data/local/tmp/main
+
+hdc shell file /data/local/tmp/libc2k.so
+hdc shell file /data/local/tmp/main
