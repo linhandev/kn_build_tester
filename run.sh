@@ -28,11 +28,11 @@ cd -
 # Build the KN shared library (libc2k.so)
 ./gradlew link"${BUILD_MODE_CAPITALIZED}"SharedOhosArm64 --rerun-tasks
 
-# Release: strip .symtab (keeps .dynsym so the .so still loads)
-SO_PATH="build/bin/ohosArm64/${BUILD_MODE}Shared/libc2k.so"
-if [ "$BUILD_MODE" = "release" ] && [ -f "$SO_PATH" ]; then
-  "${LLVM_BIN}/llvm-strip" --strip-unneeded "$SO_PATH"
-fi
+# # Release: strip .symtab (keeps .dynsym so the .so still loads)
+# SO_PATH="build/bin/ohosArm64/${BUILD_MODE}Shared/libc2k.so"
+# if [ "$BUILD_MODE" = "release" ] && [ -f "$SO_PATH" ]; then
+#   "${LLVM_BIN}/llvm-strip" --strip-unneeded "$SO_PATH"
+# fi
 
 # Build the C driver that links to libc2k.so
 cd c-caller
