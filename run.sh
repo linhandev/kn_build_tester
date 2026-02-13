@@ -13,38 +13,38 @@ BUILD_MODE_CAPITALIZED=$(echo ${BUILD_MODE} | awk '{print toupper(substr($0,1,1)
 
 # Build the static library for add (used by the published cinterop klib)
 cd add/src/nativeInterop/add
-"${LLVM_BIN}/clang++" \
+"${LLVM_BIN}/clang" \
       --sysroot "${SYSROOT}" \
       --target=aarch64-linux-ohos \
       -fPIC \
-      -c add.cpp -o add.o
+      -c add.c -o add.o
 "${LLVM_BIN}/llvm-ar" rcs libadd.a add.o
 cd -
 
-# Publish add (pure cinterop klib with static lib, no Kotlin code) to in-repo Maven
-./gradlew :add:publishAddCinteropPublicationToProjectRepoRepository
+# Publish add (cinterop klib + Kotlin) to in-repo Maven
+./gradlew :add:publishOhosArm64PublicationToProjectRepoRepository
 
 # Build the KN shared library (libc2k.so)
 ./gradlew link"${BUILD_MODE_CAPITALIZED}"SharedOhosArm64 --rerun-tasks
 
 # Build the C driver that links to libc2k.so
 cd c-caller
-"${LLVM_BIN}/clang++" \
+"${LLVM_BIN}/clang" \
       --sysroot "${SYSROOT}" \
       --target=aarch64-linux-ohos \
       -fPIC -pthread \
-      -Wall -Wextra -std=c++17 \
+      -Wall -Wextra -std=c11 \
       -isystem "${SYSROOT}/usr/include" \
       -isystem "${SYSROOT}/usr/include/aarch64-linux-ohos" \
       -I"${SYSROOT}/include" \
       -I../build/bin/ohosArm64/${BUILD_MODE}Shared \
-      -o main main.cpp \
+      -o main main.c \
       -L../build/bin/ohosArm64/${BUILD_MODE}Shared \
       -lc2k
 cd -
 
 # Deploy and run on OHOS device
-hdc shell rm /data/local/tmp/*
+hdc shell "rm -rf /data/local/tmp/*"
 hdc file send build/bin/ohosArm64/${BUILD_MODE}Shared/libc2k.so /data/local/tmp/
 hdc file send c-caller/main /data/local/tmp/
 hdc shell chmod 777 /data/local/tmp/main

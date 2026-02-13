@@ -2,8 +2,8 @@
 
 import add.addcfun
 
-@CName("add_numbers")
-fun addNumbers(a: Int, b: Int): Int {
+@CName("add_c_name")
+fun addKtFun(a: Int, b: Int): Int {
     return addcfun(a, b)
 }
 
