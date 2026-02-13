@@ -18,7 +18,7 @@ kn_samples/
 │           └── PlaceHolder.kt   # 占位，否则构建配置写起来很麻烦
 │
 ├── src/nativeMain/kotlin/       # 出 so 的 KN 工程，调用 add 里的 cinterop 库，@CName 导出接口给 c 调用
-│   └── Add.kt                   # @CName("add_c_name")，内部调用 add 的 addcfun
+│   └── Add.kt                   # @CName("add_c_name")，内部调用 add 的 addCFun
 │
 ├── c-caller/                    # C 驱动，调上面 KN 的 so
 │   └── main.c                   # 链接 libc2k.so，调用 add_c_name()
@@ -34,7 +34,7 @@ kn_samples/
 | Part | Role |
 |------|-----|
 | **add** | Kotlin Multiplatform library (OHOS only). Defines a **cinterop** that wraps the C static lib `libadd.a` (built from `add.c`). Publishes the resulting klib to `maven-repo/` so the root can depend on it. |
-| **Root (c2k)** | Kotlin/Native project that `implementation("com.example:add-ohosarm64:1.0-SNAPSHOT")`, uses `add.addcfun`, and produces **libc2k.so** with an exported `add_c_name` for C. |
+| **Root (c2k)** | Kotlin/Native project that `implementation("com.example:add-ohosarm64:1.0-SNAPSHOT")`, uses `add.addCFun`, and produces **libc2k.so** with an exported `add_c_name` for C. |
 | **c-caller** | C executable that links to **libc2k.so**, includes the generated `libc2k_api.h`, and calls `add_c_name()`. |
 | **run.sh** | Uses DevEco LLVM/sysroot to: build `libadd.a` → publish add to `maven-repo` → build `libc2k.so` → build the C driver → push to device and run. |
 

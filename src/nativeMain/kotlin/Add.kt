@@ -1,10 +1,10 @@
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlinx.cinterop.ExperimentalForeignApi::class)
 
-import add.addcfun
+import add.addCFun
 
 @CName("add_c_name")
 fun addKtFun(a: Int, b: Int): Int {
-    return addcfun(a, b)
+    return addCFun(a, b)
 }
 
 fun main() {

@@ -5,8 +5,9 @@
 extern "C" {
 #endif
 
-int addcfun(int a, int b);
+int addCFun(int a, int b);
 
+void deadFun();
 #ifdef __cplusplus
 }
 #endif
