@@ -19,12 +19,31 @@ kotlin {
     }
 }
 
-val inRepoMaven = File(rootProject.rootDir, "maven-repo")
+val projectMavenRepo = File(rootProject.rootDir, "maven-repo")
+val cinteropTask = tasks.named("cinteropAddOhosArm64")
+val cinteropKlib: Provider<File> = cinteropTask.map {
+    it.outputs.files.filter { f -> f.name.endsWith(".klib") && f.isFile }.single()
+}
+
 publishing {
-    repositories {
-        maven {
-            name = "inRepo"
-            url = uri(inRepoMaven.toURI())
+    publications {
+        create<MavenPublication>("addCinterop") {
+            artifactId = "add-ohosarm64"
+            groupId = "com.example"
+            version = "1.0-SNAPSHOT"
+            artifact(cinteropKlib) {
+                extension = "klib"
+            }
         }
     }
+    repositories {
+        maven {
+            name = "projectRepo"
+            url = uri(projectMavenRepo.toURI())
+        }
+    }
+}
+
+tasks.matching { it.name.startsWith("publish") && it.name.contains("AddCinterop") }.configureEach {
+    dependsOn(cinteropTask)
 }

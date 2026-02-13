@@ -5,32 +5,31 @@ set -euo pipefail
 PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "${PROJECT_ROOT}"
 
-rm -rf build/bin/
-
-KONAN_DATA_DIR=${KONAN_DATA_DIR:-$(realpath ~/.konan)}
+DEVECO_SDK="/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native"
+LLVM_BIN="${DEVECO_SDK}/llvm/bin"
+SYSROOT="${DEVECO_SDK}/sysroot"
 BUILD_MODE=debug
 BUILD_MODE_CAPITALIZED=$(echo ${BUILD_MODE} | awk '{print toupper(substr($0,1,1)) substr($0,2)}')
-SYSROOT="/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot"
 
 # Build the static library for add (used by the published cinterop klib)
 cd add/src/nativeInterop/add
-"${KONAN_DATA_DIR}/dependencies/llvm-11.1.0-aarch64-macos-essentials-60/bin/clang++" \
+"${LLVM_BIN}/clang++" \
       --sysroot "${SYSROOT}" \
       --target=aarch64-linux-ohos \
       -fPIC \
       -c add.cpp -o add.o
-"${KONAN_DATA_DIR}/dependencies/llvm-11.1.0-aarch64-macos-essentials-60/bin/llvm-ar" rcs libadd.a add.o
+"${LLVM_BIN}/llvm-ar" rcs libadd.a add.o
 cd -
 
-# Publish add (cinterop klib with static lib) to in-repo Maven
-./gradlew :add:publishOhosArm64PublicationToInRepoRepository
+# Publish add (pure cinterop klib with static lib, no Kotlin code) to in-repo Maven
+./gradlew :add:publishAddCinteropPublicationToProjectRepoRepository
 
 # Build the KN shared library (libc2k.so)
 ./gradlew link"${BUILD_MODE_CAPITALIZED}"SharedOhosArm64 --rerun-tasks
 
 # Build the C driver that links to libc2k.so
 cd c-caller
-"/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang++" \
+"${LLVM_BIN}/clang++" \
       --sysroot "${SYSROOT}" \
       --target=aarch64-linux-ohos \
       -fPIC -pthread \
