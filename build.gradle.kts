@@ -15,6 +15,7 @@ kotlin {
         binaries {
             sharedLib {
                 baseName = "c2k"
+                freeCompilerArgs += "-Xverbose-phases=Linker"
             }
         }
     }
