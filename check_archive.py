@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 """
-Diagnose whether a static archive (.a) has room for code-size improvement
-when linked into a shared library with --exclude-libs and --gc-sections.
+Check whether a static archive (.a) was compiled with the right flags
+to enable linker-side dead code elimination.
 
 Usage:
     python3 check_archive.py <archive.a> [--llvm-prefix <path>]
 
-Two independent axes matter:
-  1. Symbol visibility: DEFAULT vs HIDDEN
-     - --exclude-libs only helps DEFAULT symbols (demotes them to local/hidden)
-  2. Section granularity: -ffunction-sections vs monolithic .text
-     - --gc-sections can only strip individual functions if each is in its own section
-
-Best case:  DEFAULT visibility + -ffunction-sections  → both flags help
-Worst case: HIDDEN visibility  + monolithic .text      → nothing to gain at link time
+Two compile-time properties matter:
+  1. -ffunction-sections / -fdata-sections
+     Each function gets its own section, allowing the linker's --gc-sections
+     to strip unused functions individually (instead of all-or-nothing per .o).
+  2. -fvisibility=hidden
+     Symbols default to HIDDEN, so --exclude-libs is not needed at link time.
+     If symbols are DEFAULT, the linker needs --exclude-libs to hide them
+     before --gc-sections can treat them as non-roots.
 """
 
 import argparse
@@ -147,42 +147,46 @@ def analyse(archive, llvm_prefix):
     print()
 
     # ── 5. Verdict ──────────────────────────────────────────────────────
-    print("=" * 64)
-    print("  VERDICT")
-    print("=" * 64)
-
     exportable = total_global_default + total_weak_default
+    all_func_sections = n_monolithic == 0
+    all_hidden = exportable == 0
 
-    if exportable == 0 and n_func_sections == 0:
-        print("  No room for improvement at link time.")
-        print("  - All symbols are already HIDDEN → --exclude-libs is a no-op")
-        print("  - No per-function sections → --gc-sections is all-or-nothing per .o")
-        print("  ➜ Must rebuild the archive with -ffunction-sections -fdata-sections")
-        print("    and/or -fvisibility=default to enable linker-side stripping.")
-    elif exportable == 0 and n_func_sections > 0:
-        print("  Partial room for improvement.")
-        print("  - All symbols are already HIDDEN → --exclude-libs is a no-op")
-        print(f"  - {n_func_sections} objects have per-function sections")
-        print("  ➜ --gc-sections can already strip unreferenced functions from those objects.")
-        print("    --exclude-libs won't add anything. Check if --gc-sections is enabled.")
-    elif exportable > 0 and n_func_sections == 0:
-        print("  Partial room for improvement.")
-        print(f"  - {exportable} symbols are exportable → --exclude-libs will hide them")
-        print("  - But no per-function sections → --gc-sections is coarse-grained")
-        print("  ➜ --exclude-libs helps shrink .dynsym/.hash, but code removal is limited.")
-        print("    Rebuild the archive with -ffunction-sections for better stripping.")
+    actions = []
+
+    if not all_func_sections:
+        actions.append(
+            f"  - {n_monolithic} object(s) lack per-function sections\n"
+            f"    Compile fix:  add -ffunction-sections -fdata-sections\n"
+            f"    Link fix:     --gc-sections (all-or-nothing per .o without this compile fix)"
+        )
+    if not all_hidden:
+        actions.append(
+            f"  - {exportable} symbol(s) have DEFAULT visibility (exportable)\n"
+            f"    Compile fix:  add -fvisibility=hidden\n"
+            f"    Link fix:     --exclude-libs={os.path.basename(archive)}"
+        )
+
+    print("=" * 64)
+    print("  RECOMMENDATIONS")
+    print("=" * 64)
+
+    if not actions:
+        print("  No action required for the archive. It is already well-prepared:")
+        print("  - All symbols have HIDDEN visibility")
+        print("  - All objects use per-function sections (-ffunction-sections)")
+        print()
+        print("  At link time, use --gc-sections to strip unreferenced functions.")
     else:
-        print("  Good potential for code-size improvement!")
-        print(f"  - {exportable} exportable symbols → --exclude-libs will hide them")
-        print(f"  - {n_func_sections} objects have per-function sections")
-        print("  ➜ Use --exclude-libs=<archive> with --gc-sections for best results.")
-
+        print("  Room for improvement preparing the archive:\n")
+        print("\n\n".join(actions))
+        print()
+        print("  At link time, use --gc-sections to strip unreferenced functions.")
     print()
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Check if a .a archive can benefit from --exclude-libs / --gc-sections"
+        description="Check if a .a archive is compiled correctly for linker dead code elimination"
     )
     parser.add_argument("archive", help="Path to the static archive (.a)")
     parser.add_argument(
