@@ -2,4 +2,4 @@ package = add
 headers = add.h
 staticLibraries = libadd.a
 libraryPaths = src/nativeInterop/add
-linkerOpts = --exclude-libs=libadd.a
+# linkerOpts = --exclude-libs=libadd.a

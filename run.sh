@@ -17,6 +17,7 @@ cd add/src/nativeInterop/add
       --sysroot "${SYSROOT}" \
       --target=aarch64-linux-ohos \
       -O3 -fPIC \
+      -fvisibility=hidden \
       -ffunction-sections -fdata-sections \
       -c add.c -o add.o
 "${LLVM_BIN}/llvm-ar" rcs libadd.a add.o
@@ -59,3 +60,8 @@ hdc shell LD_LIBRARY_PATH=/data/local/tmp/ /data/local/tmp/main
 
 hdc shell file /data/local/tmp/libc2k.so
 hdc shell file /data/local/tmp/main
+
+echo "addCFun"
+llvm-readelf -s build/bin/ohosArm64/${BUILD_MODE}Shared/libc2k.so | grep addCFun
+echo "deadFun"
+llvm-readelf -s build/bin/ohosArm64/${BUILD_MODE}Shared/libc2k.so | grep deadFun || true
