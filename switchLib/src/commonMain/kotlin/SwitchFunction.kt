@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+
 package com.example.switchlib
 
 fun processValue(): String {
@@ -12,6 +14,7 @@ fun processValue(): String {
     }
 }
 
+@CName("processValueCond")
 fun processValueCond(): String {
     val value = 3
     return when {

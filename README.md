@@ -46,10 +46,22 @@ cd kotlin
 
 ## Project Structure
 
-- `kotlin/` - Standalone executable demo (fully tested ✅)
-- `kotlinApp/` - KMP library project
-- `harmonyApp/` - HarmonyOS app integration
-- `*.md` - Documentation guides
+**Who depends on who**
+
+依赖关系
+
+```
+harmonyApp          →  kotlinApp (libc2k.so + header)
+kotlinApp           →  switchLib (api, Maven artifact)  +  sugarLib (implementation, project)
+switchLib           →  (none)
+sugarLib            →  (none)
+```
+
+- **kotlinApp** — Builds the shared lib. Depends on **switchLib** as `api("com.example:switchLib:1.0-SNAPSHOT")` (klib from Maven local; publish with `:switchLib:publishToMavenLocal`) and **sugarLib** as `implementation(project(":sugarLib"))`.
+- **harmonyApp** — Not a Gradle subproject. Consumes `libc2k.so` and headers from kotlinApp (via `publish*BinariesToHarmonyApp` / `startHarmonyApp*`).
+- **switchLib**, **sugarLib** — No project dependencies; only kotlinApp pulls them in.
+
+Other dirs: **c-caller/** and **simpleTests/** use or test the shared library outside the app; they are not in the Gradle dependency graph.
 
 ## Key Concepts
 

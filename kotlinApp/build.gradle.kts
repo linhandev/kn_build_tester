@@ -1,5 +1,6 @@
 plugins {
-    kotlin("multiplatform") version "2.0.21-KBA-014"
+// kotlin("multiplatform") version "2.0.21-KBA-014"
+kotlin("multiplatform") version "2.2.21-OH.0.1.0-01"
 }
 
 group = "com.example"
@@ -16,7 +17,7 @@ kotlin {
                 }
             }
             dependencies {
-                implementation("com.example:switchLib:1.0-SNAPSHOT")
+                api("com.example:switchLib:1.0-SNAPSHOT")
                 implementation(project(":sugarLib"))
             }
         }
@@ -24,9 +25,31 @@ kotlin {
             sharedLib {
                 baseName = "c2k"
                 freeCompilerArgs += "-Xadd-light-debug=enable"
-                freeCompilerArgs += listOf("-Xbinary=coverage=true", "-Xtemporary-files-dir=/tmp/inspect")
+                // freeCompilerArgs += listOf("-Xbinary=coverage=true", "-Xtemporary-files-dir=/tmp/inspect")
+                export("com.example:switchLib:1.0-SNAPSHOT")
             }
         }
+    }
+    iosArm64 {
+        compilations.getByName("main") {
+            dependencies {
+                api(project(":switchLib"))
+                implementation(project(":sugarLib"))
+            }
+        }
+        binaries {
+            framework {
+                baseName = "c2k"
+                export(project(":switchLib"))
+            }
+        }
+    }
+
+    sourceSets {
+        val ohosMain by creating { dependsOn(commonMain.get()) }
+        val ohosArm64Main by getting { dependsOn(ohosMain) }
+        val iosMain by creating { dependsOn(commonMain.get()) }
+        val iosArm64Main by getting { dependsOn(iosMain) }
     }
 }
 

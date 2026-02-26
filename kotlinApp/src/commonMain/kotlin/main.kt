@@ -12,6 +12,10 @@ fun runGcovTestWrapper() {
     runGcovTest()
 }
 
+fun testHlhlhl() {
+    runGcovTest()
+}
+
 fun main() {
     println("Kotlin/Native library loaded")
 }
