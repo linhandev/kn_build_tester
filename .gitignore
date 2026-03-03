@@ -1,5 +1,9 @@
 # project specific
 *.so
+.venv/
+__pycache__/
+*.json
+coverage.log
 
 .DS_Store
 .idea/shelf
