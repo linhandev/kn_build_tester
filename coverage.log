@@ -1,0 +1,430 @@
+Finding @addtogroup headers ...
+  Found 412 headers
+Parsing umbrella header (412 includes) ...
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/hms/native/sysroot/usr/include/handwrite/native_handwrite_api.h:52:5: error: redefinition of enumerator 'E_NO_ERROR'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/hms/native/sysroot/usr/include/handwrite/native_handwrite_api.h:54:5: error: redefinition of enumerator 'E_PARAMS'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/hms/native/sysroot/usr/include/handwrite/native_handwrite_api.h:56:5: error: redefinition of enumerator 'E_INNER_ERROR'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/hms/native/sysroot/usr/include/service_collaboration/service_collaboration_api.h:76:5: error: redefinition of enumerator 'NETWORK_ERROR'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/distributedhardware/device_manager/oh_device_manager_err_code.h:56:5: error: redefinition of enumerator 'ERR_OK'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/distributedhardware/device_manager/oh_device_manager_err_code.h:60:5: error: redefinition of enumerator 'ERR_PERMISSION_ERROR'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/distributedhardware/device_manager/oh_device_manager_err_code.h:64:5: error: redefinition of enumerator 'ERR_INVALID_PARAMETER'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/filemanagement/environment/error_code.h:48:5: error: redefinition of enumerator 'ERR_OK'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/filemanagement/environment/error_code.h:52:5: error: redefinition of enumerator 'ERR_PERMISSION_ERROR'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/filemanagement/environment/error_code.h:56:5: error: redefinition of enumerator 'ERR_INVALID_PARAMETER'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/filemanagement/environment/error_code.h:60:5: error: redefinition of enumerator 'ERR_DEVICE_NOT_SUPPORTED'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/i18n/errorcode.h:48:5: error: redefinition of enumerator 'SUCCESS'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/multimedia/image_framework/image_source_mdk.h:81:20: error: redefinition of 'OHOS_IMAGE_PROPERTY_BITS_PER_SAMPLE'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/multimedia/image_framework/image_source_mdk.h:92:20: error: redefinition of 'OHOS_IMAGE_PROPERTY_ORIENTATION'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/multimedia/image_framework/image_source_mdk.h:103:20: error: redefinition of 'OHOS_IMAGE_PROPERTY_IMAGE_LENGTH'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/multimedia/image_framework/image_source_mdk.h:114:20: error: redefinition of 'OHOS_IMAGE_PROPERTY_IMAGE_WIDTH'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/multimedia/image_framework/image_source_mdk.h:125:20: error: redefinition of 'OHOS_IMAGE_PROPERTY_GPS_LATITUDE'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/multimedia/image_framework/image_source_mdk.h:136:20: error: redefinition of 'OHOS_IMAGE_PROPERTY_GPS_LONGITUDE'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/multimedia/image_framework/image_source_mdk.h:147:20: error: redefinition of 'OHOS_IMAGE_PROPERTY_GPS_LATITUDE_REF'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/multimedia/image_framework/image_source_mdk.h:158:20: error: redefinition of 'OHOS_IMAGE_PROPERTY_GPS_LONGITUDE_REF'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/multimedia/image_framework/image_source_mdk.h:169:20: error: redefinition of 'OHOS_IMAGE_PROPERTY_DATE_TIME_ORIGINAL'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/multimedia/image_framework/image_source_mdk.h:180:20: error: redefinition of 'OHOS_IMAGE_PROPERTY_EXPOSURE_TIME'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/multimedia/image_framework/image_source_mdk.h:191:20: error: redefinition of 'OHOS_IMAGE_PROPERTY_SCENE_TYPE'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/multimedia/image_framework/image_source_mdk.h:202:20: error: redefinition of 'OHOS_IMAGE_PROPERTY_ISO_SPEED_RATINGS'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/multimedia/image_framework/image_source_mdk.h:213:20: error: redefinition of 'OHOS_IMAGE_PROPERTY_F_NUMBER'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/multimedia/image_framework/image_source_mdk.h:224:20: error: redefinition of 'OHOS_IMAGE_PROPERTY_COMPRESSED_BITS_PER_PIXEL'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/multimodalinput/oh_pointer_style.h:305:5: error: redefinition of enumerator 'LOADING'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/native_color_space_manager/native_color_space_manager.h:118:5: error: redefinition of enumerator 'CUSTOM'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/native_drawing/drawing_mask_filter.h:60:5: error: redefinition of enumerator 'NORMAL'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/native_drawing/drawing_text_font_descriptor.h:64:5: error: redefinition of enumerator 'INSTALLED'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/native_effect/effect_types.h:82:5: error: redefinition of enumerator 'EFFECT_SUCCESS'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/native_effect/effect_types.h:98:5: error: redefinition of enumerator 'CLAMP'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/native_effect/effect_types.h:100:5: error: redefinition of enumerator 'REPEAT'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/native_effect/effect_types.h:104:5: error: redefinition of enumerator 'MIRROR'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/native_effect/effect_types.h:106:5: error: redefinition of enumerator 'DECAL'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/network/netstack/net_websocket_type.h:191:5: error: redefinition of enumerator 'E_BASE'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/ohcamera/camera.h:529:5: error: redefinition of enumerator 'NORMAL'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/resourcemanager/resmgr_common.h:50:5: error: redefinition of enumerator 'SUCCESS'
+  DIAG: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/web/arkweb_scheme_handler.h:115:5: error: redefinition of enumerator 'IMAGE'
+  Diagnostics: {3: 39}
+Walking AST ...
+
+Cataloged 8256 function declarations
+
+=== AST COVERAGE REPORT ===
+
+CursorKinds encountered: 24
+  PARM_DECL                       18288  [HANDLED_AS_CHILD]
+  ENUM_CONSTANT_DECL              11678  [HANDLED_AS_CHILD]
+  FIELD_DECL                       9296  [HANDLED_AS_CHILD]
+  FUNCTION_DECL                    8256  [HANDLED]
+  MACRO_INSTANTIATION              6624  [SKIPPED]
+  UNEXPOSED_ATTR                   6174  [HANDLED_AS_ATTR]
+  TYPEDEF_DECL                     5402  [HANDLED]
+  MACRO_DEFINITION                 5400  [HANDLED]
+  TYPE_REF                         4970  [SKIPPED]
+  STRUCT_DECL                      2386  [HANDLED]
+  INCLUSION_DIRECTIVE              1263  [SKIPPED]
+  ENUM_DECL                        1217  [HANDLED]
+  VAR_DECL                          773  [HANDLED]
+  VISIBILITY_ATTR                   643  [HANDLED_AS_ATTR]
+  LINKAGE_SPEC                      515  [HANDLED]
+  UNEXPOSED_DECL                     78  [SKIPPED]
+  UNION_DECL                         45  [HANDLED]
+  ASM_LABEL_ATTR                      4  [HANDLED_AS_ATTR]
+  ALIGNED_ATTR                        4  [HANDLED_AS_ATTR]
+  CONST_ATTR                          3  [HANDLED_AS_ATTR]
+  NAMESPACE                           3  [HANDLED]
+  PACKED_ATTR                         3  [HANDLED_AS_ATTR]
+  TRANSLATION_UNIT                    1  [HANDLED]
+  TYPE_ALIAS_DECL                     1  [HANDLED]
+
+TypeKinds encountered: 28
+  ELABORATED                      31057
+  TYPEDEF                         26997
+  POINTER                         19541
+  RECORD                          13956
+  ENUM                             6665
+  UINT                             4816
+  INT                              3852
+  VOID                             3276
+  FUNCTIONPROTO                    2057
+  CHAR_U                           2041
+  ULONG                            1723
+  FLOAT                            1160
+  BOOL                              646
+  UCHAR                             521
+  DOUBLE                            377
+  LONG                              360
+  CONSTANTARRAY                     356
+  USHORT                            149
+  LONGDOUBLE                        146
+  WCHAR                             138
+  SCHAR                              65
+  INCOMPLETEARRAY                    58
+  LONGLONG                           18
+  LVALUEREFERENCE                    17
+  CHAR16                             14
+  SHORT                              11
+  ULONGLONG                           3
+  UINT128                             2
+
+Attribute kinds encountered: 6
+  UNEXPOSED_ATTR                   6174
+  VISIBILITY_ATTR                   643
+  ASM_LABEL_ATTR                      4
+  ALIGNED_ATTR                        4
+  CONST_ATTR                          3
+  PACKED_ATTR                         3
+
+SUMMARY: 17 handled, 3 child, 4 skipped, 0 UNHANDLED
+
+Unique function group keys: 4
+  plain_function                                                 7311
+  has_unnamed_param                                               907
+  has_unnamed_param + variadic                                     28
+  variadic                                                         10
+
+Unique return shapes: 52
+  enum | mod:typedef_ref                                         3118
+  void                                                           1567
+  primitive_int | mod:typedef_ref                                 929
+  primitive_int                                                   908
+  opaque_ptr | mod:typedef_ptr                                    421
+  primitive_float                                                 204
+  primitive_bool                                                  156
+  const_char_ptr                                                  101
+  primitive_double                                                100
+  primitive_ulong | mod:typedef_ref                                96
+  primitive_uint | mod:typedef_ref                                 80
+  struct_ptr | mod:typedef_ptr                                     63
+  char_ptr                                                         57
+  primitive_longdouble                                             56
+  opaque_ptr | mod:typedef_ref                                     53
+  void_ptr                                                         52
+  primitive_long | mod:typedef_ref                                 48
+  struct_by_value | mod:abi_indirect_return                        38
+  primitive_long                                                   24
+  struct_by_value | mod:abi_register_return | mod:typedef_ref      21
+  void_ptr | mod:typedef_ref                                       19
+  double_ptr                                                       18
+  primitive_wchar_ptr                                              18
+  struct_ptr                                                       18
+  primitive_uchar | mod:typedef_ref                                15
+  primitive_longlong                                               10
+  opaque_ptr                                                       10
+  primitive_uint                                                    5
+  struct_by_value | mod:abi_indirect_return | mod:typedef_ref       5
+  function_pointer | mod:typedef_ref                                4
+  const_char_ptr | mod:typedef_ptr                                  4
+  primitive_ulonglong                                               3
+  struct_ptr | mod:ptr_to_const | mod:typedef_ptr                   3
+  opaque_ptr | mod:ptr_to_const | mod:typedef_ptr                   3
+  primitive_ushort | mod:typedef_ref                                3
+  function_pointer                                                  3
+  primitive_ulong                                                   2
+  enum_ptr | mod:typedef_ptr                                        2
+  enum                                                              2
+  void_ptr | mod:typedef_ptr                                        2
+  primitive_int_ptr                                                 2
+  char_ptr | mod:typedef_ptr                                        2
+  primitive_int_ptr | mod:ptr_to_const | mod:typedef_ref            2
+  primitive_ushort_ptr                                              1
+  primitive_int_ptr | mod:ptr_to_const                              1
+  void_ptr | mod:ptr_to_const | mod:typedef_ptr                     1
+  primitive_uchar                                                   1
+  double_ptr | mod:typedef_ptr                                      1
+  struct_ptr | mod:typedef_ref                                      1
+  primitive_int_ptr | mod:ptr_to_const | mod:typedef_ptr            1
+  primitive_long_ptr | mod:ptr_to_const | mod:typedef_ptr           1
+  void_ptr | mod:ptr_to_const                                       1
+
+Unique param shapes: 120
+  opaque_ptr | mod:typedef_ptr                                   3653
+  opaque_ptr | mod:typedef_ref                                   2269
+  primitive_uint | mod:typedef_ref                               1163
+  opaque_ptr | mod:ptr_to_const | mod:typedef_ptr                 836
+  const_char_ptr                                                  813
+  struct_ptr | mod:typedef_ptr                                    782
+  primitive_int | mod:typedef_ref                                 751
+  struct_ptr | mod:ptr_to_const | mod:typedef_ptr                 699
+  double_ptr                                                      607
+  primitive_ulong | mod:typedef_ref                               602
+  enum | mod:typedef_ref                                          570
+  primitive_int                                                   463
+  primitive_float                                                 463
+  double_ptr | mod:typedef_ptr                                    392
+  function_pointer | mod:typedef_ref                              321
+  void_ptr                                                        310
+  primitive_int_ptr | mod:typedef_ptr                             264
+  primitive_uint_ptr | mod:typedef_ptr                            253
+  primitive_bool                                                  195
+  primitive_bool_ptr                                              191
+  primitive_ulong_ptr | mod:typedef_ptr                           176
+  enum_ptr | mod:typedef_ptr                                      155
+  primitive_double                                                150
+  char_ptr                                                        149
+  primitive_float_ptr                                             111
+  opaque_ptr                                                      103
+  primitive_long | mod:typedef_ref                                 97
+  struct_ptr | mod:ptr_to_const                                    94
+  void_ptr | mod:ptr_to_const                                      93
+  function_pointer                                                 90
+  struct_ptr                                                       87
+  primitive_longdouble                                             86
+  void_ptr | mod:typedef_ref                                       76
+  primitive_wchar_ptr | mod:ptr_to_const                           74
+  primitive_uint                                                   65
+  opaque_ptr | mod:ptr_to_const                                    65
+  char_ptr | mod:typedef_ptr                                       62
+  primitive_long_ptr | mod:typedef_ptr                             62
+  primitive_int_ptr                                                61
+  primitive_float | mod:typedef_ref                                50
+  primitive_double_ptr                                             48
+  struct_by_value | mod:struct_by_value_large | mod:typedef_ref     47
+  primitive_uint_ptr | mod:ptr_to_const | mod:typedef_ptr          38
+  double_ptr | mod:ptr_to_const | mod:typedef_ptr                  36
+  struct_by_value | mod:struct_by_value_small | mod:typedef_ref     35
+  void_ptr | mod:const_qualified | mod:typedef_ref                 30
+  primitive_uchar | mod:typedef_ref                                27
+  primitive_uint_ptr                                               24
+  primitive_wchar_ptr                                              22
+  primitive_long | mod:const_qualified | mod:typedef_ref           22
+  const_char_ptr | mod:typedef_ptr                                 21
+  void_ptr | mod:typedef_ptr                                       21
+  primitive_float_ptr | mod:ptr_to_const | mod:typedef_ptr         20
+  primitive_ulong_ptr | mod:ptr_to_const | mod:typedef_ptr         19
+  void_ptr | mod:ptr_to_const | mod:typedef_ptr                    18
+  primitive_int_ptr | mod:ptr_to_const | mod:typedef_ptr           17
+  type_LVALUEREFERENCE                                             17
+  double_ptr | mod:ptr_to_const                                    16
+  primitive_int | mod:const_qualified | mod:typedef_ref            15
+  struct_by_value | mod:const_qualified | mod:struct_by_value_small | mod:typedef_ref     14
+  primitive_float_ptr | mod:ptr_to_const                           14
+  function_pointer | mod:const_qualified | mod:typedef_ref         14
+  primitive_long                                                   12
+  enum | mod:const_qualified | mod:typedef_ref                     12
+  incomplete_array | mod:incomplete_array_of_const_char_ptr        12
+  incomplete_array | mod:incomplete_array_of_opaque_ptr            11
+  primitive_wchar                                                  10
+  primitive_long_ptr | mod:ptr_to_const | mod:typedef_ptr          10
+  primitive_double | mod:typedef_ref                               10
+  incomplete_array | mod:incomplete_array_of_char_ptr              10
+  primitive_bool | mod:const_qualified                              9
+  fixed_array | mod:fixed_array_of_primitive_float                  8
+  primitive_ushort | mod:typedef_ref                                8
+  enum_ptr | mod:ptr_to_const | mod:typedef_ptr                     7
+  primitive_uint | mod:const_qualified | mod:typedef_ref            7
+  primitive_float | mod:const_qualified                             6
+  primitive_float_ptr | mod:typedef_ptr                             6
+  primitive_char16_ptr | mod:ptr_to_const                           6
+  primitive_char16_ptr                                              6
+  struct_ptr | mod:typedef_ref                                      6
+  fixed_array | mod:fixed_array_of_primitive_ushort                 5
+  incomplete_array | mod:incomplete_array_of_primitive_uint | mod:incomplete_array_of_typedef      5
+  incomplete_array | mod:incomplete_array_of_primitive_float        5
+  enum                                                              5
+  incomplete_array | mod:incomplete_array_of_record | mod:incomplete_array_of_typedef      5
+  primitive_ushort_ptr | mod:ptr_to_const | mod:typedef_ptr         5
+  primitive_longlong                                                4
+  struct_by_value | mod:struct_by_value_large                       4
+  struct_by_value | mod:const_qualified | mod:struct_by_value_large | mod:typedef_ref      3
+  primitive_int | mod:const_qualified                               3
+  primitive_double_ptr | mod:ptr_to_const                           3
+  primitive_longdouble_ptr                                          3
+  fixed_array | mod:fixed_array_of_primitive_int                    3
+  incomplete_array | mod:incomplete_array_of_primitive_uchar        3
+  struct_by_value | mod:struct_by_value_small                       3
+  primitive_ulong | mod:const_qualified | mod:typedef_ref           2
+  fixed_array | mod:fixed_array_of_enum | mod:fixed_array_of_typedef      2
+  primitive_schar | mod:typedef_ref                                 2
+  primitive_short | mod:typedef_ref                                 2
+  primitive_bool_ptr | mod:ptr_to_const                             2
+  opaque_ptr | mod:const_qualified | mod:typedef_ref                2
+  primitive_int_ptr | mod:ptr_to_const | mod:typedef_ref            2
+  incomplete_array | mod:incomplete_array_of_enum_ptr               1
+  incomplete_array | mod:incomplete_array_of_enum | mod:incomplete_array_of_typedef      1
+  primitive_short_ptr | mod:typedef_ptr                             1
+  primitive_int_ptr | mod:ptr_to_const                              1
+  primitive_long | mod:const_qualified                              1
+  primitive_long_ptr | mod:ptr_to_const                             1
+  primitive_uchar | mod:const_qualified                             1
+  primitive_uchar                                                   1
+  primitive_double | mod:const_qualified                            1
+  function_proto                                                    1
+  primitive_ushort_ptr | mod:typedef_ptr                            1
+  primitive_uchar | mod:const_qualified | mod:typedef_ref           1
+  primitive_short_ptr | mod:ptr_to_const | mod:typedef_ptr          1
+  incomplete_array | mod:incomplete_array_of_primitive_char16       1
+  primitive_longlong_ptr                                            1
+  union_by_value | mod:union_by_value_small                         1
+  double_ptr | mod:const_ptr | mod:const_qualified                  1
+  struct_ptr | mod:const_ptr | mod:const_qualified                  1
+
+Unique function x return groups: 77
+  plain_function ; ret=enum | mod:typedef_ref                                        3112
+  plain_function ; ret=void                                                          1526
+  plain_function ; ret=primitive_int | mod:typedef_ref                                924
+  plain_function ; ret=primitive_int                                                  453
+  has_unnamed_param ; ret=primitive_int                                               428
+  plain_function ; ret=opaque_ptr | mod:typedef_ptr                                   421
+  plain_function ; ret=primitive_bool                                                 156
+  plain_function ; ret=primitive_float                                                139
+  plain_function ; ret=const_char_ptr                                                  99
+  has_unnamed_param ; ret=primitive_double                                             69
+  has_unnamed_param ; ret=primitive_float                                              65
+  plain_function ; ret=primitive_uint | mod:typedef_ref                                61
+  has_unnamed_param ; ret=primitive_longdouble                                         56
+  plain_function ; ret=primitive_ulong | mod:typedef_ref                               56
+  plain_function ; ret=struct_ptr | mod:typedef_ptr                                    54
+  plain_function ; ret=opaque_ptr | mod:typedef_ref                                    53
+  has_unnamed_param ; ret=char_ptr                                                     44
+  has_unnamed_param ; ret=primitive_ulong | mod:typedef_ref                            40
+  has_unnamed_param ; ret=void                                                         39
+  plain_function ; ret=struct_by_value | mod:abi_indirect_return                       38
+  plain_function ; ret=primitive_double                                                31
+  has_unnamed_param ; ret=primitive_long | mod:typedef_ref                             31
+  has_unnamed_param ; ret=void_ptr                                                     26
+  plain_function ; ret=void_ptr                                                        26
+  has_unnamed_param + variadic ; ret=primitive_int                                     26
+  has_unnamed_param ; ret=primitive_uint | mod:typedef_ref                             19
+  plain_function ; ret=void_ptr | mod:typedef_ref                                      19
+  plain_function ; ret=double_ptr                                                      18
+  has_unnamed_param ; ret=primitive_wchar_ptr                                          18
+  plain_function ; ret=primitive_long | mod:typedef_ref                                17
+  plain_function ; ret=struct_by_value | mod:abi_register_return | mod:typedef_ref     17
+  has_unnamed_param ; ret=primitive_long                                               16
+  plain_function ; ret=primitive_uchar | mod:typedef_ref                               15
+  plain_function ; ret=char_ptr                                                        13
+  has_unnamed_param ; ret=struct_ptr                                                   13
+  has_unnamed_param ; ret=primitive_longlong                                           10
+  plain_function ; ret=opaque_ptr                                                      10
+  has_unnamed_param ; ret=struct_ptr | mod:typedef_ptr                                  8
+  plain_function ; ret=primitive_long                                                   7
+  variadic ; ret=enum | mod:typedef_ref                                                 6
+  plain_function ; ret=struct_by_value | mod:abi_indirect_return | mod:typedef_ref      5
+  plain_function ; ret=struct_ptr                                                       5
+  has_unnamed_param ; ret=struct_by_value | mod:abi_register_return | mod:typedef_ref      4
+  plain_function ; ret=function_pointer | mod:typedef_ref                               4
+  plain_function ; ret=const_char_ptr | mod:typedef_ptr                                 4
+  has_unnamed_param ; ret=primitive_int | mod:typedef_ref                               4
+  has_unnamed_param ; ret=primitive_uint                                                3
+  plain_function ; ret=struct_ptr | mod:ptr_to_const | mod:typedef_ptr                  3
+  plain_function ; ret=opaque_ptr | mod:ptr_to_const | mod:typedef_ptr                  3
+  has_unnamed_param ; ret=function_pointer                                              3
+
+Unique function x param groups: 182
+  plain_function ; param=opaque_ptr | mod:typedef_ptr                                3650
+  plain_function ; param=opaque_ptr | mod:typedef_ref                                2225
+  plain_function ; param=primitive_uint | mod:typedef_ref                            1070
+  plain_function ; param=opaque_ptr | mod:ptr_to_const | mod:typedef_ptr              830
+  plain_function ; param=primitive_int | mod:typedef_ref                              725
+  plain_function ; param=struct_ptr | mod:ptr_to_const | mod:typedef_ptr              665
+  plain_function ; param=struct_ptr | mod:typedef_ptr                                 626
+  plain_function ; param=const_char_ptr                                               605
+  plain_function ; param=enum | mod:typedef_ref                                       566
+  plain_function ; param=double_ptr                                                   557
+  plain_function ; param=primitive_ulong | mod:typedef_ref                            434
+  plain_function ; param=double_ptr | mod:typedef_ptr                                 391
+  plain_function ; param=primitive_float                                              378
+  plain_function ; param=function_pointer | mod:typedef_ref                           321
+  has_unnamed_param ; param=primitive_int                                             290
+  plain_function ; param=void_ptr                                                     273
+  plain_function ; param=primitive_int_ptr | mod:typedef_ptr                          255
+  plain_function ; param=primitive_uint_ptr | mod:typedef_ptr                         239
+  plain_function ; param=primitive_bool                                               195
+  plain_function ; param=primitive_bool_ptr                                           191
+  has_unnamed_param ; param=const_char_ptr                                            178
+  plain_function ; param=primitive_ulong_ptr | mod:typedef_ptr                        167
+  has_unnamed_param ; param=primitive_ulong | mod:typedef_ref                         166
+  plain_function ; param=primitive_int                                                158
+  plain_function ; param=enum_ptr | mod:typedef_ptr                                   155
+  has_unnamed_param ; param=struct_ptr | mod:typedef_ptr                              152
+  plain_function ; param=primitive_float_ptr                                          108
+  plain_function ; param=opaque_ptr                                                   100
+  has_unnamed_param ; param=primitive_uint | mod:typedef_ref                           88
+  plain_function ; param=char_ptr                                                      87
+  has_unnamed_param ; param=primitive_double                                           85
+  has_unnamed_param ; param=primitive_float                                            85
+  has_unnamed_param ; param=primitive_longdouble                                       76
+  plain_function ; param=function_pointer                                              75
+  plain_function ; param=primitive_long | mod:typedef_ref                              73
+  plain_function ; param=void_ptr | mod:typedef_ref                                    72
+  has_unnamed_param ; param=primitive_wchar_ptr | mod:ptr_to_const                     67
+  plain_function ; param=opaque_ptr | mod:ptr_to_const                                 65
+  plain_function ; param=primitive_double                                              63
+  plain_function ; param=void_ptr | mod:ptr_to_const                                   61
+  plain_function ; param=char_ptr | mod:typedef_ptr                                    61
+  has_unnamed_param ; param=char_ptr                                                   60
+  plain_function ; param=primitive_long_ptr | mod:typedef_ptr                          57
+  plain_function ; param=struct_ptr | mod:ptr_to_const                                 57
+  plain_function ; param=struct_ptr                                                    51
+  plain_function ; param=primitive_float | mod:typedef_ref                             50
+  plain_function ; param=primitive_double_ptr                                          44
+  has_unnamed_param ; param=opaque_ptr | mod:typedef_ref                               44
+  has_unnamed_param ; param=double_ptr                                                 43
+  plain_function ; param=primitive_uint                                                43
+  plain_function ; param=primitive_uint_ptr | mod:ptr_to_const | mod:typedef_ptr       37
+  has_unnamed_param ; param=struct_ptr | mod:ptr_to_const                              37
+  plain_function ; param=double_ptr | mod:ptr_to_const | mod:typedef_ptr               36
+  has_unnamed_param ; param=struct_ptr                                                 36
+  has_unnamed_param ; param=void_ptr                                                   35
+  plain_function ; param=struct_by_value | mod:struct_by_value_small | mod:typedef_ref     35
+  plain_function ; param=primitive_int_ptr                                             35
+  has_unnamed_param ; param=struct_ptr | mod:ptr_to_const | mod:typedef_ptr            33
+  has_unnamed_param ; param=void_ptr | mod:ptr_to_const                                32
+  plain_function ; param=struct_by_value | mod:struct_by_value_large | mod:typedef_ref     31
+  plain_function ; param=void_ptr | mod:const_qualified | mod:typedef_ref              30
+  plain_function ; param=primitive_uchar | mod:typedef_ref                             27
+  has_unnamed_param ; param=primitive_int_ptr                                          26
+  has_unnamed_param ; param=primitive_int | mod:typedef_ref                            26
+  has_unnamed_param ; param=primitive_long | mod:typedef_ref                           24
+  has_unnamed_param + variadic ; param=const_char_ptr                                  23
+  plain_function ; param=primitive_uint_ptr                                            23
+  plain_function ; param=primitive_long | mod:const_qualified | mod:typedef_ref        22
+  has_unnamed_param ; param=primitive_uint                                             21
+  has_unnamed_param ; param=primitive_wchar_ptr                                        21
+  plain_function ; param=const_char_ptr | mod:typedef_ptr                              21
+  plain_function ; param=void_ptr | mod:typedef_ptr                                    21
+  plain_function ; param=primitive_float_ptr | mod:ptr_to_const | mod:typedef_ptr      20
+  plain_function ; param=primitive_ulong_ptr | mod:ptr_to_const | mod:typedef_ptr      19
+  plain_function ; param=void_ptr | mod:ptr_to_const | mod:typedef_ptr                 18
+  plain_function ; param=primitive_int_ptr | mod:ptr_to_const | mod:typedef_ptr        17
+  plain_function ; param=type_LVALUEREFERENCE                                          17
+  has_unnamed_param ; param=struct_by_value | mod:struct_by_value_large | mod:typedef_ref     16
+  plain_function ; param=primitive_int | mod:const_qualified | mod:typedef_ref         15
+  plain_function ; param=double_ptr | mod:ptr_to_const                                 15
