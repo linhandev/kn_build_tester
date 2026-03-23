@@ -5,6 +5,20 @@ from .classify import classify_type
 from .helpers import FileCache, relative_path, sysroot_of
 
 
+METADATA_ATTR_TAGS = frozenset({
+    "attr_availability",
+    "attr_visibility",
+    "attr_deprecated",
+})
+
+FUNCTION_GROUP_TAGS = frozenset({
+    "variadic",
+    "static_inline_with_body",
+    "inline_non_static",
+    "has_unnamed_param",
+})
+
+
 def _is_anonymous(cursor) -> bool:
     """Clang C++ mode gives unnamed types a descriptive spelling like
     '(unnamed enum at path:line:col)' instead of an empty string."""
@@ -23,102 +37,152 @@ def _loc(cursor, addtogroup_files):
     }
 
 
-def scan_function(cursor, fc: FileCache, atg, cov: Coverage):
+def _emit_shape_tags(prefix: str, info: dict) -> set[str]:
     tags: set[str] = set()
+    if info["base_tag"]:
+        tags.add(f"{prefix}_{info['base_tag']}")
+    tags.update(f"{prefix}_mod_{t}" for t in sorted(info["modifier_tags"]))
+    return tags
+
+
+def _shape_key(info: dict) -> str:
+    parts = []
+    if info["base_tag"]:
+        parts.append(info["base_tag"])
+    parts.extend(f"mod:{tag}" for tag in sorted(info["modifier_tags"]))
+    return " | ".join(parts) if parts else "(none)"
+
+
+def _function_group_key(tags: set[str]) -> str:
+    function_tags = sorted(t for t in tags if t in FUNCTION_GROUP_TAGS)
+    return " + ".join(function_tags) if function_tags else "plain_function"
+
+
+def _attribute_tag(attr_kind_name: str, spelling: str, source_lower: str) -> str:
+    sl = spelling.lower()
+    if "deprecated" in sl:
+        return "attr_deprecated"
+    if "visibility" in sl or attr_kind_name == "VISIBILITY_ATTR" or spelling.strip() == "default":
+        return "attr_visibility"
+    if "availability" in sl or "ohos" in sl or "introduced" in sl:
+        return "attr_availability"
+    if "format" in sl:
+        return "attr_format"
+    if "noreturn" in sl or "_noreturn" in sl:
+        return "attr_noreturn"
+    if "constructor" in sl:
+        return "attr_constructor"
+    if "packed" in sl or attr_kind_name == "PACKED_ATTR":
+        return "attr_packed"
+    if "aligned" in sl or attr_kind_name == "ALIGNED_ATTR":
+        return "attr_aligned"
+    if attr_kind_name == "CONST_ATTR":
+        return "attr_const"
+    if attr_kind_name == "ASM_LABEL_ATTR":
+        return "attr_asm_label"
+    if "__availability__" in source_lower or "introduced=" in source_lower:
+        return "attr_availability"
+    if "__deprecated__" in source_lower:
+        return "attr_deprecated"
+    if "napi_inner_extern" in source_lower or "napi_extern" in source_lower:
+        return "attr_visibility"
+    return f"attr_{attr_kind_name}"
+
+
+def _log_unhandled_child(child, fc: FileCache, cov: Coverage):
+    loc = child.location
+    filepath = str(loc.file) if loc.file else ""
+    cov.log_unhandled(
+        child.kind.name,
+        filepath,
+        loc.line if loc.file else 0,
+        fc.source_text(child, limit=200),
+    )
+
+
+def scan_function(cursor, fc: FileCache, atg, cov: Coverage):
+    function_flags: set[str] = set()
     info = _loc(cursor, atg)
     source = fc.source_text(cursor)
 
     ret = cursor.result_type
     ri = classify_type(ret, cov)
     canon_ret = ret.get_canonical()
-    if canon_ret.kind == ci.TypeKind.VOID:
-        tags.add("void_return")
-    elif canon_ret.kind == ci.TypeKind.POINTER:
-        tags.add("ptr_return")
-        tags.update(f"ret_{t}" for t in ri["tags"])
-    elif canon_ret.kind == ci.TypeKind.RECORD:
-        tags.add("struct_return_by_value")
+    ret_modifiers: set[str] = set()
+    ret_sizeof = -1
+    if canon_ret.kind == ci.TypeKind.RECORD:
+        decl = canon_ret.get_declaration()
+        is_union = decl and decl.kind == ci.CursorKind.UNION_DECL
+        ri["base_tag"] = "union_by_value" if is_union else "struct_by_value"
         sz = canon_ret.get_size()
+        ret_sizeof = sz
         if 0 < sz <= 16:
-            tags.add("struct_return_small")
+            ret_modifiers.add("abi_register_return")
         elif sz > 16:
-            tags.add("struct_return_large")
-    else:
-        tags.update(f"ret_{t}" for t in ri["tags"])
+            ret_modifiers.add("abi_indirect_return")
 
     try:
         if cursor.type.is_function_variadic():
-            tags.add("variadic")
+            function_flags.add("variadic")
     except Exception:
         pass
 
     stripped = source.lstrip()
     if stripped.startswith("static inline") or stripped.startswith("static __inline"):
-        tags.add("static_inline_with_body")
+        function_flags.add("static_inline_with_body")
     elif stripped.startswith("inline "):
-        tags.add("inline_non_static")
+        function_flags.add("inline_non_static")
 
     params = []
     for arg in cursor.get_arguments():
         at = arg.type
         ai = classify_type(at, cov)
-        ptags = set(ai["tags"])
         pname = arg.spelling or ""
         if not pname:
-            tags.add("has_unnamed_param")
+            function_flags.add("has_unnamed_param")
         ac = at.get_canonical()
+        param_sizeof = ai.get("sizeof", -1)
+        param_element_count = ai.get("element_count", -1)
+        param_group = {
+            "name": pname,
+            "type": at.spelling,
+            "base_tag": ai["base_tag"],
+            "modifier_tags": sorted(ai["modifier_tags"]),
+            "sizeof": param_sizeof,
+            "element_count": param_element_count,
+        }
         if ac.kind == ci.TypeKind.RECORD:
-            ptags.add("struct_by_value")
+            decl = ac.get_declaration()
+            is_union = decl and decl.kind == ci.CursorKind.UNION_DECL
+            param_group["base_tag"] = "union_by_value" if is_union else "struct_by_value"
             sz = ac.get_size()
+            param_group["sizeof"] = sz
             if 0 < sz <= 16:
-                ptags.add("struct_by_value_small")
+                param_group["modifier_tags"].append(
+                    "union_by_value_small" if is_union else "struct_by_value_small"
+                )
             elif sz > 16:
-                ptags.add("struct_by_value_large")
-        tags.update(f"param_{t}" for t in ptags)
-        params.append({"name": pname, "type": at.spelling, "tags": sorted(ptags)})
+                param_group["modifier_tags"].append(
+                    "union_by_value_large" if is_union else "struct_by_value_large"
+                )
+        params.append(param_group)
 
     attrs = []
+    attr_tags: set[str] = set()
     src_lower = source.lower()
     for child in cursor.get_children():
         cov.count_cursor(child.kind.name)
+        if child.kind == ci.CursorKind.PARM_DECL:
+            continue
         if child.kind.is_attribute():
             cov.count_attr(child.kind.name)
             sp = child.spelling or child.displayname or ""
             if not sp or sp == child.kind.name:
                 sp = fc.source_text(child, limit=300)
             attrs.append(sp)
-            sl = sp.lower()
-            attr_kind_name = child.kind.name
-            if "deprecated" in sl:
-                tags.add("attr_deprecated")
-            elif "visibility" in sl or attr_kind_name == "VISIBILITY_ATTR" or sp.strip() == "default":
-                tags.add("attr_visibility")
-            elif "availability" in sl or "ohos" in sl or "introduced" in sl:
-                tags.add("attr_availability")
-            elif "format" in sl:
-                tags.add("attr_format")
-            elif "noreturn" in sl or "_noreturn" in sl:
-                tags.add("attr_noreturn")
-            elif "constructor" in sl:
-                tags.add("attr_constructor")
-            elif "packed" in sl or attr_kind_name == "PACKED_ATTR":
-                tags.add("attr_packed")
-            elif "aligned" in sl or attr_kind_name == "ALIGNED_ATTR":
-                tags.add("attr_aligned")
-            elif attr_kind_name == "CONST_ATTR":
-                tags.add("attr_const")
-            elif attr_kind_name == "ASM_LABEL_ATTR":
-                tags.add("attr_asm_label")
-            elif "__availability__" in src_lower or "introduced=" in src_lower:
-                tags.add("attr_availability")
-            elif "__deprecated__" in src_lower:
-                tags.add("attr_deprecated")
-            elif "NAPI_INNER_EXTERN" in source or "NAPI_EXTERN" in source:
-                tags.add("attr_visibility")
-            else:
-                tags.add(f"attr_{attr_kind_name}")
-    if attrs:
-        tags.add("has_attributes")
+            attr_tags.add(_attribute_tag(child.kind.name, sp, src_lower))
+        else:
+            _log_unhandled_child(child, fc, cov)
 
     # Some attributes produce UNEXPOSED_ATTR in C++ mode; detect via source
     for attr_name, patterns in (
@@ -126,15 +190,78 @@ def scan_function(cursor, fc: FileCache, atg, cov: Coverage):
         ("attr_constructor", ("constructor))",)),
         ("attr_deprecated", ("deprecated",)),
     ):
-        if attr_name not in tags:
+        if attr_name not in attr_tags:
             if any(p in src_lower for p in patterns):
-                tags.add(attr_name)
-                tags.add("has_attributes")
+                attr_tags.add(attr_name)
 
-    return {**info, "kind": "function", "name": cursor.spelling,
-            "tags": sorted(tags), "source": source,
-            "details": {"return_type": ret.spelling, "return_tags": sorted(ri["tags"]),
-                        "params": params, "attributes": attrs}}
+    semantic_attr_tags = sorted(t for t in attr_tags if t not in METADATA_ATTR_TAGS)
+
+    ri["modifier_tags"].update(ret_modifiers)
+
+    function_group_key = _function_group_key(function_flags)
+    return_group = {
+        "base_tag": ri["base_tag"],
+        "modifier_tags": sorted(ri["modifier_tags"]),
+        "sizeof": ret_sizeof,
+        "key": _shape_key(ri),
+    }
+    param_groups = []
+    for idx, param in enumerate(params):
+        param_groups.append({
+            "index": idx,
+            "name": param["name"],
+            "base_tag": param["base_tag"],
+            "modifier_tags": param["modifier_tags"],
+            "key": _shape_key({
+                "base_tag": param["base_tag"],
+                "modifier_tags": set(param["modifier_tags"]),
+            }),
+        })
+    full_signature_parts = [function_group_key, f"ret={return_group['key']}"]
+    for pg in param_groups:
+        full_signature_parts.append(f"param[{pg['index']}]={pg['key']}")
+    full_signature_key = " ; ".join(full_signature_parts)
+
+    return {
+        **info,
+        "kind": "function",
+        "name": cursor.spelling,
+        "source": source,
+        "function_group_key": function_group_key,
+        "function_flags": sorted(function_flags),
+        "return": {
+            "c_type": ret.spelling,
+            "base_tag": ri["base_tag"],
+            "modifier_tags": sorted(ri["modifier_tags"]),
+            "sizeof": ret_sizeof,
+            "key": return_group["key"],
+        },
+        "parameters": [
+            {
+                "index": pg["index"],
+                "name": param["name"],
+                "c_type": param["type"],
+                "base_tag": pg["base_tag"],
+                "modifier_tags": pg["modifier_tags"],
+                "sizeof": param.get("sizeof", -1),
+                "element_count": param.get("element_count", -1),
+                "key": pg["key"],
+            }
+            for param, pg in zip(params, param_groups)
+        ],
+        "attributes": {
+            "spellings": attrs,
+            "tags": semantic_attr_tags,
+        },
+        "matrix_keys": {
+            "function_x_return": f"{function_group_key} ; ret={return_group['key']}",
+            "function_x_params": [
+                f"{function_group_key} ; param={pg['key']}"
+                for pg in param_groups
+            ],
+            "full_signature": full_signature_key,
+        },
+    }
 
 
 def scan_record(cursor, fc: FileCache, atg, cov: Coverage):
@@ -172,7 +299,10 @@ def scan_record(cursor, fc: FileCache, atg, cov: Coverage):
             has_any_field = True
             ft = child.type
             fi = classify_type(ft, cov)
-            ftags = set(fi["tags"])
+            ftags = set()
+            if fi["base_tag"]:
+                ftags.add(fi["base_tag"])
+            ftags.update(fi["modifier_tags"])
             if child.is_bitfield():
                 tags.add("has_bitfield")
                 ftags.add(f"bitfield_width_{child.get_bitfield_width()}")
@@ -215,6 +345,8 @@ def scan_record(cursor, fc: FileCache, atg, cov: Coverage):
                 tags.add("attr_packed")
             elif "aligned" in sp:
                 tags.add("attr_aligned")
+        else:
+            _log_unhandled_child(child, fc, cov)
 
     if has_any_field and all_fp and fields:
         tags.add("vtable_like")
@@ -252,6 +384,8 @@ def scan_enum(cursor, fc: FileCache, atg, cov: Coverage):
         if child.kind == ci.CursorKind.ENUM_CONSTANT_DECL:
             val = child.enum_value
             values.append({"name": child.spelling, "value": val})
+        else:
+            _log_unhandled_child(child, fc, cov)
     if any(v["value"] < 0 for v in values):
         tags.add("has_negative_values")
     if "=" in source:

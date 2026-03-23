@@ -19,10 +19,52 @@ from collections import Counter
 import clang.cindex as ci
 
 from scanner.config import OH_SYSROOT, HMS_SYSROOT
-from scanner.helpers import FileCache
+from scanner.helpers import FileCache, relative_path
 from scanner.coverage import Coverage
 from scanner.walker import walk
 from scanner.parse import find_addtogroup_headers, generate_umbrella, parse_tu
+
+
+def build_function_group_stats(entries: list[dict]) -> dict:
+    function_keys: Counter = Counter()
+    function_x_return: Counter = Counter()
+    function_x_param: Counter = Counter()
+    full_signature: Counter = Counter()
+    return_shapes: Counter = Counter()
+    param_shapes: Counter = Counter()
+
+    for entry in entries:
+        matrix = entry.get("matrix_keys", {})
+        return_group = entry.get("return", {})
+        param_groups = entry.get("parameters", [])
+
+        fgk = entry.get("function_group_key")
+        if fgk:
+            function_keys[fgk] += 1
+        fxr = matrix.get("function_x_return")
+        if fxr:
+            function_x_return[fxr] += 1
+        fs = matrix.get("full_signature")
+        if fs:
+            full_signature[fs] += 1
+        ret_key = return_group.get("key")
+        if ret_key:
+            return_shapes[ret_key] += 1
+        for fxp in matrix.get("function_x_params", []):
+            function_x_param[fxp] += 1
+        for param in param_groups:
+            pk = param.get("key")
+            if pk:
+                param_shapes[pk] += 1
+
+    return {
+        "function_keys": dict(function_keys.most_common()),
+        "function_x_return": dict(function_x_return.most_common()),
+        "function_x_param": dict(function_x_param.most_common()),
+        "full_signature": dict(full_signature.most_common()),
+        "return_shapes": dict(return_shapes.most_common()),
+        "param_shapes": dict(param_shapes.most_common()),
+    }
 
 
 def main():
@@ -55,6 +97,8 @@ def main():
         atg = {hdr}
         tu = parse_tu(index, hdr)
         walk(tu.cursor, entries, fc, atg, cov, allow_paths=allow_paths)
+        primary_rel = relative_path(hdr)
+        entries = [e for e in entries if e.get("file") == primary_rel]
     else:
         print("Finding @addtogroup headers ...", file=sys.stderr)
         headers = find_addtogroup_headers()
@@ -67,25 +111,39 @@ def main():
         print("Walking AST ...", file=sys.stderr)
         walk(tu.cursor, entries, fc, atg, cov)
 
-    print(f"\nCataloged {len(entries)} declarations", file=sys.stderr)
+    functions = [e for e in entries if e.get("kind") == "function"]
 
-    tag_counts: Counter = Counter()
-    for e in entries:
-        for t in e["tags"]:
-            tag_counts[t] += 1
+    print(f"\nCataloged {len(functions)} function declarations", file=sys.stderr)
 
     cov.print_stderr()
+    function_groups = build_function_group_stats(functions)
 
-    print(f"\nUnique grammar tags: {len(tag_counts)}", file=sys.stderr)
-    for tag, cnt in tag_counts.most_common():
-        print(f"  {tag:40s} {cnt:>6d}", file=sys.stderr)
+    print(f"\nUnique function group keys: {len(function_groups['function_keys'])}", file=sys.stderr)
+    for key, cnt in function_groups["function_keys"].items():
+        print(f"  {key:60s} {cnt:>6d}", file=sys.stderr)
+
+    print(f"\nUnique return shapes: {len(function_groups['return_shapes'])}", file=sys.stderr)
+    for key, cnt in function_groups["return_shapes"].items():
+        print(f"  {key:60s} {cnt:>6d}", file=sys.stderr)
+
+    print(f"\nUnique param shapes: {len(function_groups['param_shapes'])}", file=sys.stderr)
+    for key, cnt in function_groups["param_shapes"].items():
+        print(f"  {key:60s} {cnt:>6d}", file=sys.stderr)
+
+    print(f"\nUnique function x return groups: {len(function_groups['function_x_return'])}", file=sys.stderr)
+    for key, cnt in list(function_groups["function_x_return"].items())[:50]:
+        print(f"  {key:80s} {cnt:>6d}", file=sys.stderr)
+
+    print(f"\nUnique function x param groups: {len(function_groups['function_x_param'])}", file=sys.stderr)
+    for key, cnt in list(function_groups["function_x_param"].items())[:80]:
+        print(f"  {key:80s} {cnt:>6d}", file=sys.stderr)
 
     output = {
-        "entries": entries,
+        "functions": functions,
         "coverage": cov.report(),
         "stats": {
-            "total_entries": len(entries),
-            "tag_counts": dict(tag_counts.most_common()),
+            "total_functions": len(functions),
+            "function_groups": function_groups,
         },
     }
     json.dump(output, sys.stdout, indent=2, ensure_ascii=False)
