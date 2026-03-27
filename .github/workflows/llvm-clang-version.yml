@@ -1,0 +1,127 @@
+name: LLVM Clang version
+
+on:
+  workflow_dispatch:
+
+jobs:
+  clang-version-macos:
+    name: LLVM Clang (macOS x86_64)
+    runs-on: macos-15-intel  # x86_64 macOS
+    steps:
+      - name: LLVM (macOS x86_64) — download, extract, clang --version, embedded source
+        run: |
+          set -e
+          echo "=== Download ==="
+          curl -sL -o llvm.tar.gz "https://download.jetbrains.com/kotlin/native/resources/llvm/19-x86_64-macos/llvm-19-x86_64-macos-essentials-75.tar.gz"
+          ls -la llvm.tar.gz
+          echo ""
+          echo "=== Extract ==="
+          tar -xzf llvm.tar.gz
+          ls -la llvm-19-x86_64-macos-essentials-75/
+          echo ""
+          echo "=== clang --version ==="
+          CLANG_OUT=$(./llvm-19-x86_64-macos-essentials-75/bin/clang --version 2>&1)
+          echo "$CLANG_OUT"
+          echo ""
+          echo "=== Embedded version string (from binary) ==="
+          STRINGS_OUT=$(strings ./llvm-19-x86_64-macos-essentials-75/bin/clang | grep -E 'clang version [0-9].*\(https://github\.com' || true)
+          echo "$STRINGS_OUT"
+          {
+            echo "## LLVM Clang (macOS x86_64)"
+            echo ""
+            echo "### clang --version"
+            echo '```' && echo "$CLANG_OUT" && echo '```'
+            echo ""
+            echo "### Embedded version string (from binary)"
+            echo '```' && echo "$STRINGS_OUT" && echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  clang-version-macos-arm:
+    name: LLVM Clang (macOS ARM64)
+    runs-on: macos-15  # aarch64 Apple Silicon
+    steps:
+      - name: LLVM (macOS ARM64) — download, extract, clang --version, embedded source
+        run: |
+          set -e
+          echo "=== Download ==="
+          curl -sL -o llvm.tar.gz "https://download.jetbrains.com/kotlin/native/resources/llvm/19-aarch64-macos/llvm-19-aarch64-macos-essentials-79.tar.gz"
+          ls -la llvm.tar.gz
+          echo ""
+          echo "=== Extract ==="
+          tar -xzf llvm.tar.gz
+          ls -la llvm-19-aarch64-macos-essentials-79/
+          echo ""
+          echo "=== clang --version ==="
+          CLANG_OUT=$(./llvm-19-aarch64-macos-essentials-79/bin/clang --version 2>&1)
+          echo "$CLANG_OUT"
+          echo ""
+          echo "=== Embedded version string (from binary) ==="
+          STRINGS_OUT=$(strings ./llvm-19-aarch64-macos-essentials-79/bin/clang | grep -E 'clang version [0-9].*\(https://github\.com' || true)
+          echo "$STRINGS_OUT"
+          {
+            echo "## LLVM Clang (macOS ARM64)"
+            echo ""
+            echo "### clang --version"
+            echo '```' && echo "$CLANG_OUT" && echo '```'
+            echo ""
+            echo "### Embedded version string (from binary)"
+            echo '```' && echo "$STRINGS_OUT" && echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  clang-version-linux:
+    name: LLVM Clang (Linux x86_64)
+    runs-on: ubuntu-latest
+    steps:
+      - name: LLVM (Linux x86_64) — download, extract, clang --version, embedded source
+        run: |
+          set -e
+          echo "=== Download ==="
+          curl -sL -o llvm.tar.gz "https://download.jetbrains.com/kotlin/native/resources/llvm/19-x86_64-linux/llvm-19-x86_64-linux-essentials-103.tar.gz"
+          ls -la llvm.tar.gz
+          echo ""
+          echo "=== Extract ==="
+          tar -xzf llvm.tar.gz
+          ls -la llvm-19-x86_64-linux-essentials-103/
+          echo ""
+          echo "=== clang --version ==="
+          CLANG_OUT=$(./llvm-19-x86_64-linux-essentials-103/bin/clang --version 2>&1)
+          echo "$CLANG_OUT"
+          echo ""
+          echo "=== Embedded version string (from binary) ==="
+          STRINGS_OUT=$(strings ./llvm-19-x86_64-linux-essentials-103/bin/clang | grep -E 'clang version [0-9].*\(https://github\.com' || true)
+          echo "$STRINGS_OUT"
+          {
+            echo "## LLVM Clang (Linux x86_64)"
+            echo ""
+            echo "### clang --version"
+            echo '```' && echo "$CLANG_OUT" && echo '```'
+            echo ""
+            echo "### Embedded version string (from binary)"
+            echo '```' && echo "$STRINGS_OUT" && echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  clang-version-windows:
+    name: LLVM Clang (Windows x86_64)
+    runs-on: windows-latest
+    steps:
+      - name: LLVM (Windows x86_64) — download, extract, clang --version, embedded source
+        run: |
+          Write-Host "=== Download ==="
+          Invoke-WebRequest -Uri "https://download.jetbrains.com/kotlin/native/resources/llvm/19-x86_64-windows/llvm-19-x86_64-windows-essentials-134.zip" -OutFile llvm.zip -UseBasicParsing
+          Get-Item llvm.zip
+          Write-Host ""
+          Write-Host "=== Extract ==="
+          Expand-Archive -Path llvm.zip -DestinationPath .
+          Get-ChildItem llvm-19-x86_64-windows-essentials-134
+          Write-Host ""
+          Write-Host "=== clang --version ==="
+          $CLANG_OUT = .\llvm-19-x86_64-windows-essentials-134\bin\clang.exe --version 2>&1 | Out-String
+          Write-Host $CLANG_OUT
+          Write-Host ""
+          Write-Host "=== Embedded version string (from binary) ==="
+          $bytes = [System.IO.File]::ReadAllBytes("$PWD\llvm-19-x86_64-windows-essentials-134\bin\clang.exe")
+          $str = [System.Text.Encoding]::ASCII.GetString($bytes)
+          $STRINGS_OUT = ($str -split '\x00') | Where-Object { $_ -match 'clang version \d+\.\d+\.\d+ \(https://github\.com' }
+          $STRINGS_OUT = $STRINGS_OUT -join "`n"
+          Write-Host $STRINGS_OUT
+          "## LLVM Clang (Windows x86_64)", "", "### clang --version", '```', $CLANG_OUT.Trim(), '```', "", "### Embedded version string (from binary)", '```', $STRINGS_OUT, '```' | Add-Content -Path $env:GITHUB_STEP_SUMMARY
