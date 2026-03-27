@@ -1,1 +1,18 @@
 headers = gcov.h
+libraryPaths = libs
+linkerOpts = -lhilog_ndk.z -lace_napi.z -lc++_shared
+
+---
+
+#include <unistd.h>
+#include <sys/syscall.h>
+
+int get_tid() {
+    return (int)syscall(SYS_gettid);
+}
+
+int get_pid() {
+    return (int)getpid();
+}
+
+void test_gcov_c();

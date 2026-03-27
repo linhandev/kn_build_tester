@@ -1,0 +1,90 @@
+library {
+  // module name: <com.example:kotlinApp-cinterop-gcov>
+
+  library fragment {
+    // package name: gcov
+
+    package {
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov0_toKString")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun toKString(env: kotlinx/cinterop/CPointer<cnames/structs/napi_env__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_env^? */, value: kotlinx/cinterop/CPointer<cnames/structs/napi_value__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_value^? */): kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */>?
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov1_toUInt")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun toUInt(env: kotlinx/cinterop/CPointer<cnames/structs/napi_env__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_env^? */, value: kotlinx/cinterop/CPointer<cnames/structs/napi_value__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_value^? */): kotlin/UInt /* = platform/posix/uint32_t^ */
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov2_toInt")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun toInt(env: kotlinx/cinterop/CPointer<cnames/structs/napi_env__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_env^? */, value: kotlinx/cinterop/CPointer<cnames/structs/napi_value__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_value^? */): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov3_toLong")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun toLong(env: kotlinx/cinterop/CPointer<cnames/structs/napi_env__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_env^? */, value: kotlinx/cinterop/CPointer<cnames/structs/napi_value__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_value^? */): kotlin/Long
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov4_toBigInt")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun toBigInt(env: kotlinx/cinterop/CPointer<cnames/structs/napi_env__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_env^? */, value: kotlinx/cinterop/CPointer<cnames/structs/napi_value__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_value^? */): kotlin/Long
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov5_convertStringToNapiValue")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun convertStringToNapiValue(env: kotlinx/cinterop/CPointer<cnames/structs/napi_env__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_env^? */, @kotlinx/cinterop/internal/CCall.CString value: kotlin/String?): kotlinx/cinterop/CPointer<cnames/structs/napi_value__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_value^? */
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov6_convertIntToNapiValue")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun convertIntToNapiValue(env: kotlinx/cinterop/CPointer<cnames/structs/napi_env__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_env^? */, value: kotlin/Int): kotlinx/cinterop/CPointer<cnames/structs/napi_value__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_value^? */
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov7_convertUIntToNapiValue")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun convertUIntToNapiValue(env: kotlinx/cinterop/CPointer<cnames/structs/napi_env__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_env^? */, value: kotlin/UInt /* = platform/posix/uint32_t^ */): kotlinx/cinterop/CPointer<cnames/structs/napi_value__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_value^? */
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov8_convertLongToNapiValue")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun convertLongToNapiValue(env: kotlinx/cinterop/CPointer<cnames/structs/napi_env__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_env^? */, value: kotlin/Long): kotlinx/cinterop/CPointer<cnames/structs/napi_value__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_value^? */
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov9_convertBigIntToNapiValue")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun convertBigIntToNapiValue(env: kotlinx/cinterop/CPointer<cnames/structs/napi_env__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_env^? */, value: kotlin/Long): kotlinx/cinterop/CPointer<cnames/structs/napi_value__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_value^? */
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov10_toBoolean")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun toBoolean(env: kotlinx/cinterop/CPointer<cnames/structs/napi_env__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_env^? */, value: kotlinx/cinterop/CPointer<cnames/structs/napi_value__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_value^? */): kotlin/Boolean
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov11_convertBooleanToNapiValue")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun convertBooleanToNapiValue(env: kotlinx/cinterop/CPointer<cnames/structs/napi_env__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_env^? */, value: kotlin/Boolean): kotlinx/cinterop/CPointer<cnames/structs/napi_value__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_value^? */
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov12_toDouble")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun toDouble(env: kotlinx/cinterop/CPointer<cnames/structs/napi_env__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_env^? */, value: kotlinx/cinterop/CPointer<cnames/structs/napi_value__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_value^? */): kotlin/Double
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov13_convertDoubleToNapiValue")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun convertDoubleToNapiValue(env: kotlinx/cinterop/CPointer<cnames/structs/napi_env__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_env^? */, value: kotlin/Double): kotlinx/cinterop/CPointer<cnames/structs/napi_value__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_value^? */
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov14_toFloat")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun toFloat(env: kotlinx/cinterop/CPointer<cnames/structs/napi_env__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_env^? */, value: kotlinx/cinterop/CPointer<cnames/structs/napi_value__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_value^? */): kotlin/Float
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov15_convertFloatToNapiValue")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun convertFloatToNapiValue(env: kotlinx/cinterop/CPointer<cnames/structs/napi_env__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_env^? */, value: kotlin/Float): kotlinx/cinterop/CPointer<cnames/structs/napi_value__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_value^? */
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov16_typeOf")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun typeOf(env: kotlinx/cinterop/CPointer<cnames/structs/napi_env__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_env^? */, value: kotlinx/cinterop/CPointer<cnames/structs/napi_value__>? /* = platform/ArkTS/ArkTS_Napi_NativeModule/napi_value^? */): platform/ArkTS/ArkTS_Napi_NativeModule/napi_valuetype
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov17_get_tid")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun get_tid(): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov18_get_pid")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun get_pid(): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_gcov19_test_gcov_c")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun test_gcov_c(): kotlin/Unit
+    }
+  }
+}

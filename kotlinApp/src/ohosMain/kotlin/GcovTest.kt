@@ -7,6 +7,7 @@ import com.example.sugarlib.complexSugarFunction
 
 @kotlinx.cinterop.ExperimentalForeignApi
 actual fun runGcovTest() {
+    napi_va
     val size = 10
     val overflow = 1000
     if (size > overflow) {

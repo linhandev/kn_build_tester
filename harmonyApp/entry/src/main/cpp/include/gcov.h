@@ -1,14 +1,48 @@
-#ifndef GCOV_TEST_H
-#define GCOV_TEST_H
+#include "napi/native_api.h"
+#include "js_native_api.h"
+#include "js_native_api_types.h"
 
+#ifndef NAPI_BRIDGE_TYPE_CONVERTER_H
+#define NAPI_BRIDGE_TYPE_CONVERTER_H
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void test_gcov_c();
+char *toKString(napi_env env, napi_value value);
+
+uint32_t toUInt(napi_env env, napi_value value);
+
+int toInt(napi_env env, napi_value value);
+
+long toLong(napi_env env, napi_value value);
+
+long toBigInt(napi_env env, napi_value value);
+
+napi_value convertStringToNapiValue(napi_env env, const char *value);
+
+napi_value convertIntToNapiValue(napi_env env, int value);
+
+napi_value convertUIntToNapiValue(napi_env env, uint32_t value);
+
+napi_value convertLongToNapiValue(napi_env env, long value);
+
+napi_value convertBigIntToNapiValue(napi_env env, long value);
+
+bool toBoolean(napi_env env, napi_value value);
+
+napi_value convertBooleanToNapiValue(napi_env env, bool value);
+
+double toDouble(napi_env env, napi_value value);
+
+napi_value convertDoubleToNapiValue(napi_env env, double value);
+
+float toFloat(napi_env env, napi_value value);
+
+napi_value convertFloatToNapiValue(napi_env env, float value);
+
+napi_valuetype typeOf(napi_env env, napi_value value);
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif
+#endif //NAPI_BRIDGE_TYPE_CONVERTER_H
