@@ -18,6 +18,7 @@ kotlin {
             dependencies {
                 implementation("com.example:switchLib:1.0-SNAPSHOT")
                 implementation(project(":sugarLib"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2-0.0.1-rc2")
             }
         }
         binaries {
