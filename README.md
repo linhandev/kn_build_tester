@@ -1,4 +1,4 @@
-ets 调用 testNapi.add 触发 so 加载，so中存在对未定义符号的调用（编译时通过 --unresolved-symbols=ignore-all 绕过，运行时间崩溃，模拟伙伴场景）
+ets 调用 testNapi.add 触发 so 加载，so中存在对未定义函数 the_missing_symbol 的调用（编译时通过 --unresolved-symbols=ignore-all 绕过了，运行时间崩溃，模拟伙伴场景）
 
 问题：
 - faultlog开头是和缺少符号无关的问题
