@@ -4,6 +4,7 @@ pluginManagement {
         maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
         gradlePluginPortal()
         mavenCentral()
+        maven("https://maven.eazytec-cloud.com/nexus/repository/maven-public/")
     }
 }
 
@@ -13,6 +14,7 @@ dependencyResolutionManagement {
         maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
         maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
         mavenCentral()
+        maven("https://maven.eazytec-cloud.com/nexus/repository/maven-public/")
     }
 }
 

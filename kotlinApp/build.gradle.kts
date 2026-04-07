@@ -1,5 +1,6 @@
 plugins {
-    kotlin("multiplatform") version "2.0.21-KBA-014"
+    // kotlin("multiplatform") version "2.0.21-KBA-014"
+    kotlin("multiplatform") version "2.2.21-EZ.0.2.0-05"
 }
 
 group = "com.example"
@@ -9,6 +10,14 @@ fun String.capitalize() = replaceFirstChar { it.uppercase() }
 
 kotlin {
     ohosArm64 {
+        compilations.named("main") {
+            cinterops {
+                val i18n_tz by creating {
+                    definitionFile.set(project.file("src/nativeInterop/cinterop/i18n_tz.def"))
+                    compilerOpts("-I", project.file("src/nativeInterop/cinterop").absolutePath)
+                }
+            }
+        }
         binaries {
             sharedLib {
                 baseName = "c2k"

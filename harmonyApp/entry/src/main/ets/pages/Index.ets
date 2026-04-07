@@ -8,6 +8,12 @@ const DOMAIN = 0x0000;
 struct Index {
   @State message: string = 'Hello World';
 
+  aboutToAppear(): void {
+    const tzMsg: string = testNapi.getTimeZoneRulesViaI18n();
+    hilog.info(DOMAIN, 'testTag', '[auto] GetTimeZoneRules %{public}s', tzMsg);
+    this.message = tzMsg;
+  }
+
   build() {
     Row() {
       Column() {
@@ -18,6 +24,9 @@ struct Index {
             this.message = 'Welcome';
             testNapi.runHelloWorld();
             hilog.info(DOMAIN, 'testTag', 'NAPI add 2 + 3 = %{public}d', testNapi.add(2, 3));
+            const tzMsg: string = testNapi.getTimeZoneRulesViaI18n();
+            hilog.info(DOMAIN, 'testTag', 'GetTimeZoneRules %{public}s', tzMsg);
+            this.message = tzMsg;
           })
       }
       .width('100%')

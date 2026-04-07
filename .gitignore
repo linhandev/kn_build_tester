@@ -11,6 +11,7 @@ gcov/
 
 # Gradle
 .gradle/
+.kotlin/
 build/
 kotlinApp/build/
 

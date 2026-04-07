@@ -1,0 +1,3 @@
+headers = i18n_tz_shim.h
+headerFilter = i18n_tz_shim.h
+package = i18n.tz.shim
