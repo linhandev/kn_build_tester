@@ -1,5 +1,6 @@
 plugins {
-    kotlin("multiplatform") version "2.0.21-KBA-014"
+    // kotlin("multiplatform") version "2.0.21-KBA-014"
+    kotlin("multiplatform") version "2.2.21-OH.0.1.0-07"
 }
 
 group = "com.example"
@@ -13,6 +14,8 @@ kotlin {
             sharedLib {
                 baseName = "c2k"
                 freeCompilerArgs += "-Xadd-light-debug=enable"
+                // Keep runtime/static libs' DWARF in the linked .so (pairs with kotlin.native.isNativeRuntimeDebugInfoEnabled in Kotlin repo local.properties).
+                freeCompilerArgs += "-Xbinary=stripDebugInfoFromNativeLibs=false"
             }
         }
     }
@@ -31,7 +34,7 @@ arrayOf("debug", "release").forEach { type ->
         val buildTaskName = "link${type.capitalize()}Shared${buildTaskSuffix.capitalize()}"
         dependsOn(buildTaskName)
 
-        val binDir = tasks.getByName(buildTaskName).outputs.files.single()
+        val binDir = tasks.getByName(buildTaskName).outputs.files.sicursongle()
         val soSrc = binDir.resolve("lib${baseName}.so")
         val headerSrc = binDir.resolve("lib${baseName}_api.h")
 
