@@ -17,7 +17,7 @@
   },
   "buildOptionSet": [
     {
-      "name": "release",
+      "name": "debug",
       "arkOptions": {
         "obfuscation": {
           "ruleOptions": {
@@ -30,7 +30,7 @@
       },
       "nativeLib": {
         "debugSymbol": {
-          "strip": true,
+          "strip": false,
           "exclude": []
         }
       }

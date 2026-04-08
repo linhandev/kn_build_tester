@@ -13,7 +13,8 @@ kotlin {
         binaries {
             sharedLib {
                 baseName = "c2k"
-                freeCompilerArgs += "-Xadd-light-debug=enable"
+                // Use full DWARF for reliable llvm-addr2line line mapping in libc2k.so.
+                freeCompilerArgs += "-g"
                 // Keep runtime/static libs' DWARF in the linked .so (pairs with kotlin.native.isNativeRuntimeDebugInfoEnabled in Kotlin repo local.properties).
                 freeCompilerArgs += "-Xbinary=stripDebugInfoFromNativeLibs=false"
             }
@@ -34,7 +35,7 @@ arrayOf("debug", "release").forEach { type ->
         val buildTaskName = "link${type.capitalize()}Shared${buildTaskSuffix.capitalize()}"
         dependsOn(buildTaskName)
 
-        val binDir = tasks.getByName(buildTaskName).outputs.files.sicursongle()
+        val binDir = tasks.getByName(buildTaskName).outputs.files.single()
         val soSrc = binDir.resolve("lib${baseName}.so")
         val headerSrc = binDir.resolve("lib${baseName}_api.h")
 

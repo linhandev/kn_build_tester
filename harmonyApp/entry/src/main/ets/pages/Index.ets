@@ -8,6 +8,11 @@ const DOMAIN = 0x0000;
 struct Index {
   @State message: string = 'Hello World';
 
+  aboutToAppear(): void {
+    this.message = 'Crashing on startup for symbolication test';
+    testNapi.runHelloWorld();
+  }
+
   build() {
     Row() {
       Column() {
@@ -16,7 +21,6 @@ struct Index {
           .fontWeight(FontWeight.Bold)
           .onClick(() => {
             this.message = 'Welcome';
-            testNapi.runHelloWorld();
             hilog.info(DOMAIN, 'testTag', 'NAPI add 2 + 3 = %{public}d', testNapi.add(2, 3));
           })
       }
