@@ -1,6 +1,8 @@
 #include "napi/native_api.h"
 
 extern "C" const char* kn_helloworld(void);
+extern "C" int g_oh_log_print_hook_calls;
+extern "C" void entry_call_oh_log_print(void);
 
 static napi_value RunHelloWorld(napi_env env, napi_callback_info info)
 {
@@ -41,12 +43,24 @@ static napi_value Add(napi_env env, napi_callback_info info)
 
 }
 
+static napi_value TestOhLogHook(napi_env env, napi_callback_info info)
+{
+    (void)info;
+    const int before = g_oh_log_print_hook_calls;
+    entry_call_oh_log_print();
+    const int after = g_oh_log_print_hook_calls;
+    napi_value result;
+    napi_get_boolean(env, after > before, &result);
+    return result;
+}
+
 EXTERN_C_START
 static napi_value Init(napi_env env, napi_value exports)
 {
     napi_property_descriptor desc[] = {
         { "add", nullptr, Add, nullptr, nullptr, nullptr, napi_default, nullptr },
-        { "runHelloWorld", nullptr, RunHelloWorld, nullptr, nullptr, nullptr, napi_default, nullptr }
+        { "runHelloWorld", nullptr, RunHelloWorld, nullptr, nullptr, nullptr, napi_default, nullptr },
+        { "testOhLogHook", nullptr, TestOhLogHook, nullptr, nullptr, nullptr, napi_default, nullptr }
     };
     napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc);
     return exports;

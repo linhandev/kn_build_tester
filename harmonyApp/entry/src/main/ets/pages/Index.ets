@@ -12,6 +12,8 @@ struct Index {
     try {
       this.message = testNapi.runHelloWorld();
       hilog.info(DOMAIN, 'testTag', 'Kotlin greeting: %{public}s', this.message);
+      const hookOk = testNapi.testOhLogHook();
+      hilog.info(DOMAIN, 'testTag', 'OH_LOG_Print hook (-Wl,--wrap): %{public}s', hookOk ? 'OK' : 'FAIL');
     } catch (err) {
       hilog.error(DOMAIN, 'testTag', 'runHelloWorld failed: %{public}s', JSON.stringify(err));
     }
