@@ -5,4 +5,4 @@ alwaysApply: true
 
 # Rebuild and crash check
 
-When an edit is **finished**, run from repo root `./scripts/build-and-check-crash.sh`, the build & run test should exit 0. This script performs a full rebuild, reinstalls the hap and checks if there's a crash on start.
+When an edit is **finished**, run from repo root `./scripts/build-and-check-crash.sh`, the build & run test should exit 0. This script performs a full rebuild, reinstalls the hap, checks for a crash on start, and **when `hdc` has a connected device** runs `./scripts/assert-log-hook-device.sh` to verify the `OH_LOG_PrintMsg` wrap sample emitted the expected HiLog lines (count from `LOG_HOOK_SAMPLE_LINES` in `log_caller.c`).

@@ -16,6 +16,8 @@ fi
 
 if command -v hdc >/dev/null 2>&1 && hdc list targets 2>/dev/null | tr -d '\r' | grep -q .; then
   sleep 3
+  # Fails the script if wrap sample did not emit expected HiLog lines (see bridge.md, log_caller.c).
+  ASSERT_LOG_HOOK_STRICT=1 "$_script_dir/assert-log-hook-device.sh"
   after="$(hdc shell "ls -t /data/log/faultlog/faultlogger/" 2>/dev/null | tr -d '\r' | grep -F "$bundle" | head -1 || true)"
   if [[ -n "$after" && "$before" != "$after" ]]; then
     mkdir -p build/crash-check

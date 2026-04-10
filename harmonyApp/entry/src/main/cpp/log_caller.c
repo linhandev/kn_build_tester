@@ -1,7 +1,19 @@
 #include "hilog/log.h"
+#include <stdio.h>
 
-/* Called from entry NAPI: exercises the same C API used with -lhilog_ndk.z. */
-void entry_call_oh_log_print(void)
+#define LOG_HOOK_SAMPLE_LINES 5
+
+/* Several PrintMsg calls so HiLog shows multiple wrapped lines (tag LogHookTest). */
+void entry_call_oh_log_msg(void)
 {
-    OH_LOG_Print(LOG_APP, LOG_INFO, 0x0000, "LogHookTest", "%{public}s", "entry_caller");
+    for (int i = 1; i <= LOG_HOOK_SAMPLE_LINES; i++) {
+        char msg[64];
+        (void)snprintf(msg, sizeof msg, "entry_caller line %d", i);
+        OH_LOG_PrintMsg(LOG_APP, LOG_INFO, 0x0000, "LogHookTest", msg);
+    }
+}
+
+int entry_log_hook_sample_line_count(void)
+{
+    return LOG_HOOK_SAMPLE_LINES;
 }

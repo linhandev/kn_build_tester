@@ -2,7 +2,8 @@
 
 extern "C" const char* kn_helloworld(void);
 extern "C" int g_oh_log_print_hook_calls;
-extern "C" void entry_call_oh_log_print(void);
+extern "C" void entry_call_oh_log_msg(void);
+extern "C" int entry_log_hook_sample_line_count(void);
 
 static napi_value RunHelloWorld(napi_env env, napi_callback_info info)
 {
@@ -47,10 +48,11 @@ static napi_value TestOhLogHook(napi_env env, napi_callback_info info)
 {
     (void)info;
     const int before = g_oh_log_print_hook_calls;
-    entry_call_oh_log_print();
+    entry_call_oh_log_msg();
     const int after = g_oh_log_print_hook_calls;
+    const int expected = entry_log_hook_sample_line_count();
     napi_value result;
-    napi_get_boolean(env, after > before, &result);
+    napi_get_boolean(env, after - before == expected, &result);
     return result;
 }
 

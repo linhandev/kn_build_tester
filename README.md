@@ -42,3 +42,7 @@ hdc file recv "/data/log/faultlog/freeze_ext/$latest" ./
 ```
 
 If `latest` is empty, list recent files and pick the one whose name matches your bundle: `hdc shell "ls -lt /data/log/faultlog/faultlogger/ | head -n 20"`.
+
+## Native log-wrap sample assertion
+
+With a device connected, `./scripts/build-and-check-crash.sh` also runs `./scripts/assert-log-hook-device.sh`, which checks HiLog for the `OH_LOG_PrintMsg` wrap demo (`LOG_HOOK_SAMPLE_LINES` in `harmonyApp/entry/src/main/cpp/log_caller.c`). See **`bridge.md`** for details.

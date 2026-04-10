@@ -1,4 +1,4 @@
 export const add: (a: number, b: number) => number;
 export const runHelloWorld: () => string;
-/** True if __wrap_OH_LOG_Print ran (see -Wl,--wrap=OH_LOG_Print when linking libentry). */
+/** True if five wrapped OH_LOG_PrintMsg calls ran (counter delta matches sample line count). */
 export const testOhLogHook: () => boolean;

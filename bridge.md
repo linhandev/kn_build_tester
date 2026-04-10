@@ -1,39 +1,54 @@
-## 桥接 / 拦截 HarmonyOS NDK C 调用（示例：`OH_LOG_Print`）
+## 桥接 / 拦截 HarmonyOS NDK C 调用（示例：`OH_LOG_PrintMsg`）
 
-本示例演示如何用 **wrap（包装）** 方式拦截系统 C API：先执行你的逻辑（例如计数），再 **转发** 到真实实现。NDK 中的符号名是 **`OH_LOG_Print`**（见 `hilog/log.h`），不是 `oh_log_print`。
+本示例用 HiLog 的 **`OH_LOG_PrintMsg`**（`hilog/log.h`）：**固定参数** `(type, level, domain, tag, message)`，整段字符串、无 `printf` 式格式化。NDK 标注 **API 18+**；`minAPI` 不足时需换符号或升版本。
+
+典型流程：**`-Wl,--wrap=OH_LOG_PrintMsg`** → 调用点进 **`__wrap_OH_LOG_PrintMsg`** → 自增计数、改写或附加信息后 **`__real_OH_LOG_PrintMsg(...)`** 交给系统库。`__wrap_` 与调用点须 **同一次链接** 进目标 `.so`（源文件、`.o` 或由 bitcode 链入的对象均可）。
 
 ### 为何「再做一个导出同名符号的应用 `.so`」通常不合适
 
-在另一个动态库里实现 `OH_LOG_Print`，并在链接时把它排在 `libhilog_ndk.z.so` 之前，在本工程里 **不可靠**：**`libc2k.so`（Kotlin/Native 产物）** 的 **`DT_NEEDED`** 里已经包含 **`libhilog_ndk.z.so`**。动态加载器往往会先把 `OH_LOG_Print` 绑定到 **系统** HiLog，你的额外 `.so` 很难在运行时靠「重复符号」抢在前面，因此这种插桩方式多数情况下 **会失败**。
+**`libc2k.so`（Kotlin/Native）** 已 **`DT_NEEDED`** **`libhilog_ndk.z.so`**，动态加载器往往先绑定系统 HiLog；靠第二个应用 `.so` 重复导出同名符号抢解析 **不可靠**。
 
-### 推荐做法：在链接 **同一份** `libentry.so` 时使用链接器 wrap
+### CMake（本仓库）
 
-类 GNU 的链接器（OHOS 原生构建所用工具链通常支持）提供 **`-Wl,--wrap=符号名`**。在 **生成包含调用点的那个共享库**（此处为 `libentry.so`）时传入该选项，会把对 `symbol` 的调用改写成对 **`__wrap_symbol`** 的调用。把 `__wrap_symbol` 放在 **静态库** 里并链进 **同一个** `.so`，wrap 作用在 **链接这一侧**；若做成单独的 `.so`，wrap 行为往往对不上调用方。
+见 **`harmonyApp/entry/src/main/cpp/CMakeLists.txt`**：
 
-在 **`harmonyApp/entry/src/main/cpp/CMakeLists.txt`** 中典型配置为：
+- `add_library(entry SHARED napi_init.cpp log_caller.c log_hook.c)`
+- `target_link_options(entry PRIVATE "-Wl,--wrap=OH_LOG_PrintMsg")`
+- `target_link_libraries(entry PUBLIC ... hilog_ndk.z)`
 
-- 使用 **静态** hook 库：`add_library(loghook STATIC log_hook.c)`。
-- 传入 wrap 选项：`target_link_options(entry PRIVATE "-Wl,--wrap=OH_LOG_Print")`。
-- 把静态库链进 `entry`：`target_link_libraries(entry PRIVATE loghook)`。
-- 仍要链接 **`hilog_ndk.z`**，以便转发到真实 HiLog：`target_link_libraries(entry PUBLIC ... hilog_ndk.z)`。
+### 本示例在做什么
 
-### 实现要点：计数 + 继续正常打日志
+- **`log_hook.c`**：`__wrap_` 里 **`[wrap #序号] 原 message`** 再 **`__real_`**。
+- **`log_caller.c`**：连续 **`LOG_HOOK_SAMPLE_LINES`** 次 **`OH_LOG_PrintMsg`**（tag **`LogHookTest`**）。
+- **NAPI `testOhLogHook`**（**`napi_init.cpp`**）：校验计数增量是否等于 **`entry_log_hook_sample_line_count()`**。
 
-在 C 里无法把可变参数 `...` **可移植地** 直接转发给 `__real_OH_LOG_Print`；需要带 **`va_list`** 的入口。NDK 提供 **`OH_LOG_VPrint`**，适合作为桥梁：先自增计数器，再对 `fmt` 使用 `va_start` / `va_end`，调用 **`OH_LOG_VPrint(..., fmt, ap)`**，与 `OH_LOG_Print` 走同一套 HiLog 管线。
+### 自动化断言（给后续迭代 / Agent）
 
-实现见 **`harmonyApp/entry/src/main/cpp/log_hook.c`**（`__wrap_OH_LOG_Print`）与 **`log_caller.c`**（普通调用 `OH_LOG_Print`，经链接器改写后进入 wrap）。
+连接设备且存在 **`hdc`** 时，**`./scripts/build-and-check-crash.sh`** 在安装并拉起应用后会执行：
 
-ArkTS 侧可通过 `libentry.so` 上的 **`testOhLogHook`** 做简单校验（NAPI 注册在 **`napi_init.cpp`**）。
+`ASSERT_LOG_HOOK_STRICT=1 ./scripts/assert-log-hook-device.sh`
 
-### 官方支持的替代方案（不做符号包装）
+脚本从 **`log_caller.c`** 读取 **`#define LOG_HOOK_SAMPLE_LINES`**，在 **`hilog -T LogHookTest`** 输出中要求至少该数量的 **`entry_caller line`** 与 **`[wrap #`**；不满足则 **exit 1**（用于抓回归）。无设备时跳过。
 
-若只需观察或处理格式化后的日志，可使用 NDK 文档中的 **`OH_LOG_SetCallback`**（回调方式；无需 `LD_PRELOAD` 或 `--wrap`）。在 API 级别与策略允许时，更适合作为偏「生产向」的拦截手段。
+单独运行 **`./scripts/assert-log-hook-device.sh`**（未设 **`ASSERT_LOG_HOOK_STRICT=1`**）且 HiLog 里 **完全没有** 匹配行时 **exit 0 跳过**，避免未先装包/拉起应用时的误报。
+
+修改样本行数时：**只改** `LOG_HOOK_SAMPLE_LINES`（**`entry_log_hook_sample_line_count()`** 已同源）。
+
+### 其他非可变参数的 HiLog 入口
+
+- **`OH_LOG_PrintMsg`**：本示例所用。
+- **`OH_LOG_PrintMsgByLen`**：带长度字段（API 18+）。
+
+### 附注：可变参数 API（实际 CAPI 中占比很小，仅作备忘）
+
+少数接口是 **`Foo(...)`** 形式。绝大多数桥接场景仍是 **固定参数** + **`__real_`**，与本文主流程一致。若遇到 **可变参数** 且库内另有 **`FooV(..., va_list)`**，可在 `__wrap_` 里用 `va_start` / **`FooV`** / `va_end` 转发。若 **只有** `...` **没有** `v` 版，ISO C/C++ **不能** 可移植地把 `...` 转给 `__real_Foo`；应优先 **换拦截点**（更底层的非 `...` 符号），而不是在链接期硬 wrap。编译器扩展（如部分工具链的 `__builtin_va_arg_pack`）或 **libffi** 等仅作权宜，**OHOS BiSheng** 等环境往往不可用，**不要**当作默认方案。
 
 ### 文件速查
 
 | 内容 | 路径 |
 | --- | --- |
-| CMake：wrap、静态 `loghook`、`hilog_ndk.z` | `harmonyApp/entry/src/main/cpp/CMakeLists.txt` |
-| `__wrap_OH_LOG_Print` 与 `OH_LOG_VPrint` 转发 | `harmonyApp/entry/src/main/cpp/log_hook.c` |
-| 调用点 | `harmonyApp/entry/src/main/cpp/log_caller.c` |
-| NAPI 测试导出 | `harmonyApp/entry/src/main/cpp/napi_init.cpp` |
+| CMake | `harmonyApp/entry/src/main/cpp/CMakeLists.txt` |
+| `__wrap_` + `__real_` | `harmonyApp/entry/src/main/cpp/log_hook.c` |
+| 多次调用 + `LOG_HOOK_SAMPLE_LINES` | `harmonyApp/entry/src/main/cpp/log_caller.c` |
+| NAPI | `harmonyApp/entry/src/main/cpp/napi_init.cpp` |
+| 设备 HiLog 断言 | `scripts/assert-log-hook-device.sh` |
