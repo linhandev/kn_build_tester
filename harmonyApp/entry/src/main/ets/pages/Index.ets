@@ -24,8 +24,13 @@ struct Index {
           .fontSize($r('app.float.page_text_font_size'))
           .fontWeight(FontWeight.Bold)
           .onClick(() => {
-            this.message = 'Welcome';
+            this.message = testNapi.runLibbacktraceDemo();
             hilog.info(DOMAIN, 'testTag', 'NAPI add 2 + 3 = %{public}d', testNapi.add(2, 3));
+          })
+        Text('Crash for fault log')
+          .fontSize($r('app.float.page_text_font_size'))
+          .onClick(() => {
+            testNapi.runLibbacktraceCrash();
           })
       }
       .width('100%')

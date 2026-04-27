@@ -1,6 +1,8 @@
 #include "napi/native_api.h"
 
 extern "C" const char* kn_helloworld(void);
+extern "C" const char* kn_libbacktrace_demo(void);
+extern "C" void kn_libbacktrace_crash(void);
 
 static napi_value RunHelloWorld(napi_env env, napi_callback_info info)
 {
@@ -12,6 +14,22 @@ static napi_value RunHelloWorld(napi_env env, napi_callback_info info)
     }
     napi_value result;
     napi_create_string_utf8(env, msg, NAPI_AUTO_LENGTH, &result);
+    return result;
+}
+
+static napi_value RunLibbacktraceDemo(napi_env env, napi_callback_info info)
+{
+    const char* msg = kn_libbacktrace_demo();
+    napi_value result;
+    napi_create_string_utf8(env, msg == nullptr ? "" : msg, NAPI_AUTO_LENGTH, &result);
+    return result;
+}
+
+static napi_value RunLibbacktraceCrash(napi_env env, napi_callback_info info)
+{
+    kn_libbacktrace_crash();
+    napi_value result;
+    napi_get_undefined(env, &result);
     return result;
 }
 
@@ -46,7 +64,9 @@ static napi_value Init(napi_env env, napi_value exports)
 {
     napi_property_descriptor desc[] = {
         { "add", nullptr, Add, nullptr, nullptr, nullptr, napi_default, nullptr },
-        { "runHelloWorld", nullptr, RunHelloWorld, nullptr, nullptr, nullptr, napi_default, nullptr }
+        { "runHelloWorld", nullptr, RunHelloWorld, nullptr, nullptr, nullptr, napi_default, nullptr },
+        { "runLibbacktraceDemo", nullptr, RunLibbacktraceDemo, nullptr, nullptr, nullptr, napi_default, nullptr },
+        { "runLibbacktraceCrash", nullptr, RunLibbacktraceCrash, nullptr, nullptr, nullptr, napi_default, nullptr }
     };
     napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc);
     return exports;

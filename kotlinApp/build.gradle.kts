@@ -1,7 +1,5 @@
-val kotlinPluginVersion = providers.gradleProperty("kotlinVersion").orElse("2.2.21-OH.0.1.0-07")
-
 plugins {
-    kotlin("multiplatform") version kotlinPluginVersion.get()
+    kotlin("multiplatform") version "2.2.21-OH.0.1.0-07"
 }
 
 group = "com.example"
@@ -17,6 +15,7 @@ kotlin {
                 freeCompilerArgs += "-Xadd-light-debug=enable"
                 // Keep runtime/static libs' DWARF in the linked .so (pairs with kotlin.native.isNativeRuntimeDebugInfoEnabled in Kotlin repo local.properties).
                 freeCompilerArgs += "-Xbinary=stripDebugInfoFromNativeLibs=false"
+                freeCompilerArgs += "-Xbinary=sourceInfoType=libbacktrace"
             }
         }
     }

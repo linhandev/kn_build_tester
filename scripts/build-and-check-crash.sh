@@ -15,14 +15,21 @@ fi
 ./gradlew :kotlinApp:startHarmonyAppDebug --rerun-tasks --no-daemon
 
 if command -v hdc >/dev/null 2>&1 && hdc list targets 2>/dev/null | tr -d '\r' | grep -q .; then
-  sleep 3
-  after="$(hdc shell "ls -t /data/log/faultlog/faultlogger/" 2>/dev/null | tr -d '\r' | grep -F "$bundle" | head -1 || true)"
+  # Fault log generation is asynchronous after process abort; poll briefly.
+  after=""
+  for _ in {1..10}; do
+    sleep 2
+    after="$(hdc shell "ls -t /data/log/faultlog/faultlogger/" 2>/dev/null | tr -d '\r' | grep -F "$bundle" | head -1 || true)"
+    [[ -n "$after" && "$before" != "$after" ]] && break
+  done
+
   if [[ -n "$after" && "$before" != "$after" ]]; then
     mkdir -p build/crash-check
-    hdc file recv "/data/log/faultlog/faultlogger/$after" "build/crash-check/"
-    if grep -qE '^Reason:Signal:|^Reason:.*[Aa]bort' "build/crash-check/$after"; then
-      echo "Crash detected:"
-      tail -n +19 "build/crash-check/$after" | head -n 50 >&2
+    hdc file recv "/data/log/faultlog/faultlogger/$after" "build/crash-check/" >/dev/null
+    echo "New crash log: build/crash-check/$after"
+    rg '^Timestamp:|^Reason:' "build/crash-check/$after" || true
+    if rg -q '^Reason:Signal:|^Reason:.*[Aa]bort' "build/crash-check/$after"; then
+      echo "Crash detected."
       exit 1
     fi
   fi
