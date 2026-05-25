@@ -15,6 +15,8 @@ kotlin {
                 freeCompilerArgs += "-Xadd-light-debug=enable"
                 // Keep runtime/static libs' DWARF in the linked .so (pairs with kotlin.native.isNativeRuntimeDebugInfoEnabled in Kotlin repo local.properties).
                 freeCompilerArgs += "-Xbinary=stripDebugInfoFromNativeLibs=false"
+                // Reproduction: splitBCfile=2 triggers llvm-split invocation (ALI-36)
+                freeCompilerArgs += "-Xbinary=splitBCfile=2"
             }
         }
     }

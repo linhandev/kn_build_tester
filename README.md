@@ -1,44 +1,39 @@
-# Kotlin/Native Exception Demo (Minimal)
+# Reproduction: splitBCfile=2 Crash on OHOS arm64 (ALI-36)
 
-Keep `bare` branch a starting point for doing a demo, impl demos on another branch.
+## Issue
 
-Full build command.
+Compiling a Kotlin/Native project targeting ohosArm64 with `-Xbinary=splitBCfile=2` crashes because the `llvm-split` binary is missing from the LLVM toolchain bundle (`llvm-1914-aarch64-macos-dev-10`) shipped with konan CPF 2.2.21-0.3.0-04.
 
-```shell
-clear
-hdc uninstall com.kotlin.demo \
-./gradlew clean \
-./gradlew --stop \
-./gradlew startHarmonyAppDebug --rerun-tasks
-```
+## Environment
 
-## Bundle name (from project)
+- **OS**: macOS aarch64
+- **Java**: OpenJDK 21
+- **Kotlin/Native CPF**: 2.2.21-0.3.0-04
+- **LLVM toolchain**: llvm-1914-aarch64-macos-dev-10
+- **Target**: ohosArm64
 
-The installed app’s **bundle name** is **`app.bundleName`** in **`harmonyApp/AppScope/app.json5`** (for this sample it is `com.kotlin.demo`). Use the same value for `hdc uninstall`, `aa start`, and filtering crash logs.
-
-Read it from the repo (from the project root):
+## Reproduction Steps
 
 ```shell
-grep bundleName harmonyApp/AppScope/app.json5
+./gradlew clean :kotlinApp:linkDebugSharedOhosArm64 --no-daemon
 ```
 
-## Pull the latest crash / fault log for this app
+## Expected Error
 
-Fault dumps for apps usually land under **`/data/log/faultlog/faultlogger/`** (freeze-related dumps often under **`/data/log/faultlog/freeze_ext/`**). Filenames typically include the **bundle name**, so you can take the newest matching file.
+```
+llvm-split command: ~/.konan/dependencies/llvm-1914-aarch64-macos-dev-10/bin/llvm-split -j=2 -o=... --preserve-locals ...
+e: Compilation failed: Failed to execute llvm-split: Cannot run program
+  "~/.konan/dependencies/llvm-1914-aarch64-macos-dev-10/bin/llvm-split":
+  Exec failed, error: 2 (No such file or directory)
 
-From the project root (macOS/Linux; strips a trailing CR from `hdc` output):
-
-```shell
-bundle=$(grep bundleName harmonyApp/AppScope/app.json5 | sed -n 's/.*"bundleName"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
-latest=$(hdc shell "ls -t /data/log/faultlog/faultlogger/" | tr -d '\r' | grep -F "$bundle" | head -1)
-hdc file recv "/data/log/faultlog/faultlogger/$latest" ./
+  at org.jetbrains.kotlin.backend.konan.driver.phases.BitcodeKt.splitBitcodeFile-BzPDsQc(Bitcode.kt:599)
+  at org.jetbrains.kotlin.backend.konan.driver.phases.BitcodeKt.runBitcodePostProcessingCoroutines(Bitcode.kt:613)
 ```
 
-Freeze logs for the same app (same idea, different directory):
+## Control Test
 
-```shell
-latest=$(hdc shell "ls -t /data/log/faultlog/freeze_ext/" | tr -d '\r' | grep -F "$bundle" | head -1)
-hdc file recv "/data/log/faultlog/freeze_ext/$latest" ./
-```
+To verify that `splitBCfile=1` works (uses a different code path that does not invoke `llvm-split`), edit `kotlinApp/build.gradle.kts` and change `-Xbinary=splitBCfile=2` to `-Xbinary=splitBCfile=1`, then re-run the build command above. The build should succeed.
 
-If `latest` is empty, list recent files and pick the one whose name matches your bundle: `hdc shell "ls -lt /data/log/faultlog/faultlogger/ | head -n 20"`.
+## What's Changed from `bare`
+
+- Added `freeCompilerArgs += "-Xbinary=splitBCfile=2"` to the `sharedLib` block in `kotlinApp/build.gradle.kts`
