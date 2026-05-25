@@ -1,7 +1,5 @@
-val kotlinPluginVersion = providers.gradleProperty("kotlinVersion").orElse("2.2.21-OH.0.1.0-07")
-
 plugins {
-    kotlin("multiplatform") version kotlinPluginVersion.get()
+    kotlin("multiplatform")
 }
 
 group = "com.example"
