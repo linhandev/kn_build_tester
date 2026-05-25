@@ -1,44 +1,60 @@
-# Kotlin/Native Exception Demo (Minimal)
+# Reproduction: splitBCfile=2 Compilation Crash (ALI-24)
 
-Keep `bare` branch a starting point for doing a demo, impl demos on another branch.
+## Issue
 
-Full build command.
+Compiling a Kotlin/Native project targeting `ohosArm64` with `-Xbinary=splitBCfile=2` using konan CPF version `2.2.21-0.3.0-04` crashes because the `llvm-split` binary is missing from the LLVM toolchain bundle.
 
-```shell
-clear
-hdc uninstall com.kotlin.demo \
-./gradlew clean \
-./gradlew --stop \
-./gradlew startHarmonyAppDebug --rerun-tasks
+## Environment
+
+- **OS**: macOS (aarch64)
+- **Java**: OpenJDK 21.0.10 (Temurin)
+- **Kotlin/Native CPF**: 2.2.21-0.3.0-04
+- **LLVM toolchain**: llvm-1914-aarch64-macos-dev-10 (shipped with konan)
+- **Target**: ohosArm64
+
+## Quick Start
+
+```bash
+# Clone this branch
+git clone -b repro/ALI-24-splitBCfile-crash https://github.com/linhandev/kn_samples.git
+cd kn_samples
+
+# Reproduce the crash (splitBCfile=2 is already configured in kotlinApp/build.gradle.kts)
+./gradlew clean :kotlinApp:linkDebugSharedOhosArm64 --no-daemon
 ```
 
-## Bundle name (from project)
+## Expected Error
 
-The installed app’s **bundle name** is **`app.bundleName`** in **`harmonyApp/AppScope/app.json5`** (for this sample it is `com.kotlin.demo`). Use the same value for `hdc uninstall`, `aa start`, and filtering crash logs.
+```
+e: Compilation failed: Failed to execute llvm-split: Cannot run program
+  "<konan>/dependencies/llvm-1914-aarch64-macos-dev-10/bin/llvm-split":
+  Exec failed, error: 2 (No such file or directory)
 
-Read it from the repo (from the project root):
-
-```shell
-grep bundleName harmonyApp/AppScope/app.json5
+  at org.jetbrains.kotlin.backend.konan.driver.phases.BitcodeKt.splitBitcodeFile-BzPDsQc(Bitcode.kt:599)
 ```
 
-## Pull the latest crash / fault log for this app
+## What Was Changed
 
-Fault dumps for apps usually land under **`/data/log/faultlog/faultlogger/`** (freeze-related dumps often under **`/data/log/faultlog/freeze_ext/`**). Filenames typically include the **bundle name**, so you can take the newest matching file.
+Only one line was added to `kotlinApp/build.gradle.kts` (line 18):
 
-From the project root (macOS/Linux; strips a trailing CR from `hdc` output):
-
-```shell
-bundle=$(grep bundleName harmonyApp/AppScope/app.json5 | sed -n 's/.*"bundleName"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
-latest=$(hdc shell "ls -t /data/log/faultlog/faultlogger/" | tr -d '\r' | grep -F "$bundle" | head -1)
-hdc file recv "/data/log/faultlog/faultlogger/$latest" ./
+```kotlin
+freeCompilerArgs += "-Xbinary=splitBCfile=2"
 ```
 
-Freeze logs for the same app (same idea, different directory):
+## Boundary Tests
 
-```shell
-latest=$(hdc shell "ls -t /data/log/faultlog/freeze_ext/" | tr -d '\r' | grep -F "$bundle" | head -1)
-hdc file recv "/data/log/faultlog/freeze_ext/$latest" ./
+| Configuration | Result |
+|---|---|
+| No splitBCfile flag (default) | BUILD SUCCESSFUL |
+| `-Xbinary=splitBCfile=1` | BUILD SUCCESSFUL |
+| `-Xbinary=splitBCfile=2` | **BUILD FAILED** (crash) |
+
+## Root Cause
+
+The `splitBCfile=2` mode invokes the external `llvm-split` binary to split bitcode files for parallel processing. However, `llvm-split` is **not shipped** in the `llvm-1914-aarch64-macos-dev-10` toolchain bundle that konan downloads. The `splitBCfile=1` mode uses a different code path that does not require this external tool.
+
+To verify:
+```bash
+ls ~/.konan/dependencies/llvm-1914-aarch64-macos-dev-10/bin/ | grep split
+# (no output - llvm-split is missing)
 ```
-
-If `latest` is empty, list recent files and pick the one whose name matches your bundle: `hdc shell "ls -lt /data/log/faultlog/faultlogger/ | head -n 20"`.
