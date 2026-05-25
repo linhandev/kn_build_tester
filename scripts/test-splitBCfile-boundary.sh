@@ -11,16 +11,22 @@ BUILD_FILE="kotlinApp/build.gradle.kts"
 FLAG_LINE='                freeCompilerArgs += "-Xbinary=splitBCfile='
 TASK=":kotlinApp:linkDebugSharedOhosArm64"
 
-# Save original
+# Create a CLEAN backup with the splitBCfile line removed.
+# The working build.gradle.kts has splitBCfile=2 hardcoded; strip it so the
+# backup represents the "no splitBCfile" baseline.
 cp "$BUILD_FILE" "$BUILD_FILE.bak"
-trap 'mv "$BUILD_FILE.bak" "$BUILD_FILE"' EXIT
+sed -i.tmp '/freeCompilerArgs += "-Xbinary=splitBCfile=/d' "$BUILD_FILE"
+cp "$BUILD_FILE" "$BUILD_FILE.clean"
+mv "$BUILD_FILE.bak" "$BUILD_FILE"          # restore working copy
+rm -f "$BUILD_FILE.tmp"
+trap 'rm -f "$BUILD_FILE.clean"' EXIT
 
 run_build() {
     local value="$1"
     local label="$2"
 
-    # Restore original
-    cp "$BUILD_FILE.bak" "$BUILD_FILE"
+    # Start from the clean backup (no splitBCfile line)
+    cp "$BUILD_FILE.clean" "$BUILD_FILE"
 
     if [[ "$value" != "none" ]]; then
         # Insert the splitBCfile flag after stripDebugInfoFromNativeLibs line
@@ -57,5 +63,8 @@ echo ""
 run_build "none" "splitBCfile=<not set> (default)"
 run_build "1"    "splitBCfile=1"
 run_build "2"    "splitBCfile=2"
+
+# Restore the original working file (with splitBCfile=2) from git
+GIT_MASTER=1 git checkout -- "$BUILD_FILE" 2>/dev/null || true
 
 echo "=== Boundary test complete ==="
