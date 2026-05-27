@@ -1,5 +1,4 @@
 pluginManagement {
-    // CI sets KN_ACTION_BUILD_REPO_ABS to an absolute path to kotlin build/repo (Maven layout). Optional for local dev.
     val knActionMavenUrl: String? = System.getenv("KN_ACTION_BUILD_REPO_ABS")
         ?.let { java.io.File(it).toURI().toString() }
     repositories {
@@ -13,6 +12,9 @@ pluginManagement {
     plugins {
         val kotlinVersion: String by settings
         kotlin("multiplatform") version kotlinVersion
+        val composeVersion: String by settings
+        id("org.jetbrains.compose") version composeVersion
+        kotlin("plugin.compose") version kotlinVersion
     }
 }
 
@@ -29,6 +31,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "c2k"
+rootProject.name = "compose-visibility-repro"
 
 include("kotlinApp")

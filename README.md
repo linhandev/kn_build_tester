@@ -1,44 +1,85 @@
-# Kotlin/Native Exception Demo (Minimal)
+# ALI-46 Reproduction: Public @Composable Functions Fail to Compile on OHOS arm64
 
-Keep `bare` branch a starting point for doing a demo, impl demos on another branch.
-
-Full build command.
-
-```shell
-clear
-hdc uninstall com.kotlin.demo \
-./gradlew clean \
-./gradlew --stop \
-./gradlew startHarmonyAppDebug --rerun-tasks
+## Issue
+Public `@Composable` functions fail during the Kotlin/Native link phase with error:
+```
+No file for /PublicGreeting|PublicGreeting(kotlin.String){}[0]
 ```
 
-## Bundle name (from project)
+Private and internal `@Composable` functions compile and link successfully.
 
-The installed app’s **bundle name** is **`app.bundleName`** in **`harmonyApp/AppScope/app.json5`** (for this sample it is `com.kotlin.demo`). Use the same value for `hdc uninstall`, `aa start`, and filtering crash logs.
+## Environment
+- **Kotlin**: 2.2.21-0.2.0-05 (CPF fork)
+- **Compose Multiplatform**: 1.9.2-0.3.0-05 (CPF fork)
+- **Gradle**: 9.0.0
+- **JDK**: 21.0.10 (Temurin)
+- **Target**: OHOS arm64 (sharedLib)
+- **Note**: iOS arm64 (framework) does NOT reproduce the issue
 
-Read it from the repo (from the project root):
+## Hypothesis
+The Compose compiler plugin generates synthetic IR declarations for public @Composable functions that lack proper file associations in the Kotlin/Native serialized module. During the C adapter codegen phase (used for sharedLib but not framework), the `DependenciesTrackerImpl` fails to resolve the file origin for these synthetic declarations, causing an `IllegalStateException`.
 
-```shell
-grep bundleName harmonyApp/AppScope/app.json5
+## Reproduction Steps
+
+1. Clone this repository and checkout the reproduction branch:
+   ```bash
+   git clone https://github.com/linhandev/kn_samples.git
+   cd kn_samples
+   git checkout repro/ALI-46-public-composable-compile-fail
+   ```
+
+2. Build the OHOS arm64 shared library:
+   ```bash
+   ./gradlew :kotlinApp:linkDebugSharedOhosArm64
+   ```
+
+3. Observe the compilation failure during the link phase.
+
+## Expected Behavior
+The build should succeed, producing a shared library with the public @Composable function exported.
+
+## Actual Behavior
+The link phase fails with:
+```
+e: Compilation failed: No file for /PublicGreeting|PublicGreeting(kotlin.String){}[0]
+e: java.lang.IllegalStateException: No file for /PublicGreeting|PublicGreeting(kotlin.String){}[0]
+    at org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer.getFileNameOf(KonanPartialModuleDeserializer.kt:90)
+    at org.jetbrains.kotlin.backend.konan.serialization.ExternalDeclarationFileNameProvider.getExternalDeclarationFileName(ExternalDeclarationFileNameProvider.kt:31)
+    at org.jetbrains.kotlin.backend.konan.DependenciesTrackerImpl.add$lambda$1(DependenciesTracker.kt:110)
+    at org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegen.buildCAdapter(CAdapterCodegen.kt:58)
+    ...
 ```
 
-## Pull the latest crash / fault log for this app
+## Boundary Observations
 
-Fault dumps for apps usually land under **`/data/log/faultlog/faultlogger/`** (freeze-related dumps often under **`/data/log/faultlog/freeze_ext/`**). Filenames typically include the **bundle name**, so you can take the newest matching file.
+### Works (no error):
+- **Private @Composable**: `@Composable private fun PrivateGreeting(name: String)`
+- **Internal @Composable**: `@Composable internal fun InternalGreeting(name: String)`
+- **iOS arm64 framework**: Same public @Composable compiles successfully when targeting iOS arm64 with framework binary type
 
-From the project root (macOS/Linux; strips a trailing CR from `hdc` output):
+### Fails:
+- **Public @Composable on OHOS arm64 sharedLib**: The exact scenario described in the issue
 
-```shell
-bundle=$(grep bundleName harmonyApp/AppScope/app.json5 | sed -n 's/.*"bundleName"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
-latest=$(hdc shell "ls -t /data/log/faultlog/faultlogger/" | tr -d '\r' | grep -F "$bundle" | head -1)
-hdc file recv "/data/log/faultlog/faultlogger/$latest" ./
+## Key Files
+
+- `kotlinApp/src/commonMain/kotlin/ComposableVisibility.kt` — Test code with public/private/internal @Composable functions
+- `kotlinApp/build.gradle.kts` — Build configuration with OHOS arm64 and iOS arm64 targets
+- `gradle.properties` — Kotlin and Compose version configuration
+
+## Stack Trace (Key Excerpt)
+
+```
+at org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer.getFileNameOf(KonanPartialModuleDeserializer.kt:90)
+at org.jetbrains.kotlin.backend.konan.serialization.ExternalDeclarationFileNameProvider.getExternalDeclarationFileName(ExternalDeclarationFileNameProvider.kt:31)
+at org.jetbrains.kotlin.backend.konan.DependenciesTrackerImpl.add$lambda$1(DependenciesTracker.kt:110)
+at org.jetbrains.kotlin.backend.konan.DependenciesTrackerImpl.computeFileOrigin(DependenciesTracker.kt:127)
+at org.jetbrains.kotlin.backend.konan.DependenciesTrackerImpl.add(DependenciesTracker.kt:109)
+at org.jetbrains.kotlin.backend.konan.DependenciesTrackerImpl.add(DependenciesTracker.kt:102)
+at org.jetbrains.kotlin.backend.konan.llvm.CodegenLlvmHelpers.externalFunction$backend_native(ContextUtils.kt:377)
+at org.jetbrains.kotlin.backend.konan.llvm.ContextUtils.getLlvmFunctionOrNull(ContextUtils.kt:203)
+at org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator.llvmFunctionOrNull(CodeGenerator.kt:38)
+at org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator.llvmFunction(CodeGenerator.kt:34)
+at org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegen.buildCAdapter(CAdapterCodegen.kt:58)
 ```
 
-Freeze logs for the same app (same idea, different directory):
-
-```shell
-latest=$(hdc shell "ls -t /data/log/faultlog/freeze_ext/" | tr -d '\r' | grep -F "$bundle" | head -1)
-hdc file recv "/data/log/faultlog/freeze_ext/$latest" ./
-```
-
-If `latest` is empty, list recent files and pick the one whose name matches your bundle: `hdc shell "ls -lt /data/log/faultlog/faultlogger/ | head -n 20"`.
+The error originates in `CAdapterCodegen.buildCAdapter`, which is called when generating C adapters for shared libraries. This explains why iOS frameworks (which don't use C adapters) are unaffected.
