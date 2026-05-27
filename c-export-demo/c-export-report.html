@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kotlin/Native C Export — Complete Reference</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2129;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --orange: #d29922;
+    --purple: #bc8cff;
+    --cyan: #39d353;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 2rem; border-bottom: 2px solid var(--accent); padding-bottom: 0.5rem; margin-bottom: 1rem; }
+  h2 { font-size: 1.5rem; color: var(--accent); margin-top: 2.5rem; margin-bottom: 0.8rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+  h3 { font-size: 1.2rem; color: var(--purple); margin-top: 1.8rem; margin-bottom: 0.5rem; }
+  h4 { font-size: 1rem; color: var(--orange); margin-top: 1.2rem; margin-bottom: 0.4rem; }
+  p { margin-bottom: 0.8rem; }
+  code {
+    background: var(--surface2);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+  }
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 0.8rem 0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  pre code { background: none; padding: 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+  }
+  th, td {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border);
+    text-align: left;
+  }
+  th { background: var(--surface); color: var(--accent); font-weight: 600; }
+  tr:nth-child(even) { background: var(--surface2); }
+  .yes { color: var(--green); font-weight: bold; }
+  .no { color: var(--red); font-weight: bold; }
+  .partial { color: var(--orange); font-weight: bold; }
+  .note {
+    background: #1a2332;
+    border-left: 4px solid var(--accent);
+    padding: 0.8rem 1rem;
+    margin: 1rem 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .warn {
+    background: #2a1f0e;
+    border-left: 4px solid var(--orange);
+    padding: 0.8rem 1rem;
+    margin: 1rem 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .scenario-tag {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--bg);
+    padding: 0.1em 0.5em;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-right: 0.3rem;
+  }
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .toc ul { list-style: none; padding-left: 1rem; }
+  .toc > ul { padding-left: 0; }
+  .toc li { margin: 0.3rem 0; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .kw { color: #ff7b72; }
+  .str { color: #a5d6ff; }
+  .cmt { color: #8b949e; }
+  .fn { color: #d2a8ff; }
+  .ty { color: #79c0ff; }
+  .ann { color: #ffa657; }
+  .num { color: #79c0ff; }
+  .diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin: 1rem 0;
+    font-family: 'SF Mono', monospace;
+    font-size: 0.82rem;
+    white-space: pre;
+    overflow-x: auto;
+    line-height: 1.4;
+  }
+  .file-ref {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<h1>Kotlin/Native → C Export: Complete Reference</h1>
+<p class="file-ref">Based on compiler source analysis (Kotlin 2.2.21) + demo project <code>c-export-demo/</code> targeting <code>ohosArm64</code></p>
+
+<div class="toc">
+<strong>Table of Contents</strong>
+<ul>
+  <li><a href="#overview">1. Overview — Binary Type → Export Strategy</a></li>
+  <li><a href="#pipeline">2. The C Export Pipeline (4 Phases)</a></li>
+  <li><a href="#name-control">3. Symbol Name Control</a>
+    <ul>
+      <li><a href="#name-default">3.1 Default Naming</a></li>
+      <li><a href="#name-cname">3.2 @CName Annotation</a></li>
+      <li><a href="#name-bridge">3.3 @ExportedBridge</a></li>
+      <li><a href="#name-prefix">3.4 Prefix Control</a></li>
+    </ul>
+  </li>
+  <li><a href="#visibility">4. Export Visibility Control</a>
+    <ul>
+      <li><a href="#vis-kotlin">4.1 Kotlin Visibility Modifiers</a></li>
+      <li><a href="#vis-export-gradle">4.2 Gradle export() — klib Re-Export</a></li>
+      <li><a href="#vis-include-only">4.3 moduleIncludeOnly Filtering</a></li>
+      <li><a href="#vis-cinterface-mode">4.4 cInterfaceMode Toggle</a></li>
+    </ul>
+  </li>
+  <li><a href="#header-anatomy">5. Anatomy of the Generated C Header</a></li>
+  <li><a href="#types">6. Type Mapping: Kotlin → C</a></li>
+  <li><a href="#classes">7. Classes, Interfaces, Enums, Objects</a></li>
+  <li><a href="#not-exported">8. What Is NEVER Exported</a></li>
+  <li><a href="#multi-module">9. Multi-Module: Top-Level vs Subproject vs klib</a></li>
+  <li><a href="#scenarios">10. Demo Scenarios Summary</a></li>
+  <li><a href="#method-table">11. Complete Method Reference Table</a></li>
+</ul>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="overview">1. Overview — Binary Type → Export Strategy</h2>
+
+<p>The Kotlin/Native compiler's <code>produce</code> flag determines which export pipeline runs. This is set by the Gradle binary type:</p>
+
+<table>
+<tr><th>Gradle binary</th><th>Compiler <code>produce</code></th><th>Output</th><th>Export Strategy</th></tr>
+<tr><td><code>sharedLib</code></td><td><code>DYNAMIC</code></td><td>.so / .dylib / .dll</td><td class="yes">C Export (V1 header)</td></tr>
+<tr><td><code>staticLib</code></td><td><code>STATIC</code></td><td>.a / .lib</td><td class="yes">C Export (V1 header)</td></tr>
+<tr><td><code>framework</code></td><td><code>FRAMEWORK</code></td><td>.framework</td><td class="partial">ObjC Export (Apple only)</td></tr>
+<tr><td><code>executable</code></td><td><code>PROGRAM</code></td><td>binary</td><td class="no">No export</td></tr>
+<tr><td>(default library)</td><td><code>LIBRARY</code></td><td>.klib</td><td class="no">No binary (serialized IR)</td></tr>
+</table>
+
+<div class="note">
+<strong>Key insight:</strong> C export only happens for <code>sharedLib</code> and <code>staticLib</code>. Framework export uses a completely separate ObjC pipeline. A klib is not a binary — it's serialized IR that only gets C-exported when linked into a final shared/static library.
+</div>
+
+<p>The decision is made in <code>KonanConfig.kt</code>:</p>
+<pre><code><span class="cmt">// KonanConfig.kt line 683</span>
+<span class="kw">internal val</span> cInterfaceGenerationMode <span class="kw">by lazy</span> {
+    <span class="kw">when</span> {
+        explicitMode != <span class="kw">null</span> -> explicitMode
+        produce == CompilerOutputKind.DYNAMIC || produce == CompilerOutputKind.STATIC
+            -> CInterfaceGenerationMode.V1
+        <span class="kw">else</span> -> CInterfaceGenerationMode.NONE
+    }
+}</code></pre>
+
+<!-- ============================================================ -->
+<h2 id="pipeline">2. The C Export Pipeline (4 Phases)</h2>
+
+<div class="diagram">
+┌─────────────────────────────────────────────────────────────────────┐
+│  Phase 1: Build Exports  (CAdapterGenerator.kt)                    │
+│  Walk module descriptors → collect public API elements              │
+│  into CAdapterExportedElements (scopes + elements tree)             │
+├─────────────────────────────────────────────────────────────────────┤
+│  Phase 2: Build Adapters  (CAdapterCodegen.kt)                     │
+│  For each exported element, generate LLVM bitcode bridge            │
+│  functions (_konan_function_N) with thread-state switching          │
+├─────────────────────────────────────────────────────────────────────┤
+│  Phase 3: Generate API  (CAdapterApiExporter.kt)                   │
+│  Write the .h header file + .cpp adapter file with                  │
+│  the ExportedSymbols function-pointer struct                        │
+├─────────────────────────────────────────────────────────────────────┤
+│  Phase 4: Compile Adapter  (CAdapterCompile.kt)                    │
+│  Compile the .cpp adapter to LLVM bitcode using                     │
+│  clang -std=c++17 -emit-llvm, then link into final binary          │
+└─────────────────────────────────────────────────────────────────────┘
+</div>
+
+<p>Phases 1–2 run during IR-to-bitcode conversion (<code>IrToBitcode.kt</code>). Phases 3–4 run in the backend post-processing (<code>TopLevelPhases.kt</code>).</p>
+
+<!-- ============================================================ -->
+<h2 id="name-control">3. Symbol Name Control</h2>
+
+<p>There are <strong>four mechanisms</strong> for controlling what C sees as symbol names. They operate at different levels and have different scopes.</p>
+
+<!-- 3.1 -->
+<h3 id="name-default">3.1 Default Naming (No Annotation)</h3>
+
+<p>When no annotation is applied, the compiler auto-generates C names from the Kotlin fully-qualified name:</p>
+
+<table>
+<tr><th>Element</th><th>C Name Pattern</th><th>Example</th></tr>
+<tr><td>Primitive types</td><td><code>{prefix}_KInt</code>, <code>{prefix}_KBoolean</code>, etc.</td><td><code>cexport_demo_KInt</code></td></tr>
+<tr><td>Reference types</td><td><code>{prefix}_kref_{package}_{Class}</code></td><td><code>cexport_demo_kref_com_example_app_Animal</code></td></tr>
+<tr><td>KType</td><td><code>{prefix}_KType</code></td><td><code>cexport_demo_KType</code></td></tr>
+<tr><td>NativePtr</td><td><code>{prefix}_KNativePtr</code></td><td><code>cexport_demo_KNativePtr</code></td></tr>
+<tr><td>ExportedSymbols</td><td><code>{prefix}_ExportedSymbols</code></td><td><code>cexport_demo_ExportedSymbols</code></td></tr>
+<tr><td>Global accessor</td><td><code>{prefix}_symbols()</code></td><td><code>cexport_demo_symbols()</code></td></tr>
+<tr><td>Top-level functions</td><td>Kotlin function name as struct member</td><td><code>addNumbers</code></td></tr>
+<tr><td>Class methods</td><td>Kotlin method name as struct member</td><td><code>speak</code>, <code>get_name</code></td></tr>
+<tr><td>Header guard</td><td><code>KONAN_{PREFIX}_H</code></td><td><code>KONAN_CEXPORT_DEMO_H</code></td></tr>
+</table>
+
+<p>The <strong>struct hierarchy mirrors the Kotlin package structure</strong>:</p>
+<pre><code><span class="cmt">// Access pattern for a function in package com.example.app:</span>
+lib->kotlin.root.com.example.app.<span class="fn">addNumbers</span>(<span class="num">10</span>, <span class="num">32</span>);
+
+<span class="cmt">// Access pattern for a class method:</span>
+lib->kotlin.root.com.example.app.Animal.<span class="fn">speak</span>(animalRef);
+
+<span class="cmt">// Access pattern for a top-level property:</span>
+lib->kotlin.root.com.example.app.<span class="fn">get_appVersion</span>();</code></pre>
+
+<p><span class="file-ref">Source: <code>CAdapterTypeTranslator.kt</code>, <code>CAdapterApiExporter.kt</code></span></p>
+
+<!-- 3.2 -->
+<h3 id="name-cname">3.2 <code>@CName</code> Annotation</h3>
+
+<p>The <strong>only public annotation</strong> for controlling C-visible symbol names. Defined in <code>kotlin.native.Annotations</code>.</p>
+
+<pre><code><span class="ann">@ExperimentalNativeApi</span>
+<span class="ann">@Target</span>(AnnotationTarget.FUNCTION)
+<span class="ann">@Retention</span>(AnnotationRetention.BINARY)
+<span class="kw">annotation class</span> <span class="ty">CName</span>(
+    <span class="kw">val</span> externName: <span class="ty">String</span> = <span class="str">""</span>,   <span class="cmt">// standalone extern "C" function</span>
+    <span class="kw">val</span> shortName: <span class="ty">String</span> = <span class="str">""</span>     <span class="cmt">// name inside ExportedSymbols struct</span>
+)</code></pre>
+
+<h4>Mode A: <code>externName</code> only</h4>
+<p>Creates a <strong>standalone <code>extern "C"</code> function</strong> callable directly from C without the struct:</p>
+<pre><code><span class="cmt">// Kotlin:</span>
+<span class="ann">@CName</span>(<span class="str">"kn_subtract"</span>)
+<span class="kw">fun</span> <span class="fn">subtractNumbers</span>(a: <span class="ty">Int</span>, b: <span class="ty">Int</span>): <span class="ty">Int</span> = a - b
+
+<span class="cmt">// Generated C header includes:</span>
+RUNTIME_EXPORT <span class="kw">extern</span> <span class="str">"C"</span> cexport_demo_KInt <span class="fn">kn_subtract</span>(cexport_demo_KInt a, cexport_demo_KInt b);
+
+<span class="cmt">// C caller:</span>
+<span class="kw">int</span> result = <span class="fn">kn_subtract</span>(<span class="num">100</span>, <span class="num">58</span>);  <span class="cmt">// direct call, no struct needed</span></code></pre>
+
+<h4>Mode B: <code>shortName</code> only</h4>
+<p>Changes the member name <strong>inside the ExportedSymbols struct</strong>. No standalone <code>extern "C"</code> function:</p>
+<pre><code><span class="cmt">// Kotlin:</span>
+<span class="ann">@CName</span>(externName = <span class="str">""</span>, shortName = <span class="str">"myMultiply"</span>)
+<span class="kw">fun</span> <span class="fn">multiplyNumbers</span>(a: <span class="ty">Int</span>, b: <span class="ty">Int</span>): <span class="ty">Int</span> = a * b
+
+<span class="cmt">// No extern "C" function generated. Struct member renamed:</span>
+lib->kotlin.root.com.example.app.<span class="fn">myMultiply</span>(<span class="num">6</span>, <span class="num">7</span>);  <span class="cmt">// "myMultiply" instead of "multiplyNumbers"</span></code></pre>
+
+<h4>Mode C: Both <code>externName</code> and <code>shortName</code></h4>
+<p>Creates <strong>both</strong> a standalone function and a renamed struct member:</p>
+<pre><code><span class="cmt">// Kotlin:</span>
+<span class="ann">@CName</span>(externName = <span class="str">"kn_divide"</span>, shortName = <span class="str">"div"</span>)
+<span class="kw">fun</span> <span class="fn">divideNumbers</span>(a: <span class="ty">Double</span>, b: <span class="ty">Double</span>): <span class="ty">Double</span> = <span class="kw">if</span> (b != <span class="num">0.0</span>) a / b <span class="kw">else</span> Double.NaN
+
+<span class="cmt">// C caller — two ways to call:</span>
+<span class="kw">double</span> r1 = <span class="fn">kn_divide</span>(<span class="num">355.0</span>, <span class="num">113.0</span>);                    <span class="cmt">// direct extern "C"</span>
+<span class="kw">double</span> r2 = lib->kotlin.root.com.example.app.<span class="fn">div</span>(<span class="num">355.0</span>, <span class="num">113.0</span>);  <span class="cmt">// via struct</span></code></pre>
+
+<div class="warn">
+<strong>Constraint:</strong> <code>@CName</code> only applies to <strong>top-level functions</strong>. It cannot be used on class members, constructors, or classes themselves. The annotation target is <code>AnnotationTarget.FUNCTION</code> only.
+</div>
+
+<div class="note">
+<strong>DCE Prevention — YES, @CName does prevent Dead Code Elimination.</strong> The chain is:<br>
+<code>@CName</code> → in <code>ANNOTATIONS_TO_TREAT_AS_EXPORTED</code> (<code>KonanMangler.kt:30</code>)<br>
+→ <code>isPlatformSpecificExport()</code> returns <code>true</code><br>
+→ <code>isExported()</code> returns <code>true</code> even for <code>private</code> top-level functions<br>
+→ <code>FunctionSymbol.Public</code> in DataFlowIR<br>
+→ DCE root in library mode (<code>sharedLib</code>/<code>staticLib</code>)<br><br>
+<strong>Critical edge case:</strong> A <code>private</code> top-level function with <code>@CName</code> <em>still</em> survives DCE and gets a C-callable bridge — even though the CAdapterGenerator won't include it in the <code>ExportedSymbols</code> struct (it only collects <code>isEffectivelyPublicApi</code> elements). The <code>extern "C"</code> function exists and is callable; it just won't appear in the generated header.
+</div>
+
+<p><span class="file-ref">Compiler handling: <code>CAdapterGenerator.kt</code> function <code>functionImplName()</code>; DCE: <code>KonanMangler.kt:25-31</code> → <code>BinaryInterface.kt:62-64</code> → <code>DevirtualizationAnalysis.kt:72-81</code></span></p>
+
+<!-- 3.3 -->
+<h3 id="name-bridge">3.3 <code>@ExportedBridge</code> — Raw C Symbols (No Header)</h3>
+
+<pre><code><span class="ann">@ExperimentalNativeApi</span>
+<span class="ann">@Target</span>(AnnotationTarget.FUNCTION)
+<span class="ann">@Retention</span>(AnnotationRetention.BINARY)
+<span class="kw">annotation class</span> <span class="ty">ExportedBridge</span>(<span class="kw">val</span> bridgeName: <span class="ty">String</span>)</code></pre>
+
+<p>Creates a C-callable function with the <strong>exact name</strong> as a raw LLVM symbol. Key differences from <code>@CName</code>:</p>
+
+<table>
+<tr><th>Aspect</th><th><code>@CName</code></th><th><code>@ExportedBridge</code></th></tr>
+<tr><td>Header entry</td><td class="yes">Yes — appears in .h file</td><td class="no">No — must declare manually</td></tr>
+<tr><td>Struct member</td><td class="yes">Yes (via shortName)</td><td class="no">No struct entry at all</td></tr>
+<tr><td>Symbol name</td><td>Prefix may apply</td><td>Exact verbatim name</td></tr>
+<tr><td>DCE prevention</td><td>Yes (exported)</td><td>Yes (<code>EXPLICITLY_EXPORTED</code>)</td></tr>
+<tr><td>Bridge code</td><td>Via CAdapter pipeline</td><td>C-to-Kotlin bridge with thread-state switch</td></tr>
+<tr><td>Package</td><td><code>kotlin.native</code></td><td><code>kotlin.native.internal</code></td></tr>
+</table>
+
+<pre><code><span class="cmt">// Kotlin:</span>
+<span class="ann">@ExportedBridge</span>(<span class="str">"kn_raw_add"</span>)
+<span class="kw">fun</span> <span class="fn">rawAdd</span>(a: <span class="ty">Int</span>, b: <span class="ty">Int</span>): <span class="ty">Int</span> = a + b
+
+<span class="cmt">// C caller — must declare prototype manually:</span>
+<span class="kw">extern int</span> <span class="fn">kn_raw_add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b);
+<span class="kw">int</span> result = <span class="fn">kn_raw_add</span>(<span class="num">111</span>, <span class="num">222</span>);</code></pre>
+
+<p>The compiler processes <code>@ExportedBridge</code> in four places:</p>
+<ol>
+  <li><strong>DCE prevention</strong> (<code>DataFlowIR.kt</code>): marks <code>EXPLICITLY_EXPORTED</code></li>
+  <li><strong>Symbol naming</strong> (<code>BinaryInterface.kt</code>): uses bridgeName as LLVM symbol name, no mangling</li>
+  <li><strong>Linker retention</strong> (<code>RetainAnnotation.kt</code>): prevents linker from stripping</li>
+  <li><strong>Bridge generation</strong> (<code>CodeGenerator.kt</code>): generates C-to-Kotlin bridge with runtime init and thread-state switching</li>
+</ol>
+
+<div class="warn">
+<strong>Warning:</strong> <code>@ExportedBridge</code> is in <code>kotlin.native.internal</code> — it's an experimental internal API. It's primarily used by the Swift Export pipeline. Use with caution in production code.
+</div>
+
+<!-- 3.4 -->
+<h3 id="name-prefix">3.4 Prefix Control</h3>
+
+<p>The prefix is the string prepended to all generated C type names and the symbols accessor. It defaults to the <strong>module name</strong> (usually the <code>baseName</code> in Gradle) with <code>-</code> and <code>.</code> replaced by <code>_</code>.</p>
+
+<pre><code><span class="cmt">// CExport.kt line 22</span>
+<span class="kw">val</span> prefix = context.config.fullExportedNamePrefix
+    .replace(<span class="str">"-|\\."</span>.toRegex(), <span class="str">"_"</span>)
+
+<span class="cmt">// KonanConfig.kt line 414</span>
+<span class="kw">val</span> fullExportedNamePrefix: <span class="ty">String</span>
+    <span class="kw">get</span>() = configuration.get(FULL_EXPORTED_NAME_PREFIX) ?: implicitModuleName</code></pre>
+
+<p>The prefix can be overridden via the compiler flag:</p>
+<pre><code><span class="cmt">// In build.gradle.kts:</span>
+sharedLib {
+    freeCompilerArgs += <span class="str">"-Xbinary=fullExportedNamePrefix=myCustomPrefix"</span>
+}
+
+<span class="cmt">// This changes:</span>
+<span class="cmt">//   cexport_demo_KInt        →  myCustomPrefix_KInt</span>
+<span class="cmt">//   cexport_demo_symbols()   →  myCustomPrefix_symbols()</span></code></pre>
+
+<!-- ============================================================ -->
+<h2 id="visibility">4. Export Visibility Control</h2>
+
+<p>Visibility control determines <em>which</em> Kotlin declarations appear in the C header. This is orthogonal to name control.</p>
+
+<!-- 4.1 -->
+<h3 id="vis-kotlin">4.1 Kotlin Visibility Modifiers (Primary Gate)</h3>
+
+<p>The C export pipeline checks <code>isEffectivelyPublicApi</code> for every declaration. The compiler's filter predicates (<code>CAdapterGenerator.kt</code>):</p>
+
+<pre><code><span class="cmt">// CAdapterGenerator.kt line 53</span>
+<span class="kw">fun</span> <span class="fn">isExportedFunction</span>(descriptor: FunctionDescriptor): <span class="ty">Boolean</span> =
+    descriptor.isEffectivelyPublicApi
+        && descriptor.kind.isReal
+        && !descriptor.isExpect
+        && !descriptor.isSuspend
+        && descriptor.contextReceiverParametersCount == <span class="num">0</span>
+        && descriptor.typeParameters.isEmpty()
+
+<span class="cmt">// CAdapterGenerator.kt line 62</span>
+<span class="kw">fun</span> <span class="fn">isExportedClass</span>(descriptor: ClassDescriptor): <span class="ty">Boolean</span> =
+    descriptor.isEffectivelyPublicApi
+        && !descriptor.isAnnotationClass
+        && !descriptor.isExpect
+        && descriptor.typeParameters.isEmpty()
+        && !descriptor.isValue</code></pre>
+
+<table>
+<tr><th>Kotlin visibility</th><th>Exported to C?</th><th>Notes</th></tr>
+<tr><td><code>public</code></td><td class="yes">✅ Yes</td><td>Default for top-level and class members</td></tr>
+<tr><td><code>internal</code></td><td class="no">❌ No</td><td>Filtered out by <code>isEffectivelyPublicApi</code></td></tr>
+<tr><td><code>private</code></td><td class="no">❌ No</td><td>Filtered out</td></tr>
+<tr><td><code>protected</code></td><td class="no">❌ No</td><td>Not representable in C</td></tr>
+<tr><td><code>public</code> class, <code>internal</code> member</td><td class="no">❌ Member hidden</td><td>Class is exported but member is filtered</td></tr>
+<tr><td><code>internal</code> class</td><td class="no">❌ Entire class hidden</td><td>All members gone</td></tr>
+</table>
+
+<div class="note">
+<strong>In the demo:</strong> <code>VisibilityDemo.kt</code> has <code>publicTopLevel()</code> (exported), <code>internalTopLevel()</code> (not exported), <code>privateTopLevel()</code> (not exported), and a <code>PublicClass</code> with mixed-visibility members.
+</div>
+
+<!-- 4.2 -->
+<h3 id="vis-export-gradle">4.2 Gradle <code>export()</code> — klib Dependency Re-Export</h3>
+
+<p>For <code>sharedLib</code>, <code>staticLib</code>, and <code>framework</code> binaries, the <code>export()</code> method re-exports a klib dependency's public API into the generated C header:</p>
+
+<pre><code><span class="cmt">// app/build.gradle.kts</span>
+kotlin {
+    ohosArm64 {
+        binaries {
+            sharedLib {
+                <span class="fn">export</span>(project(<span class="str">":lib"</span>))          <span class="cmt">// project dependency</span>
+                <span class="fn">export</span>(<span class="str">"com.example:lib:1.0"</span>)    <span class="cmt">// published klib</span>
+            }
+        }
+    }
+}</code></pre>
+
+<p><strong>Without <code>export()</code>:</strong> Only the app module's own public API appears in the header. The lib's code is linked into the binary but its symbols are <em>not</em> in the <code>ExportedSymbols</code> struct.</p>
+
+<p><strong>With <code>export()</code>:</strong> The lib's public API is added to the header alongside the app's. C code can call both via the same struct:</p>
+<pre><code><span class="cmt">// App module's own API:</span>
+lib->kotlin.root.com.example.app.<span class="fn">addNumbers</span>(<span class="num">1</span>, <span class="num">2</span>);
+
+<span class="cmt">// Re-exported lib module's API (because of export(project(":lib"))):</span>
+lib->kotlin.root.com.example.lib.<span class="fn">libAdd</span>(<span class="num">1</span>, <span class="num">2</span>);</code></pre>
+
+<p>The Gradle <code>export()</code> translates to the compiler flag <code>-Xexport-library=&lt;path&gt;</code>. The compiler collects exported dependencies in <code>FeaturedLibraries.kt</code>:</p>
+<pre><code><span class="cmt">// FeaturedLibraries.kt line 18</span>
+<span class="kw">fun</span> ModuleDescriptor.<span class="fn">getExportedDependencies</span>(konanConfig: KonanConfig) =
+    getDescriptorsFromLibraries(
+        (konanConfig.resolve.exportedLibraries + konanConfig.resolve.includedLibraries).toSet()
+    )</code></pre>
+
+<p><strong><code>transitiveExport</code></strong> controls whether transitive dependencies are also re-exported:</p>
+<pre><code>sharedLib {
+    transitiveExport = <span class="kw">true</span>  <span class="cmt">// also export transitive deps</span>
+    <span class="fn">export</span>(project(<span class="str">":lib"</span>))
+}</code></pre>
+
+<!-- 4.3 -->
+<h3 id="vis-include-only">4.3 <code>moduleIncludeOnly</code> — Whitelist Filtering</h3>
+
+<p>A secondary filter that restricts <em>which modules</em> have their symbols included in the C header:</p>
+
+<pre><code><span class="cmt">// In build.gradle.kts:</span>
+sharedLib {
+    freeCompilerArgs += <span class="str">"-Xbinary=moduleIncludeOnly=lib"</span>
+}
+
+<span class="cmt">// Result: ONLY the "lib" module's API appears in the header.</span>
+<span class="cmt">// The app module's own API is EXCLUDED.</span></code></pre>
+
+<p>Implementation in <code>CAdapterGenerator.shouldIncludeModule()</code> (line 548):</p>
+<ul>
+  <li>If <code>moduleIncludeOnly</code> is empty → all modules included (default)</li>
+  <li>If set → only modules whose library name contains one of the configured strings (case-insensitive)</li>
+  <li>The main module (without a library) is <strong>excluded</strong> when this filter is active</li>
+</ul>
+
+<!-- 4.4 -->
+<h3 id="vis-cinterface-mode">4.4 <code>cInterfaceMode</code> — Toggle Header Generation</h3>
+
+<pre><code>sharedLib {
+    freeCompilerArgs += <span class="str">"-Xbinary=cInterfaceMode=none"</span>
+}</code></pre>
+
+<table>
+<tr><th>Mode</th><th>Effect</th></tr>
+<tr><td><code>v1</code> (default)</td><td>Generate full <code>ExportedSymbols</code> struct header</td></tr>
+<tr><td><code>none</code></td><td>Skip C header generation entirely (binary still produced)</td></tr>
+</table>
+
+<p>Use <code>none</code> when you only need the binary and will provide your own C API layer.</p>
+
+<!-- ============================================================ -->
+<h2 id="header-anatomy">5. Anatomy of the Generated C Header</h2>
+
+<p>For a library with <code>baseName = "cexport_demo"</code>, the compiler generates <code>libcexport_demo_api.h</code>:</p>
+
+<pre><code><span class="cmt">// ① Header guard</span>
+<span class="kw">#ifndef</span> KONAN_CEXPORT_DEMO_H
+<span class="kw">#define</span> KONAN_CEXPORT_DEMO_H
+<span class="kw">#ifdef</span> __cplusplus
+<span class="kw">extern</span> <span class="str">"C"</span> {
+<span class="kw">#endif</span>
+
+<span class="cmt">// ② Primitive type mappings</span>
+<span class="kw">typedef</span> <span class="ty">int</span>                cexport_demo_KInt;
+<span class="kw">typedef</span> <span class="ty">long long</span>          cexport_demo_KLong;
+<span class="kw">typedef</span> <span class="ty">double</span>             cexport_demo_KDouble;
+<span class="kw">typedef</span> <span class="ty">void</span>*              cexport_demo_KNativePtr;
+
+<span class="cmt">// ③ Reference types (opaque pointers to Kotlin objects)</span>
+<span class="kw">typedef struct</span> { cexport_demo_KNativePtr pinned; } cexport_demo_kref_com_example_app_Animal;
+<span class="kw">typedef struct</span> { cexport_demo_KNativePtr pinned; } cexport_demo_kref_com_example_app_Point;
+
+<span class="cmt">// ④ The ExportedSymbols struct</span>
+<span class="kw">typedef struct</span> {
+  <span class="cmt">// ④a: Service functions</span>
+  <span class="kw">void</span> (*DisposeStablePointer)(cexport_demo_KNativePtr ptr);
+  <span class="kw">void</span> (*DisposeString)(<span class="kw">const char</span>* string);
+  cexport_demo_KBoolean (*IsInstance)(cexport_demo_KNativePtr ref, <span class="kw">const</span> cexport_demo_KType* type);
+
+  <span class="cmt">// ④b: Nullable value creators/accessors</span>
+  cexport_demo_kref_kotlin_Int (*createNullableInt)(cexport_demo_KInt);
+  cexport_demo_KInt (*getNonNullValueOfInt)(cexport_demo_kref_kotlin_Int);
+
+  <span class="cmt">// ④c: User functions — hierarchical package structure</span>
+  <span class="kw">struct</span> {
+    <span class="kw">struct</span> {
+      <span class="kw">struct</span> {
+        <span class="kw">struct</span> {
+          <span class="kw">struct</span> {
+            <span class="cmt">// Top-level functions</span>
+            cexport_demo_KInt (*addNumbers)(cexport_demo_KInt, cexport_demo_KInt);
+            <span class="cmt">// Classes</span>
+            <span class="kw">struct</span> {
+              cexport_demo_KType* (*_type)(<span class="kw">void</span>);
+              cexport_demo_kref_..._Animal (*Animal)(<span class="kw">const char</span>* name, cexport_demo_KInt age);
+              <span class="kw">const char</span>* (*speak)(cexport_demo_kref_..._Animal thiz);
+            } Animal;
+          } app;
+        } example;
+      } com;
+    } root;
+  } kotlin;
+} cexport_demo_ExportedSymbols;
+
+<span class="cmt">// ⑤ Global accessor function</span>
+<span class="kw">extern</span> cexport_demo_ExportedSymbols* <span class="fn">cexport_demo_symbols</span>(<span class="kw">void</span>);
+
+<span class="cmt">// ⑥ @CName(externName) standalone functions</span>
+RUNTIME_EXPORT <span class="kw">extern</span> <span class="str">"C"</span> cexport_demo_KInt <span class="fn">kn_subtract</span>(cexport_demo_KInt, cexport_demo_KInt);
+
+<span class="kw">#ifdef</span> __cplusplus
+}
+<span class="kw">#endif</span>
+<span class="kw">#endif</span></code></pre>
+
+<!-- ============================================================ -->
+<h2 id="types">6. Type Mapping: Kotlin → C</h2>
+
+<table>
+<tr><th>Kotlin type</th><th>C type</th><th>Notes</th></tr>
+<tr><td><code>Boolean</code></td><td><code>bool</code> (C++) / <code>_Bool</code> (C)</td><td></td></tr>
+<tr><td><code>Byte</code></td><td><code>signed char</code></td><td></td></tr>
+<tr><td><code>Short</code></td><td><code>short</code></td><td></td></tr>
+<tr><td><code>Int</code></td><td><code>int</code></td><td></td></tr>
+<tr><td><code>Long</code></td><td><code>long long</code></td><td></td></tr>
+<tr><td><code>Float</code></td><td><code>float</code></td><td></td></tr>
+<tr><td><code>Double</code></td><td><code>double</code></td><td></td></tr>
+<tr><td><code>Char</code></td><td><code>unsigned short</code></td><td>UTF-16 code unit</td></tr>
+<tr><td><code>String</code></td><td><code>const char*</code></td><td>UTF-8; must call <code>DisposeString()</code> to free</td></tr>
+<tr><td><code>UByte</code></td><td><code>unsigned char</code></td><td></td></tr>
+<tr><td><code>UShort</code></td><td><code>unsigned short</code></td><td></td></tr>
+<tr><td><code>UInt</code></td><td><code>unsigned int</code></td><td></td></tr>
+<tr><td><code>ULong</code></td><td><code>unsigned long long</code></td><td></td></tr>
+<tr><td>Any class/object</td><td><code>{prefix}_kref_{fqName}</code></td><td>Opaque struct wrapping <code>KNativePtr</code></td></tr>
+<tr><td><code>CPointer&lt;T&gt;</code></td><td>Raw pointer</td><td>Passed through directly</td></tr>
+<tr><td><code>COpaquePointer?</code></td><td><code>void*</code></td><td></td></tr>
+<tr><td><code>Unit</code></td><td><code>void</code></td><td></td></tr>
+<tr><td><code>Vector128</code></td><td><code>float __attribute__((vector_size(16)))</code></td><td>SIMD type</td></tr>
+</table>
+
+<div class="note">
+<strong>Memory management:</strong> String returns from Kotlin are heap-allocated UTF-8 copies. C code <strong>must</strong> call <code>DisposeString()</code> to free them. Object references (<code>kref</code> types) are stable pointers that must be released via <code>DisposeStablePointer()</code>.
+</div>
+
+<!-- ============================================================ -->
+<h2 id="classes">7. Classes, Interfaces, Enums, Objects</h2>
+
+<h3>7.1 Regular Class</h3>
+<div class="diagram">
+Kotlin:                              C struct:
+┌──────────────────────┐             ┌─────────────────────────────────────┐
+│ class Animal(        │             │ struct {                            │
+│   val name: String,  │────────────▶│   _type()                           │
+│   var age: Int       │             │   Animal(name, age)  ← constructor  │
+│ ) {                  │             │   speak(thiz)        ← method       │
+│   fun speak()        │             │   get_name(thiz)     ← val getter   │
+│   fun description()  │             │   get_age(thiz)      ← var getter   │
+│ }                    │             │   set_age(thiz, val) ← var setter   │
+└──────────────────────┘             │   description(thiz)  ← method       │
+                                     │ } Animal;                           │
+                                     └─────────────────────────────────────┘
+</div>
+
+<h3>7.2 Singleton Object</h3>
+<div class="diagram">
+Kotlin:                              C struct:
+┌──────────────────────┐             ┌─────────────────────────────────────┐
+│ object AppConfig {   │             │ struct {                            │
+│   val maxRetries = 3 │────────────▶│   _type()                           │
+│   fun summary()      │             │   _instance()        ← singleton    │
+│ }                    │             │   get_maxRetries(thiz)              │
+└──────────────────────┘             │   summary(thiz)                     │
+                                     │ } AppConfig;                        │
+                                     └─────────────────────────────────────┘
+Note: _instance() replaces the constructor. Always returns the same object.
+</div>
+
+<h3>7.3 Enum</h3>
+<div class="diagram">
+Kotlin:                              C struct:
+┌──────────────────────┐             ┌─────────────────────────────────────┐
+│ enum class Color(    │             │ struct {                            │
+│   val rgb: Int       │             │   struct { get() } RED;             │
+│ ) {                  │────────────▶│   struct { get() } GREEN;           │
+│   RED(0xFF0000),     │             │   struct { get() } BLUE;            │
+│   GREEN(0x00FF00),   │             │   _type()                           │
+│   BLUE(0x0000FF)     │             │   get_rgb(thiz)                     │
+│ }                    │             │ } Color;                            │
+                                     └─────────────────────────────────────┘
+Each entry is a nested struct with a get() that returns the enum value.
+</div>
+
+<h3>7.4 Interface</h3>
+<div class="diagram">
+Kotlin:                              C struct:
+┌──────────────────────┐             ┌─────────────────────────────────────┐
+│ interface Greeter {  │             │ struct {                            │
+│   fun greet(name)    │────────────▶│   _type()                           │
+│ }                    │             │   greet(thiz, name)                 │
+└──────────────────────┘             │ } Greeter;                          │
+                                     └─────────────────────────────────────┘
+Cannot construct directly. Must use an implementing class (e.g., FriendlyGreeter).
+</div>
+
+<h3>7.5 Sealed Class</h3>
+<div class="diagram">
+Kotlin:                              C struct:
+┌──────────────────────┐             ┌─────────────────────────────────────┐
+│ sealed class Shape { │             │ struct {                            │
+│   class Circle(...)  │             │   struct { Circle(radius) } Circle; │
+│   class Rect(...)    │────────────▶│   struct { Rect(w, h) } Rectangle;  │
+│ }                    │             │   _type()                           │
+                                     │ } Shape;                            │
+                                     └─────────────────────────────────────┘
+Each subclass is independently constructable. The sealed parent only has _type().
+</div>
+
+<!-- ============================================================ -->
+<h2 id="not-exported">8. What Is NEVER Exported to C</h2>
+
+<p>The following are filtered out by the compiler regardless of visibility:</p>
+
+<table>
+<tr><th>Language feature</th><th>Why filtered</th><th>Compiler check</th></tr>
+<tr><td><code>suspend</code> functions</td><td>Continuation-based, not representable as C call</td><td><code>!descriptor.isSuspend</code></td></tr>
+<tr><td>Generic functions (type params)</td><td>Type parameters not representable in C</td><td><code>descriptor.typeParameters.isEmpty()</code></td></tr>
+<tr><td>Functions with context receivers</td><td>Context parameters not representable in C</td><td><code>contextReceiverParametersCount == 0</code></td></tr>
+<tr><td><code>expect</code> declarations</td><td>No body to generate bridges for</td><td><code>!descriptor.isExpect</code></td></tr>
+<tr><td>Annotation classes</td><td>No meaningful C representation</td><td><code>!descriptor.isAnnotationClass</code></td></tr>
+<tr><td><code>value class</code> / <code>inline class</code></td><td>Unwrapped to underlying type; class itself not exported</td><td><code>!descriptor.isValue</code></td></tr>
+<tr><td>Extension functions</td><td>Exported as regular functions with receiver as first param</td><td>Actually exported ✅</td></tr>
+</table>
+
+<div class="note">
+<strong><code>value class</code> nuance:</strong> The class itself is not exported as a struct, but functions that take/return a value class <em>are</em> exported — the value class is unwrapped to its underlying type. E.g., <code>fun lookupUser(uid: UserId)</code> where <code>UserId(val id: Int)</code> becomes <code>KInt lookupUser(KInt uid)</code> in C.
+</div>
+
+<!-- ============================================================ -->
+<h2 id="multi-module">9. Multi-Module: Top-Level vs Subproject vs klib</h2>
+
+<h3>9.1 Architecture</h3>
+<div class="diagram">
+┌─────────────────────────────────────────────────────────────┐
+│  :lib module  (no binary, produces .klib)                   │
+│  ┌─────────────────────────────────┐                        │
+│  │ public fun libAdd(...)          │ ← exported via export() │
+│  │ public class LibCalculator      │ ← exported via export() │
+│  │ internal fun libInternalHelper()│ ← never exported        │
+│  └─────────────────────────────────┘                        │
+└──────────────────────────┬──────────────────────────────────┘
+                           │ klib dependency
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│  :app module  (produces sharedLib → .so + .h)               │
+│  ┌─────────────────────────────────┐                        │
+│  │ public fun addNumbers(...)      │ ← always in header     │
+│  │ @CName("kn_subtract") fun ...   │ ← extern "C" + header  │
+│  │ @ExportedBridge("kn_raw_add")   │ ← raw symbol, no header│
+│  │ internal fun ...                │ ← never in header       │
+│  └─────────────────────────────────┘                        │
+│                                                             │
+│  binaries.sharedLib {                                       │
+│    export(project(":lib"))  ← re-exports lib's public API   │
+│  }                                                          │
+└─────────────────────────────────────────────────────────────┘
+</div>
+
+<h3>9.2 Comparison Table</h3>
+
+<table>
+<tr><th>Scenario</th><th>Header contains</th><th>Binary contains</th></tr>
+<tr>
+  <td>Single module, no deps</td>
+  <td>Module's own public API</td>
+  <td>All compiled code</td>
+</tr>
+<tr>
+  <td>Multi-module, <strong>without</strong> <code>export()</code></td>
+  <td>Only app module's public API</td>
+  <td>All linked code (lib is linked but not in header)</td>
+</tr>
+<tr>
+  <td>Multi-module, <strong>with</strong> <code>export(project(":lib"))</code></td>
+  <td>App's + lib's public API</td>
+  <td>All linked code, both in ExportedSymbols struct</td>
+</tr>
+<tr>
+  <td>With <code>moduleIncludeOnly=lib</code></td>
+  <td><strong>Only</strong> lib's public API (app excluded)</td>
+  <td>All linked code</td>
+</tr>
+<tr>
+  <td>Published klib via <code>export("com.example:lib:1.0")</code></td>
+  <td>App's + published lib's public API</td>
+  <td>All linked code</td>
+</tr>
+</table>
+
+<h3>9.3 Key Differences: klib vs Binary Module</h3>
+
+<table>
+<tr><th>Aspect</th><th>klib module</th><th>Binary-producing module (sharedLib/staticLib)</th></tr>
+<tr><td>Output</td><td>.klib (serialized IR)</td><td>.so/.a + .h header</td></tr>
+<tr><td>C export</td><td class="no">No — klib is not a binary</td><td class="yes">Yes — generates header + bridges</td></tr>
+<tr><td>API visibility in C</td><td>Only when re-exported by a binary module</td><td>Always (public API)</td></tr>
+<tr><td>Gradle config</td><td><code>ohosArm64()</code> (no binaries block)</td><td><code>ohosArm64 { binaries { sharedLib { ... } } }</code></td></tr>
+<tr><td>Can use <code>export()</code></td><td class="no">No — only binary blocks have export()</td><td class="yes">Yes</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="scenarios">10. Demo Scenarios Summary</h2>
+
+<table>
+<tr><th>#</th><th>Scenario</th><th>Source File</th><th>Mechanism</th><th>C Access Pattern</th></tr>
+<tr>
+  <td><span class="scenario-tag">1</span></td>
+  <td>Default naming</td>
+  <td><code>TopLevelFunctions.kt</code></td>
+  <td>No annotation</td>
+  <td><code>lib->kotlin.root.com.example.app.addNumbers(10, 32)</code></td>
+</tr>
+<tr>
+  <td><span class="scenario-tag">2A</span></td>
+  <td>@CName externName</td>
+  <td><code>CNameDemo.kt</code></td>
+  <td><code>@CName("kn_subtract")</code></td>
+  <td><code>kn_subtract(100, 58)</code> — direct call</td>
+</tr>
+<tr>
+  <td><span class="scenario-tag">2B</span></td>
+  <td>@CName shortName</td>
+  <td><code>CNameDemo.kt</code></td>
+  <td><code>@CName("", "myMultiply")</code></td>
+  <td><code>lib->...app.myMultiply(6, 7)</code></td>
+</tr>
+<tr>
+  <td><span class="scenario-tag">2C</span></td>
+  <td>@CName both</td>
+  <td><code>CNameDemo.kt</code></td>
+  <td><code>@CName("kn_divide", "div")</code></td>
+  <td>Both <code>kn_divide()</code> and <code>lib->...app.div()</code></td>
+</tr>
+<tr>
+  <td><span class="scenario-tag">3A</span></td>
+  <td>Class export</td>
+  <td><code>ClassDemo.kt</code></td>
+  <td>public class</td>
+  <td>Constructor + method pointers in struct</td>
+</tr>
+<tr>
+  <td><span class="scenario-tag">3C</span></td>
+  <td>Data class</td>
+  <td><code>ClassDemo.kt</code></td>
+  <td>public data class</td>
+  <td>Constructor + copy + equals + hashCode + componentN</td>
+</tr>
+<tr>
+  <td><span class="scenario-tag">3E</span></td>
+  <td>Enum</td>
+  <td><code>ClassDemo.kt</code></td>
+  <td>public enum class</td>
+  <td><code>Color.RED.get()</code> + property getters</td>
+</tr>
+<tr>
+  <td><span class="scenario-tag">3F</span></td>
+  <td>Singleton object</td>
+  <td><code>ClassDemo.kt</code></td>
+  <td>object</td>
+  <td><code>AppConfig._instance()</code></td>
+</tr>
+<tr>
+  <td><span class="scenario-tag">3G</span></td>
+  <td>Sealed class</td>
+  <td><code>ClassDemo.kt</code></td>
+  <td>sealed class</td>
+  <td>Subclass constructors, parent _type() only</td>
+</tr>
+<tr>
+  <td><span class="scenario-tag">4</span></td>
+  <td>Visibility control</td>
+  <td><code>VisibilityDemo.kt</code></td>
+  <td>public/internal/private</td>
+  <td>Only public symbols exist in header</td>
+</tr>
+<tr>
+  <td><span class="scenario-tag">5</span></td>
+  <td>klib re-export</td>
+  <td><code>app/build.gradle.kts</code></td>
+  <td><code>export(project(":lib"))</code></td>
+  <td><code>lib->kotlin.root.com.example.lib.libAdd()</code></td>
+</tr>
+<tr>
+  <td><span class="scenario-tag">6</span></td>
+  <td>Module filtering</td>
+  <td><code>app/build.gradle.kts</code></td>
+  <td><code>moduleIncludeOnly</code></td>
+  <td>Only matching modules in header</td>
+</tr>
+<tr>
+  <td><span class="scenario-tag">7</span></td>
+  <td>@ExportedBridge</td>
+  <td><code>ExportedBridgeDemo.kt</code></td>
+  <td><code>@ExportedBridge("kn_raw_add")</code></td>
+  <td>Manual <code>extern int kn_raw_add(int, int);</code></td>
+</tr>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="method-table">11. Complete Method Reference Table</h2>
+
+<p>All methods for controlling C export, organized by what they control:</p>
+
+<h3>Name Control (What C Sees)</h3>
+<table>
+<tr><th>#</th><th>Method</th><th>Scope</th><th>Applies To</th><th>Effect</th></tr>
+<tr>
+  <td>1</td>
+  <td><code>@CName(externName)</code></td>
+  <td>Source annotation</td>
+  <td>Top-level functions</td>
+  <td>Creates standalone <code>extern "C"</code> function with given name</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>@CName(shortName)</code></td>
+  <td>Source annotation</td>
+  <td>Top-level functions</td>
+  <td>Renames member inside <code>ExportedSymbols</code> struct</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>@ExportedBridge("name")</code></td>
+  <td>Source annotation (internal)</td>
+  <td>Top-level functions</td>
+  <td>Raw LLVM symbol, no header entry, must declare manually</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>fullExportedNamePrefix</code></td>
+  <td>Compiler flag</td>
+  <td>All generated names</td>
+  <td>Controls the prefix for all C type names and the symbols accessor</td>
+</tr>
+</table>
+
+<h3>Visibility Control (What Gets Exported)</h3>
+<table>
+<tr><th>#</th><th>Method</th><th>Scope</th><th>Applies To</th><th>Effect</th></tr>
+<tr>
+  <td>5</td>
+  <td>Kotlin <code>public</code>/<code>internal</code>/<code>private</code></td>
+  <td>Source modifier</td>
+  <td>Everything</td>
+  <td>Primary gate — only <code>public</code> is exported</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>export()</code> in Gradle</td>
+  <td>Gradle DSL</td>
+  <td>sharedLib, staticLib, framework</td>
+  <td>Re-export klib dependency's public API</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>transitiveExport</code></td>
+  <td>Gradle DSL</td>
+  <td>sharedLib, staticLib, framework</td>
+  <td>Whether transitive deps are also re-exported</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>moduleIncludeOnly</code></td>
+  <td>Compiler flag</td>
+  <td>sharedLib, staticLib</td>
+  <td>Whitelist filter for which modules appear in header</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>cInterfaceMode</code></td>
+  <td>Compiler flag</td>
+  <td>sharedLib, staticLib</td>
+  <td>Enable (<code>v1</code>) or disable (<code>none</code>) header generation</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>-Xexport-library=&lt;path&gt;</code></td>
+  <td>Compiler flag</td>
+  <td>sharedLib, staticLib, framework</td>
+  <td>Compiler-level klib re-export (Gradle <code>export()</code> wraps this)</td>
+</tr>
+</table>
+
+<h3>Binary Type Selection</h3>
+<table>
+<tr><th>#</th><th>Method</th><th>Scope</th><th>Effect</th></tr>
+<tr>
+  <td>11</td>
+  <td><code>sharedLib { }</code> in Gradle</td>
+  <td>Gradle DSL</td>
+  <td>Produces .so/.dylib + C header (V1)</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>staticLib { }</code> in Gradle</td>
+  <td>Gradle DSL</td>
+  <td>Produces .a/.lib + C header (V1)</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>framework { }</code> in Gradle</td>
+  <td>Gradle DSL</td>
+  <td>Produces .framework + ObjC header (Apple only)</td>
+</tr>
+</table>
+
+<h3>Apple-Specific (ObjC Export, Not C Export)</h3>
+<table>
+<tr><th>#</th><th>Method</th><th>Scope</th><th>Effect</th></tr>
+<tr>
+  <td>14</td>
+  <td><code>@ObjCName</code></td>
+  <td>Source annotation</td>
+  <td>Controls ObjC/Swift name for classes, functions, properties</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>@ExportObjCClass</code></td>
+  <td>Source annotation</td>
+  <td>Force ObjC runtime class registration</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>@HiddenFromObjC</code></td>
+  <td>Source annotation</td>
+  <td>Remove from ObjC export</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>@ShouldRefineInSwift</code></td>
+  <td>Source annotation</td>
+  <td>Mark as <code>swift_private</code> in ObjC header</td>
+</tr>
+</table>
+
+<hr style="margin: 2rem 0; border-color: var(--border);">
+<p style="color: var(--text-dim); font-size: 0.85rem; text-align: center;">
+  Generated from compiler source analysis of Kotlin 2.2.21-OH • Demo project: <code>c-export-demo/</code> targeting <code>ohosArm64</code><br>
+  Key compiler sources: <code>CAdapterGenerator.kt</code>, <code>CAdapterCodegen.kt</code>, <code>CAdapterApiExporter.kt</code>, <code>CAdapterTypeTranslator.kt</code>, <code>KonanConfig.kt</code>, <code>BinaryOptions.kt</code>
+</p>
+
+</body>
+</html>
