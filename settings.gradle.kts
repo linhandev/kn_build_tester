@@ -1,5 +1,4 @@
 pluginManagement {
-    // CI sets KN_ACTION_BUILD_REPO_ABS to an absolute path to kotlin build/repo (Maven layout). Optional for local dev.
     val knActionMavenUrl: String? = System.getenv("KN_ACTION_BUILD_REPO_ABS")
         ?.let { java.io.File(it).toURI().toString() }
     repositories {
@@ -29,6 +28,13 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "c2k"
+rootProject.name = "cexport-demo"
 
-include("kotlinApp")
+// Scenario 1: Main app module (top-level subproject that produces the binary)
+include(":app")
+
+// Scenario 2: Dependency subproject (submodule)
+include(":lib-subproject")
+
+// Scenario 3: Klib source (will be built as klib and depended on)
+include(":lib-klib")
