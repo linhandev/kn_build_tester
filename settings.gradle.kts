@@ -1,5 +1,27 @@
-rootProject.name = "kn-sample"
+pluginManagement {
+    repositories {
+        maven("https://maven.eazytec-cloud.com/nexus/repository/maven-public")
+        maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
+        maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
+        gradlePluginPortal()
+        mavenCentral()
+    }
+    plugins {
+        val kotlinVersion: String by settings
+        kotlin("multiplatform") version kotlinVersion
+    }
+}
 
-include(":mathlib")
-include(":stringlib")
-include(":app")
+dependencyResolutionManagement {
+    repositories {
+        maven("https://maven.eazytec-cloud.com/nexus/repository/maven-public")
+        maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
+        maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
+        mavenCentral()
+    }
+}
+
+rootProject.name = "klib-dep-repro"
+include("lib")
+include("app")
+include("cinterop-test")

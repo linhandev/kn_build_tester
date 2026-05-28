@@ -1,256 +1,65 @@
-# Kotlin Multiplatform Multi-Module Demo
+# Reproduction: KLIB resolver Could not find "org.jetbrains.kotlin.native.platform.ohos"
 
-This project demonstrates how to create a Kotlin Multiplatform application with multiple modules where:
-- **mathlib**: Compiled as a **static library** (.a files) for native targets and JAR for JVM
-- **stringlib**: Compiled as a **dynamic library** (.dylib/.so files) for native targets and JAR for JVM
-- **app**: Application that uses both libraries
-
-## Project Structure
-
+## Issue
+When a klib's manifest declares a dependency on `org.jetbrains.kotlin.native.platform.ohos`, the cinterop tool fails with:
 ```
-kn-sample/
-├── README.md
-├── build.gradle.kts              # Root build configuration
-├── settings.gradle.kts           # Project modules declaration
-├── gradle.properties             # Gradle configuration (includes heap space settings)
-├── run.sh                        # Demo script
-├── mathlib/                      # Static library module
-│   ├── build.gradle.kts         # Static library build configuration
-│   └── src/
-│       ├── commonMain/kotlin/   # 🌍 Shared code: MathUtils.kt, PlatformExpected.kt
-│       ├── commonNative/kotlin/ # 🖥️ Native code: Platform.kt
-│       └── jvmMain/kotlin/      # ☕ JVM code: Platform.kt
-├── stringlib/                   # Dynamic library module
-│   ├── build.gradle.kts         # Dynamic library build configuration  
-│   └── src/
-│       ├── commonMain/kotlin/   # 🌍 Shared code: StringUtils.kt, StringPlatformExpected.kt
-│       ├── commonNative/kotlin/ # 🖥️ Native code: StringPlatform.kt
-│       └── jvmMain/kotlin/      # ☕ JVM code: StringPlatform.kt
-└── app/                         # Application module
-    ├── build.gradle.kts         # App build configuration
-    └── src/
-        └── commonMain/kotlin/   # 🌍 Main.kt (uses both libraries)
-            └── Main.kt          
+e: KLIB resolver: Could not find "org.jetbrains.kotlin.native.platform.ohos" in [search_paths]
 ```
 
-## Modules
+## Environment
+- Kotlin/Native: 2.2.21-0.3.0-05
+- Target: ohos_arm64
+- OS: macOS (tested on Apple Silicon)
 
-### 1. mathlib (Static Library Module)
-- **Purpose**: Simple math function to demonstrate static library linking
-- **Targets**: JVM, Linux x64, macOS x64, macOS ARM64
-- **Outputs**: 
-  - **JVM**: `mathlib-jvm.jar`
-  - **Native**: `libmathlib.a` (static libraries)
-- **Function**: `mathLibFunction(x: Int, y: Int): Int` - adds two numbers
+## Root Cause
+The klib manifest contains `depends=stdlib org.jetbrains.kotlin.native.platform.ohos`, but this aggregate platform library name doesn't exist as a resolvable klib file in the distribution. The distribution only contains `org.jetbrains.kotlin.native.platform.posix` in `$DIST/klib/platform/ohos_arm64/`.
 
-### 2. stringlib (Dynamic Library Module)  
-- **Purpose**: Simple string function to demonstrate dynamic library linking
-- **Targets**: JVM, Linux x64, macOS x64, macOS ARM64
-- **Outputs**: 
-  - **JVM**: `stringlib-jvm.jar`
-  - **Native**: `libstringlib.dylib/.so` (dynamic/shared libraries)
-- **Function**: `stringLibFunction(text: String): String` - processes text
+The error occurs specifically in cinterop because it calls `libraryResolver()` without `resolveManifestDependenciesLenient = true`, causing strict resolution of all manifest dependencies.
 
-### 3. app (Application Module)
-- **Purpose**: Demonstrates usage of both static and dynamic libraries
-- **Dependencies**: Links against both mathlib (static) and stringlib (dynamic)
-- **Output**: Calls functions from both libraries and shows platform information
+## Reproduction Steps
 
-## How App Depends on Libraries
-
-The dependency configuration demonstrates Kotlin Multiplatform's automatic cross-module linking:
-
-### In `app/build.gradle.kts`:
-```kotlin
-sourceSets {
-    val commonMain by getting {
-        dependencies {
-            implementation(project(":mathlib"))    // Static library
-            implementation(project(":stringlib"))  // Dynamic library
-        }
-    }
-}
-```
-
-### What Happens Automatically:
-1. **JVM→JVM**: App's JVM target depends on both libraries' JARs
-2. **Native→Native**: App's native targets link against libraries (static + dynamic)
-3. **Source Resolution**: Each platform gets the right source code via hierarchy
-
-## Library Types Demonstrated
-
-### Static Library (mathlib)
-- **Build Config**: `staticLib()` in binaries block
-- **Native Output**: `libmathlib.a` files
-- **Linking**: Embedded into final executable at compile time
-- **JVM Output**: Regular JAR file
-
-### Dynamic Library (stringlib)  
-- **Build Config**: `sharedLib()` in binaries block
-- **Native Output**: `libstringlib.dylib` (macOS) / `libstringlib.so` (Linux)
-- **Linking**: Loaded at runtime, must be available in library path
-- **JVM Output**: Regular JAR file
-
-## Technologies Used
-
-- **Kotlin**: 2.2.0
-- **Gradle**: 9.0.0 
-- **Target Platforms**: JVM, Linux x64, macOS x64, macOS ARM64
-- **Heap Configuration**: 4GB max heap for Kotlin/Native compilation
-
-## Compilation Process
-
-### 1. Static Library Compilation (mathlib)
-
+### 1. Build the lib module (creates a klib)
 ```bash
-./gradlew :mathlib:linkReleaseStaticNative
+cd lib
+./gradlew :compileKotlinOhosArm64
 ```
 
-**Output**: `mathlib/build/bin/native/releaseStatic/libmathlib.a`
-
-### 2. Dynamic Library Compilation (stringlib)
-
-```bash  
-./gradlew :stringlib:linkReleaseSharedNative
-```
-
-**Output**: `stringlib/build/bin/native/releaseShared/libstringlib.dylib`
-
-### 3. Application Compilation (app)
-
+### 2. Patch the manifest to add the bad dependency
 ```bash
-./gradlew :app:linkReleaseExecutableNative  
+sed -i.bak 's/^depends=stdlib$/depends=stdlib org.jetbrains.kotlin.native.platform.ohos/' \
+  build/classes/kotlin/ohosArm64/main/klib/lib/default/manifest
 ```
 
-Links against both static and dynamic libraries.
-**Output**: `app/build/bin/native/releaseExecutable/app.kexe`
-
-Builds both modules in the correct dependency order.
-
-## How to Build and Run
-
-### Prerequisites
-
-- Java 8 or higher
-- Gradle (or use the included wrapper)
-- Linux environment (for running the executable)
-
-### Build Steps
-
-1. **Clone and navigate to the project**:
-   ```bash
-   git clone <repository-url>
-   cd kn-sample
-   ```
-
-2. **Build the entire project** (all targets):
-   ```bash
-   ./gradlew build
-   ```
-
-## Quick Start
-
-### Using the Demo Script
+### 3. Run cinterop with the patched klib
 ```bash
-# Run both native and JVM versions automatically  
-bash run.sh
+cd ../cinterop-test
+KLIB_DIR=../lib/build/classes/kotlin/ohosArm64/main/klib/lib
+DIST=$HOME/.konan/kotlin-native-prebuilt-macos-aarch64-2.2.21-0.3.0-05
+
+cat > /tmp/test.def << 'DEF'
+headers = stdio.h
+DEF
+
+$DIST/bin/cinterop -target ohos_arm64 \
+  -def /tmp/test.def \
+  -l $KLIB_DIR \
+  -o /tmp/output 2>&1
 ```
 
-### Manual Build and Run
-
-1. **Build everything**:
-   ```bash
-   ./gradlew build
-   ```
-
-2. **Run Native** (auto-detects platform):
-   ```bash
-   # macOS ARM64
-   ./app/build/bin/macosArm/releaseExecutable/app.kexe
-   
-   # macOS x64  
-   ./app/build/bin/macos/releaseExecutable/app.kexe
-   
-   # Linux x64
-   ./app/build/bin/native/releaseExecutable/app.kexe
-   ```
-
-3. **Run JVM**:
-   ```bash
-   java -cp "app/build/classes/kotlin/jvm/main:mathlib/build/libs/mathlib-jvm.jar:stringlib/build/libs/stringlib-jvm.jar:$KOTLIN_STDLIB" MainKt
-   ```
-
-## Expected Output
-
-When running the application, you should see:
-
+### Expected Error
 ```
-=== Kotlin Multi-Module Demo ===
-Running on: [JVM (Java 21.0.8) | Native (Linux/macOS)]
-String platform: [JVM (Dynamic JAR) | Native (Dynamic Library)]
-Called mathLibAddFunction from static library
-Result from static library: 8
-Called stringLibFunction from dynamic library  
-Result from dynamic library: Processed: Hello from app!
-=== Demo completed ===
+e: KLIB resolver: Could not find "org.jetbrains.kotlin.native.platform.ohos" in [/Users/.../.konan/kotlin-native-prebuilt-macos-aarch64-2.2.21-0.3.0-05/klib/platform/ohos_arm64, ...]
 ```
 
-The output shows:
-- **Platform detection** from both libraries
-- **Static library call** (mathlib) - embedded in executable
-- **Dynamic library call** (stringlib) - loaded at runtime
-- **Cross-module dependencies** working correctly
-
-## Key Learning Points
-
-### 1. Static vs Dynamic Libraries
-- **Static Library (mathlib)**: Code embedded in final executable, no runtime dependencies
-- **Dynamic Library (stringlib)**: Loaded at runtime, smaller executable but needs library files
-
-### 2. Automatic Dependency Resolution
-- Gradle handles build order automatically based on dependencies
-- Both libraries built before application that depends on them
-- JVM gets JARs, Native gets appropriate library files
-
-### 3. Multiplatform Module Architecture
-- Single codebase supports JVM + multiple native platforms
-- `expect`/`actual` pattern for platform-specific code
-- Source set hierarchy shares code efficiently
-
-### 4. Build Configuration Benefits
-- Heap space configuration prevents out-of-memory errors
-- Configuration cache speeds up repeated builds
-- Parallel builds improve performance
-
-## Build Artifacts
-
-After a successful build, you'll find:
-
-**mathlib (Static Library):**
-- **JVM**: `mathlib/build/libs/mathlib-jvm.jar`
-- **Native**: `mathlib/build/bin/{platform}/releaseStatic/libmathlib.a`
-
-**stringlib (Dynamic Library):**
-- **JVM**: `stringlib/build/libs/stringlib-jvm.jar`  
-- **Native**: `stringlib/build/bin/{platform}/releaseShared/libstringlib.{dylib|so}`
-
-**app (Application):**
-- **JVM**: `app/build/classes/kotlin/jvm/main/` (class files)
-- **Native**: `app/build/bin/{platform}/releaseExecutable/app.kexe`
-
-Where `{platform}` is: `native` (Linux x64), `macos` (macOS x64), or `macosArm` (macOS ARM64).
-
-## Extending to Other Targets
-
-To add support for other platforms, modify the build scripts:
-
-```kotlin
-kotlin {
-    linuxX64("linux")
-    macosX64("macos") 
-    macosArm64("macosArm")
-    mingwX64("windows")
-}
+## Verification
+Restoring the manifest to `depends=stdlib` allows cinterop to succeed:
+```bash
+sed -i.bak 's/^depends=stdlib org.jetbrains.kotlin.native.platform.ohos$/depends=stdlib/' \
+  ../lib/build/classes/kotlin/ohosArm64/main/klib/lib/default/manifest
 ```
 
-This demonstrates the power of Kotlin Multiplatform for creating modular native applications with both static and dynamic library linking.
+## Key Observations
+1. The compiler uses `resolveManifestDependenciesLenient = true` and only logs a warning (not fatal)
+2. cinterop uses strict resolution (`resolveManifestDependenciesLenient = false`) and fails
+3. The aggregate platform library name `org.jetbrains.kotlin.native.platform.ohos` is listed in `KonanConfig.kt:164-174` for `emitStdlib` mode but doesn't exist as a resolvable klib
+4. The Gradle plugin doesn't pass user klibs to cinterop tasks, so the error doesn't occur in typical Gradle builds

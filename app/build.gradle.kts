@@ -3,62 +3,35 @@ plugins {
 }
 
 kotlin {
-    // JVM target
-    jvm()
-    
-    // Native targets
-    linuxX64("native") {
+    ohosArm64 {
         binaries {
-            executable {
-                entryPoint = "main"
+            sharedLib {
+                baseName = "app"
             }
         }
     }
-    
-    macosX64("macos") {
-        binaries {
-            executable {
-                entryPoint = "main"
-            }
-        }
-    }
-    
-    macosArm64("macosArm") {
-        binaries {
-            executable {
-                entryPoint = "main"
-            }
-        }
-    }
-    
+
     sourceSets {
-        val commonMain by getting {
+        val ohosArm64Main by getting {
             dependencies {
-                implementation(project(":mathlib"))
-                implementation(project(":stringlib"))
+                implementation(project(":lib"))
             }
         }
-        
-        // JVM-specific source set
-        val jvmMain by getting {
-            dependencies {
-                implementation(project(":mathlib"))
-                implementation(project(":stringlib"))
-            }
-        }
-        
-        // Share common code between all native targets
-        val commonNative by creating {
-            dependsOn(commonMain)
-            dependencies {
-                implementation(project(":mathlib"))
-                implementation(project(":stringlib"))
-            }
-        }
-        
-        // All native targets will automatically use commonNative
-        targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
-            compilations["main"].defaultSourceSet.dependsOn(commonNative)
+    }
+}
+
+// Patch the lib klib manifest to add a bad dependency before linking
+tasks.matching { it.name.contains("linkDebugSharedOhosArm64") || it.name == "linkDebugSharedOhosArm64" }.configureEach {
+    dependsOn(":lib:compileKotlinOhosArm64")
+    doFirst {
+        val manifestFile = project(":lib").layout.buildDirectory.file("classes/kotlin/ohosArm64/main/klib/lib/default/manifest").get().asFile
+        if (manifestFile.exists()) {
+            val content = manifestFile.readText()
+            val patched = content.replace("depends=stdlib", "depends=stdlib;org.jetbrains.kotlin.native.platform.ohos")
+            manifestFile.writeText(patched)
+            println("PATCHED manifest: $patched")
+        } else {
+            println("WARNING: manifest not found at ${manifestFile.absolutePath}")
         }
     }
 }
