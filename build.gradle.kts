@@ -1,9 +1,2 @@
-plugins {
-    kotlin("multiplatform") version "2.2.0" apply false
-}
-
-allprojects {
-    repositories {
-        mavenCentral()
-    }
-}
+group = "com.example"
+version = "1.0-SNAPSHOT"
