@@ -1,8 +1,0 @@
----
-description: After code/config edits, run scripts/build-and-check-crash.sh
-alwaysApply: true
----
-
-# Rebuild and crash check
-
-When an edit is **finished**, run from repo root `./scripts/build-and-check-crash.sh`, the build & run test should exit 0. This script performs a full rebuild, reinstalls the hap and checks if there's a crash on start.

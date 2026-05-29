@@ -1,44 +1,78 @@
-# Kotlin/Native Exception Demo (Minimal)
+# Reproduction: compose-multiplatform 1.9.2-0.2.0-01 Build Failure (ALI-54)
 
-Keep `bare` branch a starting point for doing a demo, impl demos on another branch.
+## Issue
+compose-multiplatform version `1.9.2-0.2.0-01` fails to build a project compared to version `1.9.2-0.2.1`.
 
-Full build command.
+## Environment
+- macOS (Darwin arm64)
+- Kotlin/Native 2.2.21-0.3.0-04
+- Gradle 8.9
+- Compose Multiplatform plugin version tested: 1.9.2-0.2.0-01 vs 1.9.2-0.2.1
 
-```shell
-clear
-hdc uninstall com.kotlin.demo \
-./gradlew clean \
-./gradlew --stop \
-./gradlew startHarmonyAppDebug --rerun-tasks
+## Scenario 1: Plugin resolution without custom Maven repo
+
+If the `pluginManagement` block does NOT include `maven("https://maven.eazytec-cloud.com/nexus/repository/maven-public")`, the plugin cannot be resolved:
+
+```
+# Edit settings.gradle.kts: remove the eazytec maven line from pluginManagement.repositories
+./gradlew :composeApp:tasks
 ```
 
-## Bundle name (from project)
-
-The installed app’s **bundle name** is **`app.bundleName`** in **`harmonyApp/AppScope/app.json5`** (for this sample it is `com.kotlin.demo`). Use the same value for `hdc uninstall`, `aa start`, and filtering crash logs.
-
-Read it from the repo (from the project root):
-
-```shell
-grep bundleName harmonyApp/AppScope/app.json5
+**Expected error:**
+```
+Plugin [id: 'org.jetbrains.compose', version: '1.9.2-0.2.0-01', apply: false] was not found in any of the following sources:
+- Gradle Core Plugins (plugin is not in 'org.gradle' namespace)
+- Included Builds (No included builds contain this plugin)
+- Plugin Repositories (could not resolve plugin artifact 'org.jetbrains.compose:org.jetbrains.compose.gradle.plugin:1.9.2-0.2.0-01')
 ```
 
-## Pull the latest crash / fault log for this app
+This same error occurs for version `1.9.2-0.2.1` — neither is published to the Gradle Plugin Portal.
 
-Fault dumps for apps usually land under **`/data/log/faultlog/faultlogger/`** (freeze-related dumps often under **`/data/log/faultlog/freeze_ext/`**). Filenames typically include the **bundle name**, so you can take the newest matching file.
+## Scenario 2: Full build with custom Maven repo (both versions)
 
-From the project root (macOS/Linux; strips a trailing CR from `hdc` output):
+With the custom maven repo configured (default `settings.gradle.kts`), both versions compile and link successfully.
 
-```shell
-bundle=$(grep bundleName harmonyApp/AppScope/app.json5 | sed -n 's/.*"bundleName"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
-latest=$(hdc shell "ls -t /data/log/faultlog/faultlogger/" | tr -d '\r' | grep -F "$bundle" | head -1)
-hdc file recv "/data/log/faultlog/faultlogger/$latest" ./
+### Build with version 1.9.2-0.2.0-01 (current configuration):
+```bash
+./gradlew :composeApp:linkDebugSharedOhosArm64
+# BUILD SUCCESSFUL — but with ~50 informational warnings about unlinked OHOS NAPI symbols
 ```
 
-Freeze logs for the same app (same idea, different directory):
-
-```shell
-latest=$(hdc shell "ls -t /data/log/faultlog/freeze_ext/" | tr -d '\r' | grep -F "$bundle" | head -1)
-hdc file recv "/data/log/faultlog/freeze_ext/$latest" ./
+### Switch to version 1.9.2-0.2.1:
+```bash
+# Edit build.gradle.kts: change version "1.9.2-0.2.0-01" to "1.9.2-0.2.1"
+./gradlew clean :composeApp:linkDebugSharedOhosArm64
+# BUILD SUCCESSFUL — zero warnings
 ```
 
-If `latest` is empty, list recent files and pick the one whose name matches your bundle: `hdc shell "ls -lt /data/log/faultlog/faultlogger/ | head -n 20"`.
+## Key Observations
+
+1. **Plugin resolution**: Neither version is available on standard Gradle Plugin Portal. Both require the custom maven repo `https://maven.eazytec-cloud.com/nexus/repository/maven-public`.
+
+2. **OHOS NAPI warnings in 1.9.2-0.2.0-01**: The link step produces ~50 info-level warnings like:
+   ```
+   i: <org.jetbrains.compose.ui:ui> @ .../JsEnv.kt:246:25: Function 'napi_create_function' can not be called: No function found for symbol 'platform.ohos/napi_create_function|...'
+   ```
+   These indicate the compose-ui klib was compiled against a Kotlin/Native distribution with different OHOS platform definitions than what's available at link time.
+
+3. **No warnings in 1.9.2-0.2.1**: The same build produces zero such warnings.
+
+4. **Dependency version differences**:
+   - `1.9.2-0.2.0-01` uses: `atomicfu:0.31.0-OH-001`, `kotlinx-coroutines-core:1.10.2-OH-103`, `lifecycle:2.9.4-OH.0.1.2-15`
+   - `1.9.2-0.2.1` uses: `atomicfu:0.31.0-0.2.0`, `kotlinx-coroutines-core:1.10.2-0.2.0`, `lifecycle:2.9.4-0.2.1`
+
+## Reproduce Script
+
+```bash
+# Test 1: Plugin resolution failure (remove custom repo)
+./gradlew :composeApp:tasks 2>&1 | head -20
+
+# Test 2: Build with broken version (has NAPI warnings)
+./gradlew :composeApp:linkDebugSharedOhosArm64 2>&1 | grep -c "^i:"
+# Expected: ~50 warnings
+
+# Test 3: Build with working version (clean, no warnings)
+# Edit build.gradle.kts version to "1.9.2-0.2.1"
+./gradlew clean :composeApp:linkDebugSharedOhosArm64 2>&1 | grep -c "^i:"
+# Expected: 0 warnings
+```
