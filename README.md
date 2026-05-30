@@ -1,44 +1,59 @@
-# Kotlin/Native Exception Demo (Minimal)
+# ALI-62 LLVM Exit Code 139 Reproduction Attempt
 
-Keep `bare` branch a starting point for doing a demo, impl demos on another branch.
+## Issue
+LLVM exit code 139 (SIGSEGV) during `linkDebugSharedOhosArm64` with KMP 7.0.0.220
 
-Full build command.
+## Environment
+- macOS arm64 (Apple Silicon)
+- Kotlin/Native CPF versions tested:
+  - `2.2.21-0.4.0-01`
+  - `2.2.21-0.3.0-06`
+  - `2.2.21-EZ.0.2.0-15`
 
-```shell
-clear
-hdc uninstall com.kotlin.demo \
-./gradlew clean \
-./gradlew --stop \
-./gradlew startHarmonyAppDebug --rerun-tasks
-```
+## Project Structure
+Minimal KMP project targeting OHOS arm64 with shared library output.
 
-## Bundle name (from project)
+## Reproduction Steps
 
-The installed app’s **bundle name** is **`app.bundleName`** in **`harmonyApp/AppScope/app.json5`** (for this sample it is `com.kotlin.demo`). Use the same value for `hdc uninstall`, `aa start`, and filtering crash logs.
+1. Clone this branch:
+   ```bash
+   git clone -b repro/ALI-62-llvm-exit-139-debug-link https://github.com/linhandev/kn_samples.git
+   cd kn_samples
+   ```
 
-Read it from the repo (from the project root):
+2. Run the debug link task:
+   ```bash
+   ./gradlew :kotlinApp:linkDebugSharedOhosArm64 --no-configuration-cache
+   ```
 
-```shell
-grep bundleName harmonyApp/AppScope/app.json5
-```
+3. Expected: LLVM crash with exit code 139
+4. Actual: BUILD SUCCESSFUL
 
-## Pull the latest crash / fault log for this app
+## Results
 
-Fault dumps for apps usually land under **`/data/log/faultlog/faultlogger/`** (freeze-related dumps often under **`/data/log/faultlog/freeze_ext/`**). Filenames typically include the **bundle name**, so you can take the newest matching file.
+All tested versions completed successfully without LLVM crash:
+- `2.2.21-0.4.0-01`: BUILD SUCCESSFUL
+- `2.2.21-0.3.0-06`: BUILD SUCCESSFUL  
+- `2.2.21-EZ.0.2.0-15`: BUILD SUCCESSFUL
 
-From the project root (macOS/Linux; strips a trailing CR from `hdc` output):
+## Observations
 
-```shell
-bundle=$(grep bundleName harmonyApp/AppScope/app.json5 | sed -n 's/.*"bundleName"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
-latest=$(hdc shell "ls -t /data/log/faultlog/faultlogger/" | tr -d '\r' | grep -F "$bundle" | head -1)
-hdc file recv "/data/log/faultlog/faultlogger/$latest" ./
-```
+The LLVM exit code 139 crash could NOT be reproduced with:
+- Simple KMP project (single Kotlin source file)
+- Available CPF Kotlin versions from Maven repository
+- Debug shared library linking for OHOS arm64
 
-Freeze logs for the same app (same idea, different directory):
+## Hypotheses
 
-```shell
-latest=$(hdc shell "ls -t /data/log/faultlog/freeze_ext/" | tr -d '\r' | grep -F "$bundle" | head -1)
-hdc file recv "/data/log/faultlog/freeze_ext/$latest" ./
-```
+The crash may require:
+1. The exact "7.0.0.220" version (not found in CPF Maven repo)
+2. A more complex project (e.g., Compose Multiplatform with larger codebase)
+3. Specific code patterns or dependencies that trigger the LLVM bug
+4. Different build configuration or compiler flags
 
-If `latest` is empty, list recent files and pick the one whose name matches your bundle: `hdc shell "ls -lt /data/log/faultlog/faultlogger/ | head -n 20"`.
+## Next Steps
+
+To reproduce this issue, we need:
+- The exact Kotlin version used by "3rd-Framework-KMP 7.0.0.220"
+- Or a sample project that exhibits the crash
+- Or more details about the code patterns that trigger the issue
