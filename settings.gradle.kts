@@ -1,5 +1,4 @@
 pluginManagement {
-    // CI sets KN_ACTION_BUILD_REPO_ABS to an absolute path to kotlin build/repo (Maven layout). Optional for local dev.
     val knActionMavenUrl: String? = System.getenv("KN_ACTION_BUILD_REPO_ABS")
         ?.let { java.io.File(it).toURI().toString() }
     repositories {
@@ -29,6 +28,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "c2k"
-
-include("kotlinApp")
+rootProject.name = "splitbc-repro"
+include(":kotlinApp")
