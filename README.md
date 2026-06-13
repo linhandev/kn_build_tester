@@ -35,14 +35,14 @@ python3 generate-sources.py
 With `kotlin.incremental.native=true` + `kotlin.native.cacheOrchestration=compiler`:
 1. Each `.kt` source file gets compiled into a per-file static cache `.a` file
 2. All cache `.a` paths are passed as individual arguments to the linker
-3. With 15000 files × ~140 bytes per path ≈ 2.1MB > 2MB ARG_MAX → `execve()` fails
+3. With 15000 source files → **24801 cache `.a` files** × ~170 bytes/path = **3.97MB** > 2MB ARG_MAX → `execve()` fails with error 7
 
-## Expected Behavior
+## Confirmed Behavior (KT 2.4.0)
 
 | Target | Linker | Result |
 |--------|--------|--------|
-| `linuxX64` | `GccBasedLinker` (ld.lld) | ❌ `Argument list too long` / `E2BIG` |
-| `macosArm64` | `MacOSBasedLinker` (ld64) | ✅ Uses `-filelist`, succeeds |
+| `linuxX64` | `GccBasedLinker` (ld.lld) | ❌ `java.io.IOException: Exec failed, error: 7 (Argument list too long)` |
+| `macosArm64` | `MacOSBasedLinker` (ld64) | ✅ Uses `-filelist`, succeeds (Sum = 124750) |
 
 ## Fix
 
