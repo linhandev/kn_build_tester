@@ -2,14 +2,15 @@
 
 ## The Bug
 
-When Kotlin/Native links a Linux executable with static caches enabled (default),
-each source file produces a separate cache `.a` file. All cache paths are passed
-as individual command-line arguments to `ld.lld`. With enough source files, the
-command line exceeds the OS `ARG_MAX` limit and `execve()` fails with `E2BIG`.
+When Kotlin/Native links a Linux executable with incremental compilation enabled,
+each source file produces a per-file static cache `.a` file. All cache paths are
+passed as individual command-line arguments to `ld.lld`. With enough source files
+(~15000), the command line exceeds the OS `ARG_MAX` limit (2MB on Linux) and
+`execve()` fails with `E2BIG`.
 
 **Root cause:** `GccBasedLinker` in the Kotlin/Native compiler passes libraries
 as raw arguments, unlike:
-- `MacOSBasedLinker` — uses `-filelist` (fixed in KT-66061, commit 921c5eee428e)
+- `MacOSBasedLinker` — uses `-filelist` (fixed in KT-66061)
 - `OhosLinker` — uses `@file` response files (CPF fix)
 
 `GccBasedLinker` was never updated to use `@file` response files despite
@@ -18,15 +19,23 @@ as raw arguments, unlike:
 ## Reproducing
 
 ```bash
-# Generate source files (default: 200 files)
+# 1. Generate 15000 source files (not committed to git)
 python3 generate-sources.py
 
-# Trigger the bug on Linux (or cross-compile from macOS to Linux)
+# 2. Build for Linux — triggers the bug
 ./gradlew linkDebugExecutableLinuxX64
+# Expected: "Argument list too long" / E2BIG from ld.lld
 
-# Verify macOS works fine (MacOSBasedLinker already uses -filelist)
+# 3. Build for macOS — succeeds (MacOSBasedLinker uses -filelist)
 ./gradlew linkDebugExecutableMacosArm64
 ```
+
+## How It Works
+
+With `kotlin.incremental.native=true` + `kotlin.native.cacheOrchestration=compiler`:
+1. Each `.kt` source file gets compiled into a per-file static cache `.a` file
+2. All cache `.a` paths are passed as individual arguments to the linker
+3. With 15000 files × ~140 bytes per path ≈ 2.1MB > 2MB ARG_MAX → `execve()` fails
 
 ## Expected Behavior
 
@@ -44,6 +53,7 @@ Mirror the OhosLinker pattern in `GccBasedLinker`:
 
 ## Files
 
-- `generate-sources.py` — creates N Kotlin source files + Main.kt
+- `generate-sources.py` — creates N Kotlin source files + Main.kt (default: 15000)
 - `build.gradle.kts` — KMP project targeting linuxX64 + macosArm64
-- `gradle.properties` — KT 2.4.0, static caches enabled (default)
+- `gradle.properties` — KT 2.4.0, incremental compilation enabled
+- `src/commonMain/kotlin/generated/` — generated files (gitignored)
