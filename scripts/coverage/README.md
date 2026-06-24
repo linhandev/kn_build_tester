@@ -17,12 +17,14 @@ cd ~/git/worktree/kn_samples-kmp-coverage-survey
 
 ## Results matrix
 
-| Backend | Official? | Mechanism | Tool | Status |
+The coverage **numbers** are not the point — all backends share the same common test code, so percentages are nearly identical and meaningless in isolation. What matters is whether each backend can **produce a report that maps coverage back to `.kt` source at line/function level and correctly flags uncovered code**. To prove that, `Calculator.kt` has an `uncalledUtility()` method that **no test calls** — every report must flag it as uncovered.
+
+| Backend | Official? | Mechanism | Tool | Can it flag uncovered .kt code? |
 |---|---|---|---|---|
-| **jvm** | ✅ JB official | JaCoCo agent on build-JVM bytecode | Kover (`koverHtmlReportJvm`) | ✅ works |
-| **js** | ❌ no JB integration | V8 native coverage + source-map remap to .kt | c8 + `NODE_V8_COVERAGE` | ✅ works (remap to .kt confirmed) |
+| **jvm** | ✅ JB official | JaCoCo agent on build-JVM bytecode | Kover (`koverHtmlReportJvm`) | ✅ METHOD 6/7, source page 8 fc + 2 nc lines |
+| **js** | ❌ no JB integration | V8 native coverage + source-map remap to .kt | c8 + `NODE_V8_COVERAGE` | ✅ Calculator % Funcs 75% (uncalledUtility flagged) + `Calculator.kt.html` per-file page |
 | **wasmJs** | ❌ no JB integration | (would need V8 wasm coverage + wasm source-map) | — | ❌ no working path (Node 24 has no wasm-coverage flag) |
-| **android** | ✅ JB official | Kover JVM agent on host unit test (runs on build JVM) | Kover (`koverHtmlReportAndroid`) | ✅ works, LINE 91.3% |
+| **android** | ✅ JB official | Kover JVM agent on host unit test (runs on build JVM) | Kover (`koverHtmlReportAndroid`) | ✅ same as jvm: METHOD 6/7, source page fc/nc lines |
 
 ## Per-backend notes
 

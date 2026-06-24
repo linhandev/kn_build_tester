@@ -24,4 +24,7 @@ object Calculator {
         }
         return true
     }
+
+    /** Intentionally NEVER called by any test — used to prove coverage reports flag uncovered code. */
+    fun uncalledUtility(n: Int): Int = n * 42
 }
