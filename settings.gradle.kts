@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "multiplatform-library-template"
 include(":library")
+include(":androidApp")

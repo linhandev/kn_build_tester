@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.kover)
+    jacoco
 }
 
 group = "io.github.kotlin"
@@ -21,8 +22,8 @@ kotlin {
 
         withJava() // enable java compilation support
         withHostTestBuilder {}.configure {}
-        withDeviceTestBuilder {
-            sourceSetTreeName = "test"
+        withDeviceTest {
+            enableCoverage = true
         }
 
         compilerOptions {
@@ -71,5 +72,32 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+
+        // Android instrumented (device) test dependencies.
+        val androidDeviceTest by getting {
+            dependencies {
+                implementation(libs.androidx.test.core)
+                implementation(libs.androidx.test.runner)
+                implementation(libs.androidx.test.rules)
+                implementation(libs.androidx.test.ext.junit)
+            }
+        }
     }
 }
+
+// Device (instrumented) test coverage report — consume the .ec pulled from the emulator.
+// AGP9 KMP androidLibrary does NOT auto-create a coverage report task, so build one with JaCoCo.
+tasks.register<org.gradle.testing.jacoco.tasks.JacocoReport>("createAndroidDeviceCoverageReport") {
+    group = "verification"
+    description = "Generates coverage report for library androidMain from on-device instrumented tests."
+    val ec = layout.buildDirectory.file("outputs/code_coverage/androidDeviceTest/connected/Small_Phone(AVD) - 17/coverage.ec")
+    executionData.from(ec.map { it.asFile })
+    // androidMain compiled classes (original, with line-number tables for source mapping).
+    classDirectories.from(layout.buildDirectory.dir("classes/kotlin/android/main"))
+    sourceDirectories.from(files("src/commonMain/kotlin", "src/androidMain/kotlin"))
+    reports {
+        html.required.set(true)
+        xml.required.set(true)
+    }
+}
+
