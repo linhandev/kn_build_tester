@@ -1,44 +1,19 @@
-# Kotlin/Native Exception Demo (Minimal)
+[![official project](http://jb.gg/badges/official.svg)](https://github.com/JetBrains#jetbrains-on-github)
 
-Keep `bare` branch a starting point for doing a demo, impl demos on another branch.
+# Multiplatform library template
 
-Full build command.
+## What is it?
 
-```shell
-clear
-hdc uninstall com.kotlin.demo \
-./gradlew clean \
-./gradlew --stop \
-./gradlew startHarmonyAppDebug --rerun-tasks
-```
+This repository contains a simple library project, intended to demonstrate a [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html) library that is deployable to [Maven Central](https://central.sonatype.com/).
 
-## Bundle name (from project)
+The library has only one function: generate the [Fibonacci sequence](https://en.wikipedia.org/wiki/Fibonacci_sequence) starting from platform-provided numbers. Also, it has a test for each platform just to be sure that tests run.
 
-The installed app’s **bundle name** is **`app.bundleName`** in **`harmonyApp/AppScope/app.json5`** (for this sample it is `com.kotlin.demo`). Use the same value for `hdc uninstall`, `aa start`, and filtering crash logs.
+Note that no other actions or tools usually required for the library development are set up, such as [tracking of backwards compatibility](https://kotlinlang.org/docs/jvm-api-guidelines-backward-compatibility.html#tools-designed-to-enforce-backward-compatibility), explicit API mode, licensing, contribution guideline, code of conduct and others. You can find a guide for best practices for designing Kotlin libraries [here](https://kotlinlang.org/docs/api-guidelines-introduction.html).
 
-Read it from the repo (from the project root):
+## Guide
 
-```shell
-grep bundleName harmonyApp/AppScope/app.json5
-```
+Please find the detailed guide [here](https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-publish-libraries.html).
 
-## Pull the latest crash / fault log for this app
-
-Fault dumps for apps usually land under **`/data/log/faultlog/faultlogger/`** (freeze-related dumps often under **`/data/log/faultlog/freeze_ext/`**). Filenames typically include the **bundle name**, so you can take the newest matching file.
-
-From the project root (macOS/Linux; strips a trailing CR from `hdc` output):
-
-```shell
-bundle=$(grep bundleName harmonyApp/AppScope/app.json5 | sed -n 's/.*"bundleName"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
-latest=$(hdc shell "ls -t /data/log/faultlog/faultlogger/" | tr -d '\r' | grep -F "$bundle" | head -1)
-hdc file recv "/data/log/faultlog/faultlogger/$latest" ./
-```
-
-Freeze logs for the same app (same idea, different directory):
-
-```shell
-latest=$(hdc shell "ls -t /data/log/faultlog/freeze_ext/" | tr -d '\r' | grep -F "$bundle" | head -1)
-hdc file recv "/data/log/faultlog/freeze_ext/$latest" ./
-```
-
-If `latest` is empty, list recent files and pick the one whose name matches your bundle: `hdc shell "ls -lt /data/log/faultlog/faultlogger/ | head -n 20"`.
+# Other resources
+* [Publishing via the Central Portal](https://central.sonatype.org/publish-ea/publish-ea-guide/)
+* [Gradle Maven Publish Plugin \- Publishing to Maven Central](https://vanniktech.github.io/gradle-maven-publish-plugin/central/)

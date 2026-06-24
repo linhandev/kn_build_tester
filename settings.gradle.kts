@@ -1,34 +1,24 @@
 pluginManagement {
-    // CI sets KN_ACTION_BUILD_REPO_ABS to an absolute path to kotlin build/repo (Maven layout). Optional for local dev.
-    val knActionMavenUrl: String? = System.getenv("KN_ACTION_BUILD_REPO_ABS")
-        ?.let { java.io.File(it).toURI().toString() }
     repositories {
-        knActionMavenUrl?.let { maven(it) }
-        maven("https://maven.eazytec-cloud.com/nexus/repository/maven-public")
-        maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
+        // CN mirrors first for speed, then official fallbacks.
+        maven("https://maven.aliyun.com/repository/gradle-plugin")
+        maven("https://maven.aliyun.com/repository/public")
         maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
-        gradlePluginPortal()
+        google()
         mavenCentral()
-    }
-    plugins {
-        val kotlinVersion: String by settings
-        kotlin("multiplatform") version kotlinVersion
+        gradlePluginPortal()
     }
 }
 
 dependencyResolutionManagement {
-    val knActionMavenUrl: String? = System.getenv("KN_ACTION_BUILD_REPO_ABS")
-        ?.let { java.io.File(it).toURI().toString() }
     repositories {
-        knActionMavenUrl?.let { maven(it) }
-        mavenLocal()
-        maven("https://maven.eazytec-cloud.com/nexus/repository/maven-public")
-        maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
+        maven("https://maven.aliyun.com/repository/public")
+        maven("https://maven.aliyun.com/repository/google")
         maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
+        google()
         mavenCentral()
     }
 }
 
-rootProject.name = "c2k"
-
-include("kotlinApp")
+rootProject.name = "multiplatform-library-template"
+include(":library")

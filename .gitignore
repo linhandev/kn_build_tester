@@ -1,28 +1,16 @@
-# Kotlin Native Build Outputs
-*.kexe
-*.so
-*.o
-*.bc
-*.ll
-harmonyApp/entry/src/main/cpp/include/libc2k_api.h
-
-# project specific
-*.log
-
-# Gradle
-.gradle/
-build/
-kotlinApp/build/
-
-# IDE
-.idea/
 *.iml
+.gradle
+.idea
+.DS_Store
+build
+captures
+.externalNativeBuild
+.cxx
+local.properties
+xcuserdata
+.kotlin
+#So we don't accidentally commit our private keys
+*.gpg
 
-# HarmonyOS
-harmonyApp/.hvigor/
-harmonyApp/oh_modules/
-harmonyApp/entry/build/
-harmonyApp/build/
-harmonyApp/node_modules/
-harmonyApp/local.properties
-
+# JS/Wasm coverage toolchain (c8 installed via npm)
+node_modules/
