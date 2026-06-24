@@ -22,7 +22,7 @@ cd ~/git/worktree/kn_samples-kmp-coverage-survey
 | **jvm** | ✅ JB official | JaCoCo agent on build-JVM bytecode | Kover (`koverHtmlReportJvm`) | ✅ works |
 | **js** | ❌ no JB integration | V8 native coverage + source-map remap to .kt | c8 + `NODE_V8_COVERAGE` | ✅ works (remap to .kt confirmed) |
 | **wasmJs** | ❌ no JB integration | (would need V8 wasm coverage + wasm source-map) | — | ❌ no working path (Node 24 has no wasm-coverage flag) |
-| **android** | ✅ JB official | JaCoCo offline instrumentation, host unit test | Kover + AGP `enableUnitTestCoverage` | ⏳ needs Android SDK (script stops & reports) |
+| **android** | ✅ JB official | Kover JVM agent on host unit test (runs on build JVM) | Kover (`koverHtmlReportAndroid`) | ✅ works, LINE 91.3% |
 
 ## Per-backend notes
 
@@ -49,7 +49,8 @@ cd ~/git/worktree/kn_samples-kmp-coverage-survey
 - The only theoretical path is the V8 Inspector `Profiler.startPreciseCoverage{detailed:true}`, and even then no mainstream tool consumes wasm source maps. Left as a documented gap.
 
 ### android — `run-android.sh`
-- Official path: AGP offline-instruments debug classes; host unit test runs on the build JVM; Kover aggregates `.exec` into a report.
-- Tasks: `:library:testDebugUnitTest` → `:library:koverHtmlReportAndroid` / `:library:koverXmlReportAndroid`
+- Official path: **host unit tests run on the build JVM**, so Kover's JVM agent collects coverage directly (same engine as the jvm target — no device/emulator needed). The Android SDK is required only to **compile** `androidMain` (AGP needs `ANDROID_HOME` at configuration time).
+- Tasks: `:library:testAndroidHostTest` → `:library:koverHtmlReportAndroid` / `:library:koverXmlReportAndroid`
+  - **Gotcha:** under AGP 9's `com.android.kotlin.multiplatform.library`, the host-test task is `testAndroidHostTest` — **not** `testDebugUnitTest` (that name no longer exists).
 - Requires `ANDROID_HOME` + `platforms;android-36` + `build-tools;36.0.0`. The script **stops** at the pre-flight if the SDK is missing and prints install instructions — per the user's "don't auto-skip, tell me what's missing" rule.
-- `enableCoverage = true` is set in the `withHostTestBuilder {}` block of `library/build.gradle.kts`.
+- Verified: LINE 91.3% (21/23) — same common code as jvm, identical numbers.

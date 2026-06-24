@@ -1,7 +1,8 @@
 #!/bin/bash
-# run-android.sh — Android target coverage via Kover + AGP enableUnitTestCoverage (host unit tests).
-# This is the official path: AGP offline-instruments debug classes, host unit tests run on the build
-# JVM, Kover/JaCoCo aggregates the .exec data into a report.
+# run-android.sh — Android target coverage via Kover (host unit tests).
+# Host unit tests run on the build JVM (not a device), so Kover's JVM agent collects coverage
+# directly — same mechanism as the jvm target. The Android SDK is needed only to *compile* the
+# androidMain source set (AGP requires it at configuration time), not to run the tests.
 #
 # Per user instruction: do NOT auto-skip. Run until a dependency is missing, then STOP and report
 # exactly what's missing so the user can install it before continuing.
@@ -30,11 +31,11 @@ if [ -z "${ANDROID_HOME:-}${ANDROID_SDK_ROOT:-}" ]; then
 fi
 ok "ANDROID_HOME=$ANDROID_HOME"
 
-# 1. Build + run Android host unit tests with coverage enabled.
-log "Step 1/3: build + :library:testDebugUnitTest (with enableUnitTestCoverage)"
-# enableUnitTestCoverage is wired in library/build.gradle.kts androidLibrary block.
-gradle_run "$OUT/01-testDebugUnitTest.log" :library:testDebugUnitTest
-ok "testDebugUnitTest passed"
+# 1. Build + run Android host unit tests. AGP9 KMP library uses `testAndroidHostTest`
+#    (the old `testDebugUnitTest` name does not exist under com.android.kotlin.multiplatform.library).
+log "Step 1/3: build + :library:testAndroidHostTest"
+gradle_run "$OUT/01-testAndroidHostTest.log" :library:testAndroidHostTest
+ok "testAndroidHostTest passed"
 
 # 2. Kover Android report.
 log "Step 2/3: generate Kover Android report"
