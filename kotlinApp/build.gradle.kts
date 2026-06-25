@@ -1,3 +1,5 @@
+@file:OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
+
 plugins {
     kotlin("multiplatform")
 }
@@ -15,6 +17,16 @@ kotlin {
             }
         }
     }
+
+    iosArm64 {
+        binaries {
+            framework {
+                baseName = "c2k"
+                freeCompilerArgs += "-linker-options=-lz" // dfx的bug
+            }
+        }
+    }
+
 }
 
 arrayOf("debug", "release").forEach { type ->
