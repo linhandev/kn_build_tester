@@ -10,6 +10,16 @@ version = "1.0-SNAPSHOT"
 fun String.capitalize() = replaceFirstChar { it.uppercase() }
 
 kotlin {
+    applyDefaultHierarchyTemplate {
+        common {
+            group("native") {
+                group("ohos") {
+                    withOhos()
+                }
+            }
+        }
+    }
+
     ohosArm64 {
         binaries {
             sharedLib {
