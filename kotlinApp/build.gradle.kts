@@ -12,9 +12,6 @@ kotlin {
         binaries {
             sharedLib {
                 baseName = "c2k"
-                freeCompilerArgs += "-Xadd-light-debug=enable"
-                // Keep runtime/static libs' DWARF in the linked .so (pairs with kotlin.native.isNativeRuntimeDebugInfoEnabled in Kotlin repo local.properties).
-                freeCompilerArgs += "-Xbinary=stripDebugInfoFromNativeLibs=false"
             }
         }
     }
