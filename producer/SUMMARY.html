@@ -82,7 +82,7 @@
 <div class="grid">
   <div class="stat"><div class="n ok">159</div><div class="l">ohos-only def 全部封装成功</div></div>
   <div class="stat"><div class="n">160</div><div class="l">klib 发布到 maven local（159 cinterop + 1 main）</div></div>
-  <div class="stat"><div class="n ok">9/9</div><div class="l">IR001 测试模块跑通</div></div>
+  <div class="stat"><div class="n ok">9/9</div><div class="l">capi demo 测试模块跑通</div></div>
   <div class="stat"><div class="n ok">139</div><div class="l">自动化用例执行（132 成功 + 7 预期失败）</div></div>
 </div>
 
@@ -94,7 +94,7 @@
   <span class="mono">com.example:hilog-klib:1.0-SNAPSHOT</span>（maven local）
   <span class="arrow">→</span>
   <span class="tag">消费者</span> <span class="path mono">kn_samples-bare</span> /
-  <span class="path mono">kmp-cmp-test-demo</span>（2.3.20-HUAWEI）
+  <span class="path mono">consumer-capi-demo</span>（2.3.20-HUAWEI）
 </p>
 <table>
   <tr><th>角色</th><th>仓库 / 路径</th><th>Kotlin</th><th>职责</th></tr>
@@ -112,7 +112,7 @@
   </tr>
   <tr>
     <td>消费者 B</td>
-    <td class="path">/Users/ohoskt/git/worktree/kmp-cmp-test-demo<br><span class="small">分支 capi-demo-newVersion</span></td>
+    <td class="path">/Users/ohoskt/git/worktree/consumer-capi-demo<br><span class="small">分支 capi-demo-newVersion</span></td>
     <td><code>2.3.20-HUAWEI</code></td>
     <td>真实 KMP 项目，含 9 模块 CAPI smoke test + autotest.py UI 自动化</td>
   </tr>
@@ -170,12 +170,12 @@ publishing { publications { withType&lt;MavenPublication&gt; { artifactId = "hil
     <td><code>-libraryPath</code> 只是搜索路径不自动加载；必须用 <code>-library &lt;dep klib path&gt;</code> 显式加载，且传<b>传递闭包</b>（直接依赖的 klib 自己的 depends 也要解析）</td>
   </tr>
   <tr>
-    <td>HUAWEI 的 KGP/stdlib 来自 devcloud 私有仓库</td>
-    <td>settings.gradle.kts 加 devcloud 仓库 + BasicAuthentication 强制认证头（devcloud 缺凭据返回 403 非 401，Gradle 默认不发认证）</td>
+    <td>消费者拉 2.3.20-HUAWEI 的 KGP/stdlib</td>
+    <td>settings.gradle.kts 加 devcloud 仓库（凭据放 local.properties）+ BasicAuthentication 强制认证头（devcloud 缺凭据返回 403 非 401，Gradle 默认不发认证）</td>
   </tr>
   <tr>
-    <td>cpf 0.4 的 <code>kotlin-native-compiler-embeddable</code> 无 Maven 坐标</td>
-    <td><code>gradle.properties</code> 设 <code>kotlin.native.home=~/.konan/.../2.2.21-0.4.0-03</code>，KGP 从本地 dist 加载 embeddable jar</td>
+    <td>cpf 0.4 的 <code>kotlin-native-compiler-embeddable</code> Maven 坐标待确认</td>
+    <td>当前 <code>gradle.properties</code> 设 <code>kotlin.native.home=~/.konan/.../2.2.21-0.4.0-03</code> 让 KGP 从本地 dist 加载 embeddable jar。<i>待 #11 确认是否能从 Maven 下载后去掉</i></td>
   </tr>
 </table>
 </div>
@@ -195,16 +195,34 @@ publishing { publications { withType&lt;MavenPublication&gt; { artifactId = "hil
     <td><code>-linker-options=-Wl,--as-needed</code>，只对实际引用符号的库记 NEEDED（159→15）；并加 <code>-L&lt;HMS&gt;/usr/lib/aarch64-linux-ohos</code> 让 link 阶段找得到扩展 Kit .so stub</td>
   </tr>
   <tr>
-    <td>IR001 项目原用 0.3.0-07 + 自带 cinterop hilog</td>
+    <td>capi demo 项目原用 0.3.0-07 + 自带 cinterop hilog</td>
     <td>切 2.3.20-HUAWEI 后无内置 platform klib</td>
     <td>删自己的 cinterops，<code>ohosArm64Main { dependencies { implementation("com.example:hilog-klib:1.0-SNAPSHOT") } }</code>；项目用到的 15 个 platform 包被 159 def 全覆盖</td>
   </tr>
-  <tr>
-    <td>IR001 项目无签名配置</td>
-    <td>unsigned HAP 装不上</td>
-    <td>从 bare 仓库借 debug 签名配置（build-profile.json5 signingConfigs），bundleName 临时改为 <code>com.kotlin.demo</code> 匹配证书</td>
-  </tr>
 </table>
+</div>
+
+<h3>3a. SONAME 问题根因（待确认是否 HUAWEI 特殊）</h3>
+<div class="card">
+<p>KN 的 <code>sharedLib</code> 产出的 <code>libc2k.so</code>/<code>libkn.so</code> 二进制里<b>没有 <code>DT_SONAME</code> 字段</b>（<code>readelf -d</code> 看不到 SONAME）。在这个场景下会出问题：</p>
+<ol>
+  <li>HarmonyOS App 的 NAPI 库 <code>libentry.so</code>（CMake 编译）要调用 Kotlin 代码，CMake 用 <code>IMPORTED_LOCATION</code> 绝对路径链接 <code>libc2k.so</code></li>
+  <li>链接时 ld 看到 <code>libc2k.so</code> <b>无 SONAME</b>，就把 <code>IMPORTED_LOCATION</code> 的<b>完整绝对路径</b>烤进 <code>libentry.so</code> 的 <code>DT_NEEDED</code>：<code>NEEDED: /Users/.../libs/arm64-v8a/libc2k.so</code>（正常有 SONAME 时只记裸名 <code>libc2k.so</code>）</li>
+  <li>设备 dlopen <code>libentry.so</code> → 读 NEEDED 是宿主机绝对路径 → 设备不存在 → namespace 检查失败 → <code>load module default/entry failed</code> → ArkTS <code>testNapi</code> 是 undefined → <code>runHelloWorld failed: {}</code></li>
+</ol>
+<p><b>修复</b>：KN sharedLib 加 <code>-linker-options=-Wl,-soname,libc2k.so</code>，<code>libc2k.so</code> 有 <code>DT_SONAME=libc2k.so</code>，<code>libentry.so</code> 的 NEEDED 记裸名，设备从 App libs 目录解析。</p>
+<p class="small"><b>待确认</b>：是否 HUAWEI 版本特殊（其他 KN 版本在此场景是否也默认不设 soname），未对比。标准 KN 项目通常 <code>libc2k.so</code> 被 kexe 直接加载或不被别的 .so 链接，不遇到此问题；这里是"被 CMake .so 链接"的组合才暴露。</p>
+</div>
+
+<h3>3b. publication 覆盖警告根因</h3>
+<div class="card">
+<p>KMP + <code>maven-publish</code> 自动创建<b>两个</b> MavenPublication：</p>
+<ul>
+  <li><code>kotlinMultiplatform</code> — metadata publication，含 common 的 .jar + <code>.module</code>（Gradle Module Metadata，记录各 target variant）</li>
+  <li><code>ohosArm64</code> — target publication，含 .klib + .pom</li>
+</ul>
+<p>build 里 <code>withType&lt;MavenPublication&gt; { artifactId = "hilog-klib" }</code> 把两者的 artifactId 都设成 <code>hilog-klib</code>，于是发布时 <code>hilog-klib-1.0-SNAPSHOT.pom</code> 先由 <code>kotlinMultiplatform</code> 写一次（metadata .pom），再被 <code>ohosArm64</code> <b>覆盖</b>写一次 → 警告 <code>Multiple publications ... will overwrite each other!</code></p>
+<p><b>为什么 benign</b>：Gradle 消费者优先读 <code>.module</code>（含 ohosArm64 variant 坐标），按 target 选 .klib；.pom 被覆盖只影响纯 Maven 消费者（不读 .module）。我们都是 Gradle 消费者，所以之前能跑。<i>待 #17 给两个 publication 不同 artifactId 彻底消除警告</i>。</p>
 </div>
 
 <h3>4. 端到端验证（autotest.py）</h3>
@@ -234,10 +252,8 @@ publishing { publications { withType&lt;MavenPublication&gt; { artifactId = "hil
 
 <h3>目标（你定的）</h3>
 <ul>
-  <li>klib 自带 .so 供消费者编译时 ld 用 —— 不假定消费者 Kotlin 版本的 <code>-L</code>/sysroot 能找到所有 .so</li>
-  <li>libkn.so 的 NEEDED 只含<b>实际有调用关系</b>的库（经过编译优化/LTO 后真正 UND 的）,不是全部 159 个</li>
-  <li>.so 不打进 HAP,运行时按 soname 走设备 ROM 的系统库</li>
-  <li>低版本 ROM 缺库时,只缺"真正用到的"才报错,不因 NEEDED 没用的而失败</li>
+  <li>libkn.so 的 NEEDED 只含<b>实际有调用关系</b>的库（经过编译优化/LTO 后真正 UND 的），不是全部 159 个 —— <b>目的</b>：低版本 ROM 缺库时，只缺"真正用到的"才报错，不因 NEEDED 没用的而失败</li>
+  <li>.so 不打进 HAP，运行时按 soname 走设备 ROM 的系统库</li>
 </ul>
 
 <h3>探索过的 4 条路</h3>
@@ -323,20 +339,16 @@ publishing { publications { withType&lt;MavenPublication&gt; { artifactId = "hil
 
 <h3 class="warn">需注意 / 待优化</h3>
 <ul>
-  <li><b>消费者要装 HMS sysroot 并加 <code>-L</code></b>（(c) 方案核心 gap）：聚合 klib 带了 19 个扩展 Kit def 的 <code>linkerOpts</code>，<code>--as-needed</code> 下 ld 仍要<b>找到</b>这些 .so 才能判断未引用，而 DevEco 主 sysroot 没有它们。所以<b>任何</b>依赖聚合 hilog-klib 的消费者都要在 sharedLib 加 <code>-linker-options=-L&lt;HMS sysroot&gt;/usr/lib/aarch64-linux-ohos</code>，且本机要有这个 HMS sysroot（cpf 0.4 的依赖 <code>~/.konan/dependencies/sysroot-hms-aarch64-6.0.2.640-02</code>，DevEco 不自带）。即使消费者代码不用扩展 Kit 也得加。bare 和 kmp-cmp-test-demo 都加了这行</li>
-  <li><b>不用扩展 Kit 的消费者也被迫加 -L</b>（聚合代价）：理想是拆分——主 140 个 def 一个坐标（消费者主 sysroot 够，不需 -L HMS），19 个扩展 Kit 单独坐标（要用才依赖 + 加 -L）。当前未拆分，接受在应用加 -L</li>
-  <li><b>路径硬编码</b>：生产者 build 的 <code>-I&lt;HMS include&gt;</code>、<code>kotlin.native.home</code>，消费者 build 的 <code>-L&lt;HMS&gt;</code>，都是 <code>/Users/ohoskt/...</code> 绝对路径，换机器/CI 要改。建议抽成 <code>local.properties</code> 或环境变量</li>
+  <li><b>消费者要装 HMS sysroot 并加 <code>-L</code></b>（(c) 方案核心 gap）：聚合 klib 带了 19 个扩展 Kit def 的 <code>linkerOpts</code>，<code>--as-needed</code> 下 ld 仍要<b>找到</b>这些 .so 才能判断未引用，而 DevEco 主 sysroot 没有它们。所以<b>任何</b>依赖聚合 hilog-klib 的消费者都要在 sharedLib 加 <code>-linker-options=-L&lt;HMS sysroot&gt;/usr/lib/aarch64-linux-ohos</code>，且本机要有这个 HMS sysroot。即使消费者代码不用扩展 Kit 也得加。consumer-bare 和 consumer-capi-demo 都加了这行。<i>待 #14 拆分后，不用扩展 Kit 的消费者无需此 -L</i></li>
+  <li><b>路径硬编码</b>：生产者 build 的 <code>-I&lt;HMS include&gt;</code>，消费者 build 的 <code>-L&lt;HMS&gt;</code>，都是 <code>/Users/ohoskt/...</code> 绝对路径，换机器/CI 要改。<i>待 #10 把 sysroot 提交进仓库后，生产者用仓库内路径；消费者只用 DevEco 路径</i></li>
   <li><b>覆盖范围</b>：只封装了 159 个 ohos-only def。11 个共享 def（posix/linux/gles3 等）仍在 cpf 0.4 dist 内置，<b>未进 maven klib</b>。若消费者也缺这些，需另行封装</li>
-  <li><b>Failure 模块 7 个"失败"</b>不是 klib 问题，是测试设计（故意传坏参数验证错误码）。脚本按"返回成功码"判定，可改为按"返回预期错误码"判定以消除误报</li>
-  <li><b>IR001 项目改了 bundleName</b>：为匹配 bare 的 debug 证书，<code>com.example.harmonyapp</code> → <code>com.kotlin.demo</code>。正式应给 IR001 生成专属证书</li>
-  <li><b>ohosX64 被注释</b>：IR001 项目原本支持 x64（Windows 模拟器），我们的 klib 只发了 ohosArm64，x64 target 暂时禁用</li>
-  <li><b>publication 覆盖警告</b>：<code>kotlinMultiplatform</code> 与 <code>ohosArm64</code> 同坐标 .pom 互相覆盖（benign，module metadata 仍正确解析）</li>
+  <li><b>ohosX64 待支持</b>：当前 klib 只发 ohosArm64，capi demo 的 x64 target 暂时禁用。<i>待 #16 增加 ohosX64 支持</i></li>
+  <li><b>SONAME 待确认</b>：KN sharedLib 默认不设 DT_SONAME，被 CMake 的 .so 链接时绝对路径烤进 NEEDED。当前用 <code>-Wl,-soname</code> 修复有效。是否 HUAWEI 版本特殊（其他 KN 版本在此场景是否也这样）未对比确认。</li>
 </ul>
 
 <h3 class="bad">未做的事</h3>
 <ul>
-  <li><b>消费者零配置（klib 自带 .so 供 ld）</b>：探索过 <code>-staticLibrary</code> 嵌 .so 进 klib 的 <code>included/</code>，但 KGP 对 maven 传递的 cinterops klib 不自动 -L（included 目录留空）。KGP 现有机制下"零配置 + .so + 运行时走系统"不可兼得，要零配置必须用 .a（cpf 没 .a 且不走系统）。见上文 .so 链接策略节</li>
-  <li><b>commonTest 的 JVM 执行</b>：IR001 的 commonTest 跑 Android 单元测试需 ANDROID_HOME，未配置；但 ohosArm64 侧已通过 autotest.py 设备测试充分验证</li>
+  <li><b>commonTest 的 JVM 执行</b>：capi demo 的 commonTest 跑 Android 单元测试需 ANDROID_HOME，未配置；但 ohosArm64 侧已通过 autotest.py 设备测试充分验证</li>
   <li><b>扩展 Kit 运行时 .so</b>：当前 NEEDED 不含扩展 Kit（as-needed 去掉未引用）。若未来某模块真要用 securityantivirus/aip 等，设备需有对应 HMS 服务运行时（sysroot 的 .so stub 只供 link，不供运行）</li>
   <li><b>CI 化</b>：整套仍是本地手动跑，未写成 CI 脚本</li>
 </ul>
@@ -349,8 +361,8 @@ publishing { publications { withType&lt;MavenPublication&gt; { artifactId = "hil
   <tr><td class="path"><code>kn_samples-ohos-def/hilog-klib/build.gradle.kts</code></td><td>生产者：自动遍历 def + 传递闭包 -library + HMS -I + 发布</td></tr>
   <tr><td class="path"><code>kn_samples-ohos-def/ohos-only-defs.txt</code></td><td>159 个 ohos-only def 清单（ohos 有、其他 target 无）</td></tr>
   <tr><td class="path"><code>kn_samples-ohos-def/PLAN.md</code></td><td>原始 6 步计划</td></tr>
-  <tr><td class="path"><code>kmp-cmp-test-demo/autotest.py</code></td><td>UI 自动化测试（hdc uitest 驱动，9 模块 139 用例）</td></tr>
-  <tr><td class="path"><code>kmp-cmp-test-demo/test_reports/</code></td><td>测试报告 CSV + HTML</td></tr>
+  <tr><td class="path"><code>consumer-capi-demo/autotest.py</code></td><td>UI 自动化测试（hdc uitest 驱动，9 模块 139 用例）</td></tr>
+  <tr><td class="path"><code>consumer-capi-demo/test_reports/</code></td><td>测试报告 CSV + HTML</td></tr>
   <tr><td class="path"><code>~/.m2/repository/com/example/hilog-klib/1.0-SNAPSHOT/</code></td><td>发布的 160 个 klib</td></tr>
 </table>
 </div>

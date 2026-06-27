@@ -116,12 +116,12 @@ echo
 bold "==================== 端到端测试结果 ===================="
 green "  producer klib        : 发布 $klibs 个 ✅"
 green "  consumer-bare        : KN hilog + ArkTS greeting ✅"
-if [ "${fail_n:-0}" -le 7 ]; then
-  green "  consumer-capi-demo   : $total 用例,成功 $ok,失败 $fail_n (7 个为 Failure 模块预期错误) ✅"
+if [ "${fail_n:-0}" -eq 0 ]; then
+  green "  consumer-capi-demo   : $total 用例,成功 $ok,失败 $fail_n ✅"
   echo
   green "🎉 全流程通过"
   exit 0
 else
-  red "  consumer-capi-demo   : $total 用例,成功 $ok,失败 $fail_n (超过 7 个预期失败,有真实失败)"
+  red "  consumer-capi-demo   : $total 用例,成功 $ok,失败 $fail_n (有真实失败)"
   exit 1
 fi
