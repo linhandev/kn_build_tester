@@ -166,8 +166,8 @@ publishing { publications { withType&lt;MavenPublication&gt; { artifactId = "hil
     <td>cpf 0.4 的 <code>additionalTargetSysRoot = sysroot-hms-aarch64-6.0.2.640-02</code>（HMS sysroot）有这些头，但 cinterop 不自动加。全局给每个 cinterops 传 <code>-compiler-option -I&lt;HMS&gt;/usr/include</code></td>
   </tr>
   <tr>
-    <td>cinterop 的 <code>depends = A</code> 不自动解析</td>
-    <td><code>-libraryPath</code> 只是搜索路径不自动加载；必须用 <code>-library &lt;dep klib path&gt;</code> 显式加载，且传<b>传递闭包</b>（直接依赖的 klib 自己的 depends 也要解析）</td>
+    <td>cinterop 的 <code>depends</code> 只写<b>直接依赖</b>（不用写全传递）</td>
+    <td>传递依赖由各 klib manifest 链式声明。但 build 必须用 <code>-library &lt;dep klib path&gt;</code> 显式加载传递闭包：<code>-libraryPath</code> 只是搜索路径不自动加载；且让 cinterops 解析传递依赖到<b>我们的 klib</b>（unique_name <code>com.example:...</code>）而非 dist 内置（<code>org.jetbrains.kotlin.native.platform.*</code>）——消费者无 dist，depends 必须指向我们的 klib 才能解析</td>
   </tr>
   <tr>
     <td>消费者拉 2.3.20-HUAWEI 的 KGP/stdlib</td>
