@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "c2k"
 
 include("hilog-klib")
+include("static-lib-demo")

@@ -40,6 +40,9 @@ kotlin {
             dependencies {
                 // klib built with cpf 0.4 (abi_version 2.2.0); read by 2.3.20-HUAWEI (same major 2.x).
                 implementation("com.example:hilog-klib:1.0-SNAPSHOT")
+                // static-lib-demo: cinterop with staticLibraries (.a embedded in klib).
+                // Consumer links the .a automatically (KGP handles included .a), no -L/-l needed.
+                implementation("com.example:static-lib-demo:1.0-SNAPSHOT")
             }
         }
     }

@@ -1,0 +1,5 @@
+package = demo.mylib
+headers = mylib.h
+headerFilter = mylib.h
+staticLibraries = libmylib.a
+language = C

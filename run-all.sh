@@ -35,13 +35,15 @@ done
 green "✅ java/hdc/DevEco/HMS sysroot/设备/凭据 齐全"
 
 # ============ 1/4  producer: publish klib to maven local ============
-step "1/4  producer: publishToMavenLocal (cpf 0.4 → com.example:hilog-klib:1.0-SNAPSHOT)"
+step "1/4  producer: publishToMavenLocal (cpf 0.4 → hilog-klib + static-lib-demo)"
 cd "$PROD"
 ./gradlew --stop >/dev/null 2>&1 || true
-rm -rf "$HOME/.m2/repository/com/example/hilog-klib"
-if ./gradlew :hilog-klib:publishToMavenLocal --no-daemon 2>&1 | tail -20 | grep -q "BUILD SUCCESSFUL"; then
+rm -rf "$HOME/.m2/repository/com/example/hilog-klib" "$HOME/.m2/repository/com/example/static-lib-demo"
+if ./gradlew :hilog-klib:publishToMavenLocal :static-lib-demo:publishToMavenLocal --no-daemon 2>&1 | tail -20 | grep -q "BUILD SUCCESSFUL"; then
   klibs=$(ls "$HOME/.m2/repository/com/example/hilog-klib/1.0-SNAPSHOT/"*.klib 2>/dev/null | wc -l | tr -d ' ')
-  green "✅ 发布成功,klib 文件数: $klibs (期望 160)"
+  green "✅ hilog-klib 发布: $klibs 个 klib (期望 160)"
+  slklibs=$(ls "$HOME/.m2/repository/com/example/static-lib-demo/1.0-SNAPSHOT/"*.klib 2>/dev/null | wc -l | tr -d ' ')
+  green "✅ static-lib-demo 发布: $slklibs 个 klib (含嵌入 .a)"
 else
   fail "producer publishToMavenLocal 失败"
 fi
