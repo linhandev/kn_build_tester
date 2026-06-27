@@ -94,8 +94,9 @@ defs.forEach { d ->
 
 publishing {
     publications {
-        withType<MavenPublication> {
-            artifactId = "hilog-klib"
-        }
+        // Give target vs metadata publications different artifactIds to avoid .pom overwrite.
+        // Consumer depends on com.example:hilog-klib (the target publication, carries .klib).
+        named<MavenPublication>("ohosArm64") { artifactId = "hilog-klib" }
+        named<MavenPublication>("kotlinMultiplatform") { artifactId = "hilog-klib-metadata" }
     }
 }
