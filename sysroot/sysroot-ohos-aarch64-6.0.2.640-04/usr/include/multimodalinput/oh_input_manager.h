@@ -1,0 +1,2593 @@
+/*
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * @addtogroup input
+ * @{
+ *
+ * @brief Provides the C interface in the multi-modal input domain.
+ *
+ * @since 12
+ */
+
+/**
+ * @file oh_input_manager.h
+ *
+ * @brief Provides capabilities such as event injection and key status query.
+ * @kit InputKit
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @library libohinput.so
+ * @since 12
+ */
+
+#ifndef OH_INPUT_MANAGER_H
+#define OH_INPUT_MANAGER_H
+
+#include "info/application_target_sdk_version.h"
+#include <stdint.h>
+
+#include "oh_axis_type.h"
+#include "oh_key_code.h"
+#include "oh_pointer_style.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+struct OH_PixelmapNative;
+/**
+ * @brief Pixelmap struct
+ *
+ * @since 22
+ */
+typedef struct OH_PixelmapNative OH_PixelmapNative;
+
+/**
+ * @brief Enumerated values of key event action.
+ *
+ * @since 12
+ */
+typedef enum Input_KeyStateAction {
+    /** Default */
+    KEY_DEFAULT = -1,
+    /** Pressing of a key */
+    KEY_PRESSED = 0,
+    /** Release of a key */
+    KEY_RELEASED = 1,
+    /** Key switch enabled */
+    KEY_SWITCH_ON = 2,
+    /** Key switch disabled */
+    KEY_SWITCH_OFF = 3
+} Input_KeyStateAction;
+
+/**
+ * @brief Enumerates key event types.
+ *
+ * @since 12
+ */
+typedef enum Input_KeyEventAction {
+    /** Cancellation of a key action. */
+    KEY_ACTION_CANCEL = 0,
+    /** Pressing of a key. */
+    KEY_ACTION_DOWN = 1,
+    /** Release of a key. */
+    KEY_ACTION_UP = 2,
+} Input_KeyEventAction;
+
+/**
+ * @brief Enumerated values of mouse event action.
+ *
+ * @since 12
+ */
+typedef enum Input_MouseEventAction {
+    /** Cancel. */
+    MOUSE_ACTION_CANCEL = 0,
+    /** Moving of the mouse pointer. */
+    MOUSE_ACTION_MOVE = 1,
+    /** Pressing down of the mouse. */
+    MOUSE_ACTION_BUTTON_DOWN = 2,
+    /** Lifting of the mouse button. */
+    MOUSE_ACTION_BUTTON_UP = 3,
+    /** Beginning of the mouse axis event */
+    MOUSE_ACTION_AXIS_BEGIN = 4,
+    /** Updating of the mouse axis event */
+    MOUSE_ACTION_AXIS_UPDATE = 5,
+    /** End of the mouse axis event */
+    MOUSE_ACTION_AXIS_END = 6,
+} Input_MouseEventAction;
+
+/**
+ * @brief Mouse axis types.
+ *
+ * @since 12
+ */
+typedef enum InputEvent_MouseAxis {
+    /** Vertical scroll axis */
+    MOUSE_AXIS_SCROLL_VERTICAL = 0,
+    /** Horizontal scroll axis */
+    MOUSE_AXIS_SCROLL_HORIZONTAL = 1,
+} InputEvent_MouseAxis;
+
+/**
+ * @brief Enumerated values of mouse event button.
+ *
+ * @since 12
+ */
+typedef enum Input_MouseEventButton {
+    /** Invalid button */
+    MOUSE_BUTTON_NONE = -1,
+    /** Left button on the mouse. */
+    MOUSE_BUTTON_LEFT = 0,
+    /** Middle button on the mouse. */
+    MOUSE_BUTTON_MIDDLE = 1,
+    /** Right button on the mouse. */
+    MOUSE_BUTTON_RIGHT = 2,
+    /** Forward button on the mouse. */
+    MOUSE_BUTTON_FORWARD = 3,
+    /** Back button on the mouse. */
+    MOUSE_BUTTON_BACK = 4,
+} Input_MouseEventButton;
+
+/**
+ * @brief Enumerated values of touch event action.
+ *
+ * @since 12
+ */
+typedef enum Input_TouchEventAction {
+    /** Touch cancelled. */
+    TOUCH_ACTION_CANCEL = 0,
+    /** Touch pressed. */
+    TOUCH_ACTION_DOWN = 1,
+    /** Touch moved. */
+    TOUCH_ACTION_MOVE = 2,
+    /** Touch lifted. */
+    TOUCH_ACTION_UP = 3,
+} Input_TouchEventAction;
+
+/**
+ * @brief Enumerates keyboard types.
+ *
+ * @since 13
+ */
+typedef enum Input_KeyboardType {
+    /** Keyboard without keys */
+    KEYBOARD_TYPE_NONE = 0,
+    /** Keyboard with unknown keys */
+    KEYBOARD_TYPE_UNKNOWN = 1,
+    /** Full keyboard */
+    KEYBOARD_TYPE_ALPHABETIC = 2,
+    /** Digital keyboard */
+    KEYBOARD_TYPE_DIGITAL = 3,
+    /** Stylus */
+    KEYBOARD_TYPE_STYLUS = 4,
+    /** Remote control */
+    KEYBOARD_TYPE_REMOTE_CONTROL = 5,
+} Input_KeyboardType;
+
+/**
+ * @brief Enumerates the injection authorization status.
+ *
+ * @since 20
+ */
+typedef enum Input_InjectionStatus {
+    /** Unauthorized */
+    UNAUTHORIZED = 0,
+    /** Authorizing */
+    AUTHORIZING = 1,
+    /** Authorized */
+    AUTHORIZED = 2,
+} Input_InjectionStatus;
+
+/**
+ * @brief Enumerates event source types.
+ *
+ * @since 12
+ */
+typedef enum InputEvent_SourceType {
+    /**
+     * Indicates that the input source generates events similar to mouse cursor movement,
+     * button press and release, and wheel scrolling.
+     *
+     * @since 12
+     */
+    SOURCE_TYPE_MOUSE = 1,
+    /**
+     * Indicates that the input source generates a touchscreen multi-touch event.
+     *
+     * @since 12
+     */
+    SOURCE_TYPE_TOUCHSCREEN = 2,
+    /**
+     * Indicates that the input source generates a touchpad multi-touch event.
+     *
+     * @since 12
+     */
+    SOURCE_TYPE_TOUCHPAD = 3
+} InputEvent_SourceType;
+
+/**
+ * @brief Defines key information, which identifies a key pressing behavior. For example, the Ctrl key information contains the key value and key type.
+ *
+ * @since 12
+ */
+typedef struct Input_KeyState Input_KeyState;
+
+/**
+ * @brief The key event to be injected.
+ *
+ * @since 12
+ */
+typedef struct Input_KeyEvent Input_KeyEvent;
+
+/**
+ * @brief The mouse event to be injected.
+ *
+ * @since 12
+ */
+typedef struct Input_MouseEvent Input_MouseEvent;
+
+/**
+ * @brief The touch event to be injected.
+ *
+ * @since 12
+ */
+typedef struct Input_TouchEvent Input_TouchEvent;
+
+/**
+ * @brief Enumerates axis events.
+ *
+ * @since 12
+ */
+typedef struct Input_AxisEvent Input_AxisEvent;
+
+/**
+ * @brief Defines the hot key structure.
+ *
+ * @since 14
+ */
+typedef struct Input_Hotkey Input_Hotkey;
+
+/**
+ * @brief Defines the cursor information.
+ *
+ * @since 22
+ */
+typedef struct Input_CursorInfo Input_CursorInfo;
+
+/**
+ * @brief Enumerates error codes.
+ *
+ * @since 12
+ */
+typedef enum Input_Result {
+    /** @error Success return code on success*/
+    INPUT_SUCCESS = 0,
+    /** @error Permission verification failed */
+    INPUT_PERMISSION_DENIED = 201,
+    /** @error Non-system application */
+    INPUT_NOT_SYSTEM_APPLICATION = 202,
+    /** @error Parameter check failed */
+    INPUT_PARAMETER_ERROR = 401,
+    /** @error Device not support */
+    INPUT_DEVICE_NOT_SUPPORTED = 801,
+    /** @error Service error */
+    INPUT_SERVICE_EXCEPTION = 3800001,
+    /** @error Interceptor repeatedly created for an application */
+    INPUT_REPEAT_INTERCEPTOR = 4200001,
+    /**
+     * @error Already occupied by the system
+     * @since 14
+     */
+    INPUT_OCCUPIED_BY_SYSTEM = 4200002,
+    /**
+     * @error Already occupied by the other
+     * @since 14
+     */
+    INPUT_OCCUPIED_BY_OTHER = 4200003,
+    /**
+     * @error No keyboard device connected
+     * @since 15
+     */
+    INPUT_KEYBOARD_DEVICE_NOT_EXIST = 3900002,
+     /**
+     * @error Authorizing
+     * @since 20
+     */
+    INPUT_INJECTION_AUTHORIZING = 3900005,
+    /**
+     * @error Too many operations
+     * @since 20
+     */
+    INPUT_INJECTION_OPERATION_FREQUENT = 3900006,
+    /**
+     * @error Authorized
+     * @since 20
+     */
+    INPUT_INJECTION_AUTHORIZED = 3900007,
+    /**
+     * @error Authorized to other applications
+     * @since 20
+     */
+    INPUT_INJECTION_AUTHORIZED_OTHERS = 3900008,
+    /**
+     * @error App is not the focused app
+     * @since 20
+     */
+    INPUT_APP_NOT_FOCUSED = 3900009,
+    /**
+     * @error The device has no pointer
+     * @since 20
+     */
+    INPUT_DEVICE_NO_POINTER = 3900010,
+    /**
+     * @error Invalid windowID
+     * @since 22
+     */
+    INPUT_INVALID_WINDOWID = 26500001,
+} Input_Result;
+
+/**
+ * @brief Callback used to return shortcut key events.
+ * @since 14
+ */
+typedef void (*Input_HotkeyCallback)(Input_Hotkey* hotkey);
+
+/**
+ * @brief Represents information about the input device.
+ *
+ * @since 13
+ */
+typedef struct Input_DeviceInfo Input_DeviceInfo;
+
+/**
+ * @brief Pixel map resource.
+ *
+ * @since 22
+ */
+typedef struct Input_CustomCursor Input_CustomCursor;
+ 
+/**
+ * @brief Defines the custom cursor configuration.
+ *
+ * @since 22
+ */
+typedef struct Input_CursorConfig Input_CursorConfig;
+
+/**
+ * @brief Defines a lifecycle callback for keyEvent. If the callback is triggered, keyEvent will be destroyed.
+ * 
+ * @param keyEvent Key event object.
+ * @since 12
+ */
+typedef void (*Input_KeyEventCallback)(const Input_KeyEvent* keyEvent);
+
+/**
+ * @brief Defines a lifecycle callback for mouseEvent. If the callback is triggered, mouseEvent will be destroyed.
+ * 
+ * @param mouseEvent Mouse event object.
+ * @since 12
+ */
+typedef void (*Input_MouseEventCallback)(const Input_MouseEvent* mouseEvent);
+
+/**
+ * @brief Defines a lifecycle callback for touchEvent. If the callback is triggered, touchEvent will be destroyed.
+ * 
+ * @param touchEvent Touch event object.
+ * @since 12
+ */
+typedef void (*Input_TouchEventCallback)(const Input_TouchEvent* touchEvent);
+
+/**
+ * @brief Defines a lifecycle callback for axisEvent. If the callback is triggered, axisEvent will be destroyed.
+ * 
+ * @param axisEvent Axis event object.
+ * @since 12
+ */
+typedef void (*Input_AxisEventCallback)(const Input_AxisEvent* axisEvent);
+
+/**
+ * @brief Defines the callback for device addition events.
+ * @param deviceId Device ID.
+ * @since 13
+ */
+typedef void (*Input_DeviceAddedCallback)(int32_t deviceId);
+
+/**
+ * @brief Defines the callback for device removal events.
+ * @param deviceId Device ID.
+ * @since 13
+ */
+typedef void (*Input_DeviceRemovedCallback)(int32_t deviceId);
+
+/**
+ * @brief Defines the event injection callback.
+ * @param authorizedStatus Authorization status.
+ * @since 20
+ */
+typedef void (*Input_InjectAuthorizeCallback)(Input_InjectionStatus authorizedStatus);
+
+/**
+ * @brief Defines the structure for the interceptor of event callbacks,
+ * including mouseCallback, touchCallback, and axisCallback.
+ * @since 12
+ */
+typedef struct Input_InterceptorEventCallback {
+    /** Defines a lifecycle callback for **mouseEvent**. */
+    Input_MouseEventCallback mouseCallback;
+    /** Defines a lifecycle callback for **touchEvent**. */
+    Input_TouchEventCallback touchCallback;
+    /** Defines a lifecycle callback for **axisEvent**. */
+    Input_AxisEventCallback axisCallback;
+} Input_InterceptorEventCallback;
+
+/**
+ * @brief Defines a listener for device insertion and removal events.
+ * @since 13
+ */
+typedef struct Input_DeviceListener {
+    /** Callback for device addition events */
+    Input_DeviceAddedCallback deviceAddedCallback;
+    /** Callback for device removal events */
+    Input_DeviceRemovedCallback deviceRemovedCallback;
+} Input_DeviceListener;
+
+/**
+ * @brief Defines event interceptor options.
+ * @since 12
+ */
+typedef struct Input_InterceptorOptions Input_InterceptorOptions;
+
+/**
+ * @brief Queries the key state.
+ *
+ * @param keyState Key state.
+ * @return OH_Input_GetKeyState function result code.
+ *         {@link INPUT_SUCCESS} get KeyState success.\n
+ *         {@link INPUT_PARAMETER_ERROR} keyCode is invalid.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_GetKeyState(struct Input_KeyState* keyState)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Creates a key status enumeration object.
+ *
+ * @return Returns an {@Input_KeyState} pointer object if the operation is successful.
+ * Otherwise, a null pointer is returned. The possible cause is memory allocation failure.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+struct Input_KeyState* OH_Input_CreateKeyState() __attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Destroys a key status enumeration object.
+ * 
+ * @param keyState Key status enumeration object.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_DestroyKeyState(struct Input_KeyState** keyState)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the key value of a key status enumeration object.
+ * 
+ * @param keyState Key status enumeration object.
+ * @param keyCode Key value of the key status enumeration object.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_SetKeyCode(struct Input_KeyState* keyState, int32_t keyCode)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the key value of a key status enumeration object.
+ * 
+ * @param keyState Key status enumeration object.
+ * @return Key value of the key status enumeration object.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int32_t OH_Input_GetKeyCode(const struct Input_KeyState* keyState)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets whether the key specific to a key status enumeration object is pressed.
+ * 
+ * @param keyState Key status enumeration object.
+ * @param keyAction Whether the key is pressed.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_SetKeyPressed(struct Input_KeyState* keyState, int32_t keyAction)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Checks whether the key specific to a key status enumeration object is pressed.
+ * 
+ * @param keyState Key status enumeration object.
+ * @return Key pressing status of the key status enumeration object.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int32_t OH_Input_GetKeyPressed(const struct Input_KeyState* keyState)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the key switch of the key status enumeration object.
+ * 
+ * @param keyState Key status enumeration object.
+ * @param keySwitch Key switch of the key status enumeration object.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_SetKeySwitch(struct Input_KeyState* keyState, int32_t keySwitch)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the key switch of the key status enumeration object.
+ * 
+ * @param keyState Key status enumeration object.
+ * @return Key switch of the key status enumeration object.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int32_t OH_Input_GetKeySwitch(const struct Input_KeyState* keyState)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Inject system keys.
+ * since API 20, it is recommended to use OH_Input_RequestInjection
+ * to request authorization before using the interface,
+ * and then use OH_Input_QueryAuthorizedStatus to query the authorization status.
+ * When the authorization status is AUTHORIZED, use the interface.
+ *
+ * @param keyEvent - the key event to be injected.
+ * @return OH_Input_InjectKeyEvent function result code.
+ *         {@link INPUT_SUCCESS} inject keyEvent success.\n
+ *         {@link INPUT_PERMISSION_DENIED} Permission verification failed.\n
+ *         {@link INPUT_PARAMETER_ERROR} keyCode is less 0, can not process.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int32_t OH_Input_InjectKeyEvent(const struct Input_KeyEvent* keyEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Creates a key event object.
+ *
+ * @return Returns an {@link Input_KeyEvent} pointer object if the operation is successful.
+ * Otherwise, a null pointer is returned. The possible cause is memory allocation failure.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+struct Input_KeyEvent* OH_Input_CreateKeyEvent() __attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Destroys a key event object.
+ *
+ * @param keyEvent Key event object.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_DestroyKeyEvent(struct Input_KeyEvent** keyEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the key event type.
+ *
+ * @param keyEvent Key event object.
+ * @param action Key event type.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_SetKeyEventAction(struct Input_KeyEvent* keyEvent, int32_t action)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the key event type.
+ *
+ * @param keyEvent Key event object.
+ * @return Key event type.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int32_t OH_Input_GetKeyEventAction(const struct Input_KeyEvent* keyEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the key value for a key event.
+ *
+ * @param keyEvent Key event object.
+ * @param keyCode keyCode Key code.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_SetKeyEventKeyCode(struct Input_KeyEvent* keyEvent, int32_t keyCode)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the key value of a key event.
+ *
+ * @param keyEvent Key event object.
+ * @return Key code.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int32_t OH_Input_GetKeyEventKeyCode(const struct Input_KeyEvent* keyEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the time when a key event occurs.
+ *
+ * @param keyEvent Key event object.
+ * @param actionTime Time when the key event occurs.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_SetKeyEventActionTime(struct Input_KeyEvent* keyEvent, int64_t actionTime)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the time when a key event occurs.
+ *
+ * @param keyEvent Key event object.
+ * @return Returns the time when the key event occurs.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int64_t OH_Input_GetKeyEventActionTime(const struct Input_KeyEvent* keyEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the windowId for a key event.
+ *
+ * @param keyEvent Key event object.
+ * @param windowId The windowId for a key event.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 15
+ */
+void OH_Input_SetKeyEventWindowId(struct Input_KeyEvent* keyEvent, int32_t windowId)
+__attribute__((__availability__(ohos, introduced=15.0.0)));
+
+/**
+ * @brief Obtains the windowId of a key event.
+ *
+ * @param keyEvent Key event object.
+ * @return windowId.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 15
+ */
+int32_t OH_Input_GetKeyEventWindowId(const struct Input_KeyEvent* keyEvent)
+__attribute__((__availability__(ohos, introduced=15.0.0)));
+
+/**
+ * @brief Sets the displayId for a key event.
+ *
+ * @param keyEvent Key event object.
+ * @param displayId The displayId for a key event.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 15
+ */
+void OH_Input_SetKeyEventDisplayId(struct Input_KeyEvent* keyEvent, int32_t displayId)
+__attribute__((__availability__(ohos, introduced=15.0.0)));
+
+/**
+ * @brief Obtains the displayId of a key event.
+ *
+ * @param keyEvent Key event object.
+ * @return displayId.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 15
+ */
+int32_t OH_Input_GetKeyEventDisplayId(const struct Input_KeyEvent* keyEvent)
+__attribute__((__availability__(ohos, introduced=15.0.0)));
+
+/**
+ * @brief Get the eventId of the keyEvent.
+ *
+ * @param keyEvent - Key event object.
+ * @param eventId - Get the keyEvent eventId.
+ * @return OH_Input_GetKeyEventId function result code.
+ *         {@link INPUT_SUCCESS} Get the eventId of the keyEvent success.\n
+ *         {@link INPUT_PARAMETER_ERROR} Parameter check failed.\n
+ * @since 21
+ */
+
+Input_Result OH_Input_GetKeyEventId(const struct Input_KeyEvent* keyEvent, int32_t* eventId)
+__attribute__((__availability__(ohos, introduced=21.0.0)));
+
+/**
+ * @brief Add a keyEvent interception hook function. Before using this interface,
+ *        the user needs to authorize it in the settings.
+ *
+ * @permission ohos.permission.HOOK_KEY_EVENT
+ * @param callback - Hook function, keyEvent will be sent to the hook function for priority processing.
+ * @return OH_Input_AddKeyEventHook function result code.
+ *         {@link INPUT_SUCCESS} Added hook function successfully.\n
+ *         {@link INPUT_PARAMETER_ERROR}  Failed to add the hook function. Reason: Parameter check failed.\n
+ *         {@link INPUT_DEVICE_NOT_SUPPORTED} Capability not supported.\n
+ *         {@link INPUT_PERMISSION_DENIED} Failed to add the hook function. Reason: Permission check failed.\n
+ *         {@link INPUT_REPEAT_INTERCEPTOR} Failed to add the hook function.\n
+ *                 Reason: Repeatedly set the hook function. A process can only have one key hook function.\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Failed to add the hook function.\n
+ *                 Reason: Input service exception, please try again.\n
+ * @since 21
+ */
+Input_Result OH_Input_AddKeyEventHook(Input_KeyEventCallback callback)
+__attribute__((__availability__(ohos, introduced=21.0.0)));
+
+/**
+ * @brief Remove keyEvent interception hook function.
+ *
+ * @param callback - Hook function, Same as the parameters when calling OH_Input_AddKeyEventHook.
+ * @return OH_Input_RemoveKeyEventHook function result code.
+ *         {@link INPUT_SUCCESS} Hook function removed successfully.\n
+ *               Even if the hook function has not been added before, it will return success when removed.\n
+ *         {@link INPUT_PARAMETER_ERROR} Failed to remove the hook function. Reason: Parameter check failed.\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Failed to remove the hook function.\n
+ *                 Reason: Input service exception, please try again.\n
+ * @since 21
+ */
+Input_Result OH_Input_RemoveKeyEventHook(Input_KeyEventCallback callback)
+__attribute__((__availability__(ohos, introduced=21.0.0)));
+
+/**
+ * @brief Redispatches keyEvent.
+ *        Only keyEvent intercepted by hook functions can be redispatched,
+ *        and the event order must be maintained during redispatching.
+ *        The hook function intercepts the input event and then redistributes it for 3 seconds.
+ *        If this time is exceeded, calling this function will return INPUT_PARAMETER_ERROR.
+ * 	      Re-dispatching requires event pairing, usually starting with one or more KEY_ACTION_DOWN and
+ *        ending with KEY_ACTION_UP or KEY_ACTION_CANCEL.
+ * 	      Only KEY_ACTION_UP or KEY_ACTION_CANCEL is redispatched, the function call succeeds,
+ *        but no actual dispatch is made.
+ *        If an event is dispatched that is not intercepted by the hook function,
+ *        the function call succeeds, but no actual dispatch action is taken.
+ * 
+ * @param eventId - keyEvent eventId.
+ * @return OH_Input_DispatchToNextHandler function result code.
+ *         {@link INPUT_SUCCESS} Redistribution successful.\n
+ *         {@link INPUT_PARAMETER_ERROR} Redistribution failed. Reason: KeyEvent does not exist.\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Redistribution failed.\n
+ *                 Reason: Input service exception, it's recommended to reset the pending distribution status.\n
+ * @since 21
+ */
+Input_Result OH_Input_DispatchToNextHandler(int32_t eventId) __attribute__((__availability__(ohos, introduced=21.0.0)));
+
+/**
+ * @brief Inject mouse event.
+ * since API 20, it is recommended to use OH_Input_RequestInjection
+ * to request authorization before using the interface,
+ * and then use OH_Input_QueryAuthorizedStatus to query the authorization status.
+ * When the authorization status is AUTHORIZED, use the interface.
+ *
+ * @param mouseEvent - the mouse event to be injected.
+ * @return OH_Input_InjectMouseEvent function result code.
+ *         {@link INPUT_SUCCESS} inject mouseEvent success.\n
+ *         {@link INPUT_PERMISSION_DENIED} Permission verification failed.\n
+ *         {@link INPUT_PARAMETER_ERROR} Parameter check failed.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int32_t OH_Input_InjectMouseEvent(const struct Input_MouseEvent* mouseEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Inject mouse event using global coordinate.
+ * since API 20, it is recommended to use OH_Input_RequestInjection
+ * to request authorization before using the interface,
+ * and then use OH_Input_QueryAuthorizedStatus to query the authorization status.
+ * When the authorization status is AUTHORIZED, use the interface.
+ *
+ * @param mouseEvent - the mouse event to be injected, set up effective globalX globalY.
+ * @return OH_Input_InjectMouseEventGlobal function result code.
+ *         {@link INPUT_SUCCESS} inject mouseEvent success.\n
+ *         {@link INPUT_PERMISSION_DENIED} Permission verification failed.\n
+ *         {@link INPUT_PARAMETER_ERROR} Parameter check failed.\n
+ * @since 20
+ */
+int32_t OH_Input_InjectMouseEventGlobal(const struct Input_MouseEvent* mouseEvent)
+__attribute__((__availability__(ohos, introduced=20.0.0)));
+
+/**
+ * @brief Creates a mouse event object.
+ *
+ * @return Returns an {@link Input_MouseEvent} pointer object if the operation is successful.
+ * Otherwise, a null pointer is returned. The possible cause is memory allocation failure.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+struct Input_MouseEvent* OH_Input_CreateMouseEvent() __attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Destroys a mouse event object.
+ *
+ * @param mouseEvent Mouse event object.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_DestroyMouseEvent(struct Input_MouseEvent** mouseEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the action for a mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @param action Mouse action.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_SetMouseEventAction(struct Input_MouseEvent* mouseEvent, int32_t action)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the action of a mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @return Mouse action.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int32_t OH_Input_GetMouseEventAction(const struct Input_MouseEvent* mouseEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the X coordinate for a mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @param displayX  X coordinate on the display.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_SetMouseEventDisplayX(struct Input_MouseEvent* mouseEvent, int32_t displayX)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the X coordinate of a mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @return X coordinate on the display.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int32_t OH_Input_GetMouseEventDisplayX(const struct Input_MouseEvent* mouseEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the Y coordinate for a mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @param displayY Y coordinate on the display.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_SetMouseEventDisplayY(struct Input_MouseEvent* mouseEvent, int32_t displayY)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the Y coordinate of a mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @return Y coordinate on the display.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int32_t OH_Input_GetMouseEventDisplayY(const struct Input_MouseEvent* mouseEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the button for a mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @param button Mouse button.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_SetMouseEventButton(struct Input_MouseEvent* mouseEvent, int32_t button)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the button of a mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @return Mouse button.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int32_t OH_Input_GetMouseEventButton(const struct Input_MouseEvent* mouseEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the axis type for mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @param axisType Axis type, for example, X axis or Y axis.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_SetMouseEventAxisType(struct Input_MouseEvent* mouseEvent, int32_t axisType)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the axis type of a mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @return Axis type.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int32_t OH_Input_GetMouseEventAxisType(const struct Input_MouseEvent* mouseEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the axis value for a mouse axis event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @param axisValue Axis value. A positive value means scrolling forward,
+ * and a negative number means scrolling backward.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_SetMouseEventAxisValue(struct Input_MouseEvent* mouseEvent, float axisValue)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the axis value of a mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @return Axis value.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+float OH_Input_GetMouseEventAxisValue(const struct Input_MouseEvent* mouseEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the time when a mouse event occurs.
+ *
+ * @param mouseEvent Mouse event object.
+ * @param actionTime Time when the mouse event occurs.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_SetMouseEventActionTime(struct Input_MouseEvent* mouseEvent, int64_t actionTime)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the time when a mouse event occurs.
+ *
+ * @param mouseEvent Mouse event object.
+ * @return Returns the time when the mouse event occurs.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int64_t OH_Input_GetMouseEventActionTime(const struct Input_MouseEvent* mouseEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the windowId for a mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @param windowId The windowId for a mouse event.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 15
+ */
+void OH_Input_SetMouseEventWindowId(struct Input_MouseEvent* mouseEvent, int32_t windowId)
+__attribute__((__availability__(ohos, introduced=15.0.0)));
+
+/**
+ * @brief Obtains the windowId of a mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @return windowId.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 15
+ */
+int32_t OH_Input_GetMouseEventWindowId(const struct Input_MouseEvent* mouseEvent)
+__attribute__((__availability__(ohos, introduced=15.0.0)));
+
+/**
+ * @brief Sets the displayId for a mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @param displayId The displayId for a mouse event.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 15
+ */
+void OH_Input_SetMouseEventDisplayId(struct Input_MouseEvent* mouseEvent, int32_t displayId)
+__attribute__((__availability__(ohos, introduced=15.0.0)));
+
+/**
+ * @brief Obtains the displayId of a mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @return displayId.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 15
+ */
+int32_t OH_Input_GetMouseEventDisplayId(const struct Input_MouseEvent* mouseEvent)
+__attribute__((__availability__(ohos, introduced=15.0.0)));
+
+/**
+ * @brief Set the global X coordinate of the mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @param globalX Global X coordinate.
+ * @since 20
+ */
+void OH_Input_SetMouseEventGlobalX(struct Input_MouseEvent* mouseEvent, int32_t globalX)
+__attribute__((__availability__(ohos, introduced=20.0.0)));
+
+/**
+ * @brief Queries the global X coordinate of the mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @return Global X coordinate.
+ * @since 20
+ */
+int32_t OH_Input_GetMouseEventGlobalX(const struct Input_MouseEvent* mouseEvent)
+__attribute__((__availability__(ohos, introduced=20.0.0)));
+
+/**
+ * @brief Set the global Y coordinate of the mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @param globalY Global Y coordinate.
+ * @since 20
+ */
+void OH_Input_SetMouseEventGlobalY(struct Input_MouseEvent* mouseEvent, int32_t globalY)
+__attribute__((__availability__(ohos, introduced=20.0.0)));
+
+/**
+ * @brief Queries the global Y coordinate of the mouse event.
+ *
+ * @param mouseEvent Mouse event object.
+ * @return Global Y coordinate.
+ * @since 20
+ */
+int32_t OH_Input_GetMouseEventGlobalY(const struct Input_MouseEvent* mouseEvent)
+__attribute__((__availability__(ohos, introduced=20.0.0)));
+
+/**
+ * @brief Inject touch event.
+ * since API 20, it is recommended to use OH_Input_RequestInjection
+ * to request authorization before using the interface,
+ * and then use OH_Input_QueryAuthorizedStatus to query the authorization status.
+ * When the authorization status is AUTHORIZED, use the interface.
+ *
+ * @param touchEvent - the touch event to be injected.
+ * @return OH_Input_InjectTouchEvent function result code.
+ *         {@link INPUT_SUCCESS} inject touchEvent success.\n
+ *         {@link INPUT_PARAMETER_ERROR} Parameter check failed.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int32_t OH_Input_InjectTouchEvent(const struct Input_TouchEvent* touchEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Inject touch event using global coordinate.
+ * since API 20, it is recommended to use OH_Input_RequestInjection
+ * to request authorization before using the interface,
+ * and then use OH_Input_QueryAuthorizedStatus to query the authorization status.
+ * When the authorization status is AUTHORIZED, use the interface.
+ *
+ * @param touchEvent - the touch event to be injected, set up effective globalX globalY.
+ * @return OH_Input_InjectTouchEventGlobal function result code.
+ *         {@link INPUT_SUCCESS} inject touchEvent success.\n
+ *         {@link INPUT_PARAMETER_ERROR} Parameter check failed.\n
+ *         {@link INPUT_PERMISSION_DENIED} Permission verification failed.\n
+ * @since 20
+ */
+int32_t OH_Input_InjectTouchEventGlobal(const struct Input_TouchEvent* touchEvent)
+__attribute__((__availability__(ohos, introduced=20.0.0)));
+
+/**
+ * @brief Creates a touch event object.
+ *
+ * @return Returns an {@link Input_TouchEvent} pointer object if the operation is successful.
+ * Otherwise, a null pointer is returned. The possible cause is memory allocation failure.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+struct Input_TouchEvent* OH_Input_CreateTouchEvent() __attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Destroys a touch event object.
+ *
+ * @param touchEvent Touch event object.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_DestroyTouchEvent(struct Input_TouchEvent** touchEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the action for a touch event.
+ *
+ * @param touchEvent Touch event object.
+ * @param action Touch action.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_SetTouchEventAction(struct Input_TouchEvent* touchEvent, int32_t action)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the action of a touch event.
+ *
+ * @param touchEvent Touch event object.
+ * @return Touch action.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int32_t OH_Input_GetTouchEventAction(const struct Input_TouchEvent* touchEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the finger ID for the touch event.
+ *
+ * @param touchEvent Touch event object.
+ * @param id Finger ID.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_SetTouchEventFingerId(struct Input_TouchEvent* touchEvent, int32_t id)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the finger ID of a touch event.
+ *
+ * @param touchEvent Touch event object.
+ * @return Finger ID.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int32_t OH_Input_GetTouchEventFingerId(const struct Input_TouchEvent* touchEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the X coordinate for a touch event.
+ *
+ * @param touchEvent Touch event object.
+ * @param displayX X coordinate.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_SetTouchEventDisplayX(struct Input_TouchEvent* touchEvent, int32_t displayX)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the X coordinate of a touch event.
+ *
+ * @param touchEvent Touch event object.
+ * @return X coordinate.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int32_t OH_Input_GetTouchEventDisplayX(const struct Input_TouchEvent* touchEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the Y coordinate for a touch event.
+ *
+ * @param touchEvent Touch event object.
+ * @param displayY Y coordinate.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_SetTouchEventDisplayY(struct Input_TouchEvent* touchEvent, int32_t displayY)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the Y coordinate of a touch event.
+ *
+ * @param touchEvent Touch event object.
+ * @return Y coordinate.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int32_t OH_Input_GetTouchEventDisplayY(const struct Input_TouchEvent* touchEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the time when a touch event occurs.
+ *
+ * @param touchEvent Touch event object.
+ * @param actionTime Time when the touch event occurs.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_SetTouchEventActionTime(struct Input_TouchEvent* touchEvent, int64_t actionTime)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the time when a touch event occurs.
+ *
+ * @param touchEvent touch event object.
+ * @return Returns the time when the touch event occurs.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+int64_t OH_Input_GetTouchEventActionTime(const struct Input_TouchEvent* touchEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the windowId for a touch event.
+ *
+ * @param touchEvent Touch event object.
+ * @param windowId The windowId for a touch event.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 15
+ */
+void OH_Input_SetTouchEventWindowId(struct Input_TouchEvent* touchEvent, int32_t windowId)
+__attribute__((__availability__(ohos, introduced=15.0.0)));
+
+/**
+ * @brief Obtains the windowId of a touch event.
+ *
+ * @param touchEvent Touch event object.
+ * @return windowId.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 15
+*/
+int32_t OH_Input_GetTouchEventWindowId(const struct Input_TouchEvent* touchEvent)
+__attribute__((__availability__(ohos, introduced=15.0.0)));
+
+/**
+ * @brief Sets the displayId for a touch event.
+ *
+ * @param touchEvent Touch event object.
+ * @param displayId The displayId for a touch event.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 15
+ */
+void OH_Input_SetTouchEventDisplayId(struct Input_TouchEvent* touchEvent, int32_t displayId)
+__attribute__((__availability__(ohos, introduced=15.0.0)));
+
+/**
+ * @brief Obtains the displayId of a touch event.
+ *
+ * @param touchEvent Touch event object.
+ * @return displayId.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 15
+*/
+int32_t OH_Input_GetTouchEventDisplayId(const struct Input_TouchEvent* touchEvent)
+__attribute__((__availability__(ohos, introduced=15.0.0)));
+
+/**
+ * @brief Set the global X coordinate of the touch event.
+ *
+ * @param touchEvent Touch event object.
+ * @param globalX Global X coordinate.
+ * @since 20
+ */
+void OH_Input_SetTouchEventGlobalX(struct Input_TouchEvent* touchEvent, int32_t globalX)
+__attribute__((__availability__(ohos, introduced=20.0.0)));
+
+/**
+ * @brief Queries the global X coordinate of the touch event.
+ *
+ * @param touchEvent Touch event object.
+ * @return Global X coordinate.
+ * @since 20
+ */
+int32_t OH_Input_GetTouchEventGlobalX(const struct Input_TouchEvent* touchEvent)
+__attribute__((__availability__(ohos, introduced=20.0.0)));
+
+/**
+ * @brief Set the global Y coordinate of the touch event.
+ *
+ * @param touchEvent Touch event object.
+ * @param globalY Global Y coordinate.
+ * @since 20
+ */
+void OH_Input_SetTouchEventGlobalY(struct Input_TouchEvent* touchEvent, int32_t globalY)
+__attribute__((__availability__(ohos, introduced=20.0.0)));
+
+/**
+ * @brief Queries the global Y coordinate of the touch event.
+ *
+ * @param touchEvent Touch event object.
+ * @return Global Y coordinate.
+ * @since 20
+ */
+int32_t OH_Input_GetTouchEventGlobalY(const struct Input_TouchEvent* touchEvent)
+__attribute__((__availability__(ohos, introduced=20.0.0)));
+
+/**
+ * @brief Cancels event injection and revokes authorization.
+ *
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+void OH_Input_CancelInjection() __attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Requests for injection authorization.
+ *
+ * @param callback - callback used to return the result.
+ * @return OH_Input_RequestInjection function result code.
+ *         {@link INPUT_SUCCESS} Success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The callback is NULL.\n
+ *         {@INPUT_DEVICE_NOT_SUPPORTED} Capability not supported.\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Service error.\n
+ *         {@link INPUT_INJECTION_AUTHORIZING} Authorizing.\n
+ *         {@link INPUT_INJECTION_OPERATION_FREQUENT} Too many operations.\n
+ *         {@link INPUT_INJECTION_AUTHORIZED} Authorized.\n
+ *         {@link INPUT_INJECTION_AUTHORIZED_OTHERS} Authorized to other applications.\n
+ * @since 20
+ */
+
+Input_Result OH_Input_RequestInjection(Input_InjectAuthorizeCallback callback)
+__attribute__((__availability__(ohos, introduced=20.0.0)));
+
+/**
+ * @brief Queries the injection authorization status.
+ *
+ * @param status Injection authorization status. For details, see {@Link Input_InjectionStatus}.
+ * @return OH_Input_QueryAuthorizedStatus function result code.
+ *         {@link INPUT_SUCCESS} Success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The status is NULL\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Service error.\n
+ * @since 20
+ */
+
+Input_Result OH_Input_QueryAuthorizedStatus(Input_InjectionStatus* status)
+__attribute__((__availability__(ohos, introduced=20.0.0)));
+
+/**
+ * @brief Creates an axis event object.
+ *
+ * @return If the operation is successful, a {@Link Input_AxisEvent} object is returned.
+ * If the operation fails, null is returned.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_AxisEvent* OH_Input_CreateAxisEvent(void) __attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Destroys an axis event object.
+ * 
+ * @param axisEvent Pointer to the axis event object.
+ * @return OH_Input_DestroyAxisEvent function result code.
+ *         {@link INPUT_SUCCESS} Destroys axisEvent success.\n
+ *         {@link INPUT_PARAMETER_ERROR}The axisEvent is NULL or the *axisEvent is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_DestroyAxisEvent(Input_AxisEvent** axisEvent)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the axis event action.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param action Axis event action. The values are defined in {@link InputEvent_AxisAction}.
+ * @return OH_Input_SetAxisEventAction function result code.
+ *         {@link INPUT_SUCCESS} Sets the axis event action success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_SetAxisEventAction(Input_AxisEvent* axisEvent, InputEvent_AxisAction action)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the axis event action.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param action Axis event action. The values are defined in {@link InputEvent_AxisAction}.
+ * @return OH_Input_GetAxisEventAction function result code.
+ *         {@link INPUT_SUCCESS} Obtains the axis event action success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL or the action is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_GetAxisEventAction(const Input_AxisEvent* axisEvent, InputEvent_AxisAction *action)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the X coordinate of an axis event.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param displayX X coordinate of the axis event.
+ * @return OH_Input_SetAxisEventDisplayX function result code.
+ *         {@link INPUT_SUCCESS} Sets the X coordinate of the axis event success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_SetAxisEventDisplayX(Input_AxisEvent* axisEvent, float displayX)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the X coordinate of an axis event.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param displayX X coordinate of the axis event.
+ * @return OH_Input_GetAxisEventDisplayX function result code.
+ *         {@link INPUT_SUCCESS} Obtains the X coordinate of the axis event success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL or the displayX is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_GetAxisEventDisplayX(const Input_AxisEvent* axisEvent, float* displayX)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the Y coordinate of an axis event.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param displayY Y coordinate of the axis event.
+ * @return OH_Input_SetAxisEventDisplayY function result code.
+ *         {@link INPUT_SUCCESS} Sets the Y coordinate of the axis event success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_SetAxisEventDisplayY(Input_AxisEvent* axisEvent, float displayY)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the Y coordinate of an axis event.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param displayY Y coordinate of the axis event.
+ * @return OH_Input_GetAxisEventDisplayY function result code.
+ *         {@link INPUT_SUCCESS} Obtains the Y coordinate of the axis event success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL or the displayY is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_GetAxisEventDisplayY(const Input_AxisEvent* axisEvent, float* displayY)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the axis value of the axis type specified by the axis event.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param axisType Axis type. The values are defined in {@link InputEvent_AxisType}.
+ * @param axisValue Axis value.
+ * @return OH_Input_SetAxisEventAxisValue function result code.
+ *         {@link INPUT_SUCCESS} Sets the axis value of the axis event success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_SetAxisEventAxisValue(Input_AxisEvent* axisEvent,
+                                            InputEvent_AxisType axisType, double axisValue)
+                                            __attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the axis value for the specified axis type of the axis event.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param axisType Axis type. The values are defined in {@link InputEvent_AxisType}.
+ * @param axisValue Axis value.
+ * @return OH_Input_GetAxisEventAxisValue function result code.
+ *         {@link INPUT_SUCCESS} Obtains the axis value of the axis event success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL or the axisValue is NULL,
+ *         or the axisType not found in the axisEvent.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_GetAxisEventAxisValue(const Input_AxisEvent* axisEvent,
+                                            InputEvent_AxisType axisType, double* axisValue)
+                                            __attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the time when an axis event occurs.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param actionTime Time when an axis event occurs.
+ * @return OH_Input_SetAxisEventActionTime function result code.
+ *         {@link INPUT_SUCCESS} Sets the time when an axis event occurs success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_SetAxisEventActionTime(Input_AxisEvent* axisEvent, int64_t actionTime)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the time when an axis event occurs.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param actionTime Time when an axis event occurs.
+ * @return OH_Input_GetAxisEventActionTime function result code.
+ *         {@link INPUT_SUCCESS} Obtains the time when an axis event occurs success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL or the actionTime is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_GetAxisEventActionTime(const Input_AxisEvent* axisEvent, int64_t* actionTime)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the axis event type.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param axisEventType Axis event type. The values are defined in {@link InputEvent_AxisEventType}.
+ * @return OH_Input_SetAxisEventType function result code.
+ *         {@link INPUT_SUCCESS} Sets the axis event type success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_SetAxisEventType(Input_AxisEvent* axisEvent, InputEvent_AxisEventType axisEventType)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the axis event type.
+ *
+ * @param axisEvent Axis event object.
+ * @param axisEventType Axis event type. The values are defined in {@link InputEvent_AxisEventType}.
+ * @return OH_Input_GetAxisEventType function result code.
+ *         {@link INPUT_SUCCESS} Obtains the axis event type success.\n
+ *         {@Link INPUT_PARAMETER_ERROR} The axisEvent is NULL or the axisEventType is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_GetAxisEventType(const Input_AxisEvent* axisEvent, InputEvent_AxisEventType* axisEventType)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the axis event source type.
+ *
+ * @param axisEvent Axis event object.
+ * @param sourceType Axis event source type. The values are defined in {@link InputEvent_SourceType}.
+ * @return OH_Input_SetAxisEventSourceType function result code.
+ *         {@link INPUT_SUCCESS} Sets the axis event source type success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_SetAxisEventSourceType(Input_AxisEvent* axisEvent, InputEvent_SourceType sourceType)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the axis event source type.
+ *
+ * @param axisEvent Axis event object.
+ * @param sourceType Axis event source type. The values are defined in {@link InputEvent_SourceType}.
+ * @return OH_Input_GetAxisEventSourceType function result code.
+ *         {@link INPUT_SUCCESS} Obtains the axis event source type success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL or the sourceType is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_GetAxisEventSourceType(const Input_AxisEvent* axisEvent, InputEvent_SourceType* sourceType)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Sets the windowId of an axis event.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param windowId The windowId for the axis event.
+ * @return OH_Input_SetAxisEventWindowId function result code.
+ *         {@link INPUT_SUCCESS} Sets the Y coordinate of the axis event success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 15
+ */
+Input_Result OH_Input_SetAxisEventWindowId(Input_AxisEvent* axisEvent, int32_t windowId)
+__attribute__((__availability__(ohos, introduced=15.0.0)));
+
+/**
+ * @brief Obtains the windowId of an axis event.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param windowId The windowId for the axis event.
+ * @return OH_Input_GetAxisEventWindowId function result code.
+ *         {@link INPUT_SUCCESS} Obtains the Y coordinate of the axis event success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL or the displayY is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 15
+ */
+Input_Result OH_Input_GetAxisEventWindowId(const Input_AxisEvent* axisEvent, int32_t* windowId)
+__attribute__((__availability__(ohos, introduced=15.0.0)));
+
+/**
+ * @brief Sets the displayId of an axis event.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param displayId The displayId for the axis event.
+ * @return OH_Input_SetAxisEventDisplayId function result code.
+ *         {@link INPUT_SUCCESS} Sets the Y coordinate of the axis event success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 15
+ */
+Input_Result OH_Input_SetAxisEventDisplayId(Input_AxisEvent* axisEvent, int32_t displayId)
+__attribute__((__availability__(ohos, introduced=15.0.0)));
+
+/**
+ * @brief Obtains the displayId of an axis event.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param displayId The displayId for the axis event.
+ * @return OH_Input_GetAxisEventDisplayId function result code.
+ *         {@link INPUT_SUCCESS} Obtains the Y coordinate of the axis event success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL or the displayY is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 15
+ */
+Input_Result OH_Input_GetAxisEventDisplayId(const Input_AxisEvent* axisEvent, int32_t* displayId)
+__attribute__((__availability__(ohos, introduced=15.0.0)));
+
+/**
+ * @brief Set the global X coordinate of the axis event.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param globalX Global X coordinate.
+ * @return OH_Input_SetAxisEventGlobalX function result code.
+ *        {@link INPUT_SUCCESS} Success.\n
+ *        {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL.\n
+ * @since 20
+ */
+Input_Result OH_Input_SetAxisEventGlobalX(struct Input_AxisEvent* axisEvent, int32_t globalX)
+__attribute__((__availability__(ohos, introduced=20.0.0)));
+
+/**
+ * @brief Queries the global X coordinate of the axis event.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param globalX Global X coordinate.
+ * @return OH_Input_GetAxisEventGlobalX function result code.
+ *         {@link INPUT_SUCCESS} Success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL or the globalX is NULL.\n
+ * @since 20
+ */
+Input_Result OH_Input_GetAxisEventGlobalX(const Input_AxisEvent* axisEvent, int32_t* globalX)
+__attribute__((__availability__(ohos, introduced=20.0.0)));
+
+/**
+ * @brief Set the global Y coordinate of the axis event.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param globalY Global Y coordinate.
+ * @return OH_Input_SetAxisEventGlobalY function result code.
+ *         {@link INPUT_SUCCESS} Success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL.\n
+ * @since 20
+ */
+Input_Result OH_Input_SetAxisEventGlobalY(struct Input_AxisEvent* axisEvent, int32_t globalY)
+__attribute__((__availability__(ohos, introduced=20.0.0)));
+
+/**
+ * @brief Queries the global Y coordinate of the axis event.
+ *
+ * @param axisEvent Axis event object. For details, see {@Link Input_AxisEvent}.
+ * @param globalY Global Y coordinate.
+ * @return OH_Input_GetAxisEventGlobalY function result code.
+ *         {@link INPUT_SUCCESS} Success.\n
+ *         {@link INPUT_PARAMETER_ERROR} The axisEvent is NULL or the globalY is NULL.\n
+ * @since 20
+ */
+Input_Result OH_Input_GetAxisEventGlobalY(const Input_AxisEvent* axisEvent, int32_t* globalY)
+__attribute__((__availability__(ohos, introduced=20.0.0)));
+
+/**
+ * @brief Adds a listener of key events.
+ *
+ * @permission ohos.permission.INPUT_MONITORING
+ * @param callback - Callback used to receive key events.
+ * @return OH_Input_AddKeyEventMonitor function result code.
+ *         {@link INPUT_SUCCESS} Adds a listener of key events success.\n
+ *         {@link INPUT_PERMISSION_DENIED} Permission verification failed.\n
+ *         {@link INPUT_PARAMETER_ERROR} The callback is NULL.\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Failed to add the monitor because the service is exception.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_AddKeyEventMonitor(Input_KeyEventCallback callback)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Adds a listener for mouse events, including mouse click and movement events,
+ * but not scroll wheel events. Scroll wheel events are axis events.
+ *
+ * @permission ohos.permission.INPUT_MONITORING
+ * @param callback - Callback used to receive mouse events.
+ * @return OH_Input_AddMouseEventMonitor function result code.
+ *         {@link INPUT_SUCCESS} Adds a listener of mouse events success.\n
+ *         {@link INPUT_PERMISSION_DENIED} Permission verification failed.\n
+ *         {@link INPUT_PARAMETER_ERROR} The callback is NULL.\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Failed to add the monitor because the service is exception.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_AddMouseEventMonitor(Input_MouseEventCallback callback)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Add a listener for touch events.
+ *
+ * @permission ohos.permission.INPUT_MONITORING
+ * @param callback - Callback used to receive touch events.
+ * @return OH_Input_AddTouchEventMonitor function result code.
+ *         {@link INPUT_SUCCESS} Adds a listener of touch events success.\n
+ *         {@link INPUT_PERMISSION_DENIED} Permission verification failed.\n
+ *         {@link INPUT_PARAMETER_ERROR} The callback is NULL.\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Failed to add the monitor because the service is exception.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_AddTouchEventMonitor(Input_TouchEventCallback callback)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Adds a listener for all types of axis events.
+ * The axis event types are defined in {@Link InputEvent_AxisEventType}.
+ *
+ * @permission ohos.permission.INPUT_MONITORING
+ * @param callback - Callback used to receive axis events.
+ * @return OH_Input_AddAxisEventMonitorForAll function result code.
+ *         {@link INPUT_SUCCESS} Adds a listener for all types of axis events success.\n
+ *         {@link INPUT_PERMISSION_DENIED} Permission verification failed.\n
+ *         {@link INPUT_PARAMETER_ERROR} The callback is NULL.\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Failed to add the monitor because the service is exception.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_AddAxisEventMonitorForAll(Input_AxisEventCallback callback)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Adds a listener for the specified type of axis events.
+ *
+ * @permission ohos.permission.INPUT_MONITORING
+ * @param axisEventType - Axis event type. The values are defined in {@Link InputEvent_AxisEventType}.
+ * @param callback - Callback used to receive the specified type of axis events.
+ * @return OH_Input_AddAxisEventMonitor function result code.
+ *         {@link INPUT_SUCCESS} Adds a listener for the specified types of axis events success.\n
+ *         {@link INPUT_PERMISSION_DENIED} Permission verification failed.\n
+ *         {@link INPUT_PARAMETER_ERROR} The callback is NULL.\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Failed to add the monitor because the service is exception.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_AddAxisEventMonitor(InputEvent_AxisEventType axisEventType, Input_AxisEventCallback callback)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Removes a key event listener.
+ *
+ * @permission ohos.permission.INPUT_MONITORING
+ * @param callback - Callback for the key event listener.
+ * @return OH_Input_RemoveKeyEventMonitor function result code.
+ *         {@link INPUT_SUCCESS} Removes a key event listener success.\n
+ *         {@link INPUT_PERMISSION_DENIED} Permission verification failed.\n
+ *         {@link INPUT_PARAMETER_ERROR} The callback is NULL or has not been added.\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Fail to remove the monitor because the service is exception.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_RemoveKeyEventMonitor(Input_KeyEventCallback callback)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Removes a mouse event listener.
+ *
+ * @permission ohos.permission.INPUT_MONITORING
+ * @param callback - Callback for the mouse event listener.
+ * @return OH_Input_RemoveMouseEventMonitor function result code.
+ *         {@link INPUT_SUCCESS} Removes a mouse event listener success.\n
+ *         {@link INPUT_PERMISSION_DENIED} Permission verification failed.\n
+ *         {@link INPUT_PARAMETER_ERROR} The callback is NULL or has not been added.\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Fail to remove the monitor because the service is exception.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_RemoveMouseEventMonitor(Input_MouseEventCallback callback)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Removes a touch event listener.
+ *
+ * @permission ohos.permission.INPUT_MONITORING
+ * @param callback - Callback for the touch event listener.
+ * @return OH_Input_RemoveTouchEventMonitor function result code.
+ *         {@link INPUT_SUCCESS} Removes a touch event listener success.\n
+ *         {@link INPUT_PERMISSION_DENIED} Permission verification failed.\n
+ *         {@link INPUT_PARAMETER_ERROR} The callback is NULL or has not been added.\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Fail to remove the monitor because the service is exception.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_RemoveTouchEventMonitor(Input_TouchEventCallback callback)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Removes the listener for all types of axis events.
+ *
+ * @permission ohos.permission.INPUT_MONITORING
+ * @param callback - Callback for the listener used to listen for all types of axis events.
+ * @return OH_Input_RemoveAxisEventMonitorForAll function result code.
+ *         {@link INPUT_SUCCESS} Removes the listener for all types of axis events success.\n
+ *         {@link INPUT_PERMISSION_DENIED} Permission verification failed.\n
+ *         {@link INPUT_PARAMETER_ERROR} The callback is NULL or has not been added.\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Fail to remove the monitor because the service is exception.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_RemoveAxisEventMonitorForAll(Input_AxisEventCallback callback)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Removes the listener for the specified type of axis events.
+ *
+ * @permission ohos.permission.INPUT_MONITORING
+ * @param axisEventType - Axis event type. The axis event type is defined in {@Link InputEvent_AxisEventType}.
+ * @param callback - Callback for the listener used to listen for the specified type of axis events.
+ * @return OH_Input_RemoveAxisEventMonitor function result code.
+ *         {@link INPUT_SUCCESS} Removes the listener for the specified type of axis events success.\n
+ *         {@link INPUT_PERMISSION_DENIED} Permission verification failed.\n
+ *         {@link INPUT_PARAMETER_ERROR} The callback is NULL or has not been added.\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Fail to remove the monitor because the service is exception.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_RemoveAxisEventMonitor(InputEvent_AxisEventType axisEventType, Input_AxisEventCallback callback)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Adds a key event interceptor. If multiple interceptors are added, only the first one takes effect.
+ *
+ * @permission ohos.permission.INTERCEPT_INPUT_EVENT
+ * @param callback - Callback used to receive key events.
+ * @param option - Options for event interception. If **null** is passed, the default value is used.
+ * @return OH_Input_AddKeyEventInterceptor function result code.
+ *         {@link INPUT_SUCCESS} Adds a key event interceptor success.\n
+ *         {@link INPUT_PERMISSION_DENIED} Permission verification failed.\n
+ *         {@link INPUT_PARAMETER_ERROR} The callback is NULL.\n
+ *         {@link INPUT_REPEAT_INTERCEPTOR} Interceptor repeatedly created for an application.\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Failed to add the interceptor because the service is exception.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_AddKeyEventInterceptor(Input_KeyEventCallback callback, Input_InterceptorOptions *option)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Adds an interceptor for input events, including mouse, touch, and axis events.
+ * If multiple interceptors are added, only the first one takes effect.
+ *
+ * @permission ohos.permission.INTERCEPT_INPUT_EVENT
+ * @param callback - Pointer to the structure of the callback for the input event interceptor.
+ * For details, see {@Link Input_InterceptorEventCallback}.
+ * @param option - Options for event interception. If **null** is passed, the default value is used.
+ * @return OH_Input_AddInputEventInterceptor function result code.
+ *         {@link INPUT_SUCCESS} Adds an interceptor for input events success.\n
+ *         {@link INPUT_PERMISSION_DENIED} Permission verification failed.\n
+ *         {@link INPUT_PARAMETER_ERROR} The callback is NULL.\n
+ *         {@link INPUT_REPEAT_INTERCEPTOR} Interceptor repeatedly created for an application.\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Failed to add the interceptor because the service is exception.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_AddInputEventInterceptor(Input_InterceptorEventCallback *callback,
+                                               Input_InterceptorOptions *option)
+                                               __attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Removes a key event interceptor.
+ *
+ * @permission ohos.permission.INTERCEPT_INPUT_EVENT
+ * @return OH_Input_RemoveKeyEventInterceptor function result code.
+ *         {@link INPUT_SUCCESS}Removes a key event interceptor success.\n
+ *         {@link INPUT_PERMISSION_DENIED} Permission verification failed.\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Failed to remove the interceptor because the service is exception.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_RemoveKeyEventInterceptor(void) __attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Removes an interceptor for input events, including mouse, touch, and axis events.
+ *
+ * @permission ohos.permission.INTERCEPT_INPUT_EVENT
+ * @return OH_Input_RemoveInputEventInterceptor function result code.
+ *         {@link INPUT_SUCCESS} Removes an interceptor for input events success.\n
+ *         {@link INPUT_PERMISSION_DENIED} Permission verification failed.\n
+ *         {@link INPUT_SERVICE_EXCEPTION} Failed to remove the interceptor because the service is exception.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 12
+ */
+Input_Result OH_Input_RemoveInputEventInterceptor(void) __attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Obtains the interval since the last system input event.
+ *
+ * @param timeInterval Interval, in microseconds.
+ * @return OH_Input_GetIntervalSinceLastInput status code, specifically.
+ *         {@Link INPUT_SUCCESS} if the Operation is successful.\n
+ *         {@Link INPUT_SERVICE_EXCEPTION} Failed to get the interval because the service is exception.\n
+ *         {@Link INPUT_PARAMETER_ERROR} The timeInterval is NULL.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 14
+ */
+Input_Result OH_Input_GetIntervalSinceLastInput(int64_t *timeInterval)
+__attribute__((__availability__(ohos, introduced=14.0.0)));
+
+/**
+ * @brief Creates a hot key object.
+ *
+ * @return Returns an {@Link Input_Hotkey} pointer object if the operation is successful. Otherwise, a null pointer is
+ * returned. The possible cause is memory allocation failure.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 14
+ */
+Input_Hotkey *OH_Input_CreateHotkey(void) __attribute__((__availability__(ohos, introduced=14.0.0)));
+
+/**
+ * @brief Destroys a hot key object.
+ *
+ * @param hotkey Hot key object.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 14
+ */
+void OH_Input_DestroyHotkey(Input_Hotkey **hotkey) __attribute__((__availability__(ohos, introduced=14.0.0)));
+
+/**
+ * @brief Sets a modifier key.
+ *
+ * @param hotkey Hotkey key object.
+ * @param preKeys List of modifier keys.
+ * @param size Number of modifier keys. One or two modifier keys are supported.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 14
+ */
+void OH_Input_SetPreKeys(Input_Hotkey *hotkey, int32_t *preKeys, int32_t size)
+__attribute__((__availability__(ohos, introduced=14.0.0)));
+
+/**
+ * @brief Obtains a modifier key.
+ *
+ * @param hotkey Hotkey key object.
+ * @param preKeys List of modifier keys.
+ * @param preKeyCount Number of modifier keys.
+ * @return OH_Input_GetPreKeys status code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;\n
+ *         {@link INPUT_PARAMETER_ERROR} The hotkey is NULL or the pressedKeys is NULL or the pressedKeyCount
+ *         is NULL;\n
+ *         {@Link INPUT_DEVICE_NOT_SUPPORTED} Capability not supported.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 14
+ */
+Input_Result OH_Input_GetPreKeys(const Input_Hotkey *hotkey, int32_t **preKeys, int32_t *preKeyCount)
+__attribute__((__availability__(ohos, introduced=14.0.0)));
+
+/**
+ * @brief Sets a modified key.
+ *
+ * @param hotkey Hotkey key object.
+ * @param finalKey Modified key. Only one modified key is supported.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 14
+ */
+void OH_Input_SetFinalKey(Input_Hotkey *hotkey, int32_t finalKey)
+__attribute__((__availability__(ohos, introduced=14.0.0)));
+
+/**
+ * @brief Obtains a modified key.
+ *
+ * @param hotkey Hotkey key object.
+ * @param finalKeyCode Returns the key value of the decorated key.
+ * @return OH_Input_GetFinalKey status code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;\n
+ *         {@link INPUT_PARAMETER_ERROR} The hotkey is NULL or the finalKeyCode is NULL;\n
+ *         {@Link INPUT_DEVICE_NOT_SUPPORTED} Capability not supported.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 14
+ */
+Input_Result OH_Input_GetFinalKey(const Input_Hotkey *hotkey, int32_t *finalKeyCode)
+__attribute__((__availability__(ohos, introduced=14.0.0)));
+
+/**
+ * @brief Creates an array of {@Link Input_Hotkey} instances.
+ *
+ * @param count Number of {@Link Input_Hotkey} instances to be created. The count must be the same as the number of
+ * system shortcut keys.
+ * @return Returns a pointer to an array of {@Link Input_Hotkey} instances if the operation is successful. If the
+ * operation fails, a null pointer is returned. The possible cause is memory allocation failure or count is not equal
+ * to the number of system hotkeys.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 14
+ */
+Input_Hotkey **OH_Input_CreateAllSystemHotkeys(int32_t count) __attribute__((__availability__(ohos, introduced=14.0.0)));
+
+/**
+ * @brief Destroys an array of {@link Input_Hotkey} instances and reclaims memory.
+ *
+ * @param hotkeys Pointer to an array of {@Link Input_Hotkey } instances created by the
+ * {@Link OH_Input_CreateAllSystemHotkeys} method.
+ * @param count Count of the array to be destroyed, which must be the same as the number of system shortcut keys.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 14
+ */
+void OH_Input_DestroyAllSystemHotkeys(Input_Hotkey **hotkeys, int32_t count)
+__attribute__((__availability__(ohos, introduced=14.0.0)));
+
+/**
+ * @brief Obtains all hot keys supported by the system.
+ *
+ * @param hotkey Array of {@Link Input_Hotkey} instances.
+ * When calling this API for the first time, you can pass NULL to obtain the array length.
+ * @param count Number of hot keys supported by the system.
+ * @return OH_Input_GetAllSystemHotkeys status code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;\n
+ *         {@link INPUT_PARAMETER_ERROR} The hotkey or count is NULL, or the value of count does not match the number
+ *         of system shortcut keys supported by the system;
+ *         {@Link INPUT_DEVICE_NOT_SUPPORTED} Capability not supported.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 14
+ */
+Input_Result OH_Input_GetAllSystemHotkeys(Input_Hotkey **hotkey, int32_t *count)
+__attribute__((__availability__(ohos, introduced=14.0.0)));
+
+/**
+ * @brief Specifies whether to report repeated key events.
+ *
+ * @param hotkey Shortcut key object.
+ * @param isRepeat Whether to report repeated key events.
+ * The value <b>true</b> means to report repeated key events, and the value <b>false</b> means the opposite.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 14
+ */
+void OH_Input_SetRepeat(Input_Hotkey* hotkey, bool isRepeat) __attribute__((__availability__(ohos, introduced=14.0.0)));
+
+/**
+ * @brief Checks whether to report repeated key events.
+ *
+ * @param hotkey Shortcut key object.
+ * @param isRepeat Whether a key event is repeated.
+ * @return OH_Input_GetRepeat status code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;\n
+ *         {@link INPUT_PARAMETER_ERROR} otherwise;\n
+ *         {@Link INPUT_DEVICE_NOT_SUPPORTED} Capability not supported.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 14
+ */
+Input_Result OH_Input_GetRepeat(const Input_Hotkey* hotkey, bool *isRepeat)
+__attribute__((__availability__(ohos, introduced=14.0.0)));
+
+/**
+ * @brief Subscribes to shortcut key events.
+ *
+ * @param hotkey Shortcut key object.
+ * @param callback Callback used to return shortcut key events.
+ * @return OH_Input_AddHotkeyMonitor status code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;\n
+ *         {@link INPUT_PARAMETER_ERROR} if hotkey or callback is NULL;\n
+ *         {@Link INPUT_DEVICE_NOT_SUPPORTED} Capability not supported;\n
+ *         {@Link INPUT_OCCUPIED_BY_SYSTEM} The hotkey has been used by the system. You can call the {@Link
+ *         GetAllSystemHotkeys} interface to query all system shortcut keys.\n
+ *         {@Link INPUT_OCCUPIED_BY_OTHER} The hotkey has been subscribed to by another.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 14
+ */
+Input_Result OH_Input_AddHotkeyMonitor(const Input_Hotkey* hotkey, Input_HotkeyCallback callback)
+__attribute__((__availability__(ohos, introduced=14.0.0)));
+
+/**
+ * @brief Unsubscribes from shortcut key events.
+ *
+ * @param hotkey Shortcut key object.
+ * @param callback Callback used to return shortcut key events.
+ * @return OH_Input_RemoveHotkeyMonitor status code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;\n
+ *         {@link INPUT_PARAMETER_ERROR} if hotkey or callback is NULL;\n
+ *         {@Link INPUT_DEVICE_NOT_SUPPORTED} Capability not supported.\n
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 14
+ */
+Input_Result OH_Input_RemoveHotkeyMonitor(const Input_Hotkey* hotkey, Input_HotkeyCallback callback)
+__attribute__((__availability__(ohos, introduced=14.0.0)));
+
+/**
+ * @brief Obtains the IDs of all input devices.
+ *
+ * @param deviceIds Array of input device IDs.
+ * @param inSize Size of the array of input device IDs.
+ * @param outSize Length of the list of input device IDs. The value cannot be greater than the value of inSize.
+ * @return OH_Input_GetDeviceIds result code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if deviceIds or outSize is a null pointer or inSize is less than 0.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 13
+ */
+Input_Result OH_Input_GetDeviceIds(int32_t *deviceIds, int32_t inSize, int32_t *outSize)
+__attribute__((__availability__(ohos, introduced=13.0.0)));
+
+/**
+ * @brief Obtains the information about an input device.
+ *
+ * @param deviceId Device ID.
+ * @param deviceInfo Pointer to an {@Link Input_DeviceInfo} object.
+ * @return OH_Input_GetDevice result code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if the deviceInfo is a null pointer or the deviceId is invalid.
+ * You can use the {@Link OH_Input_GetDeviceIds} interface to query the device IDs supported by the system.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 13
+ */
+Input_Result OH_Input_GetDevice(int32_t deviceId, Input_DeviceInfo **deviceInfo)
+__attribute__((__availability__(ohos, introduced=13.0.0)));
+
+/**
+ * @brief Creates a deviceInfo object.
+ *
+ * @return Pointer to an {@Link Input_DeviceInfo} object if the operation is successful;
+ * a null pointer otherwise (possibly because of a memory allocation failure).
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 13
+ */
+Input_DeviceInfo* OH_Input_CreateDeviceInfo(void) __attribute__((__availability__(ohos, introduced=13.0.0)));
+
+/**
+ * @brief Destroys a deviceInfo object.
+ *
+ * @param deviceInfo information object. For details, see {@Link Input_DeviceInfo}.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 13
+ */
+void OH_Input_DestroyDeviceInfo(Input_DeviceInfo **deviceInfo)
+__attribute__((__availability__(ohos, introduced=13.0.0)));
+
+/**
+ * @brief Obtains the keyboard type of an input device.
+ *
+ * @param deviceId Device ID.
+ * @param keyboardType Pointer to the keyboard type of the input device.
+ * @return OH_Input_GetKeyboardType result code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if the device ID is invalid or keyboardType is a null pointer.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 13
+ */
+Input_Result OH_Input_GetKeyboardType(int32_t deviceId, int32_t *keyboardType)
+__attribute__((__availability__(ohos, introduced=13.0.0)));
+
+/**
+ * @brief Obtains the ID of an input device.
+ *
+ * @param deviceInfo information object. For details, see {@Link Input_DeviceInfo}.
+ * @param id Pointer to the ID of the input device.
+ * @return OH_Input_GetDeviceId result code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if deviceInfo or id is a null pointer.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 13
+ */
+Input_Result OH_Input_GetDeviceId(Input_DeviceInfo *deviceInfo, int32_t *id)
+__attribute__((__availability__(ohos, introduced=13.0.0)));
+
+/**
+ * @brief Obtains the name of an input device.
+ *
+ * @param deviceInfo information object. For details, see {@Link Input_DeviceInfo}.
+ * @param name Pointer to the name of the input device.
+ * @return OH_Input_GetDeviceName result code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if deviceInfo or name is a null pointer.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 13
+ */
+Input_Result OH_Input_GetDeviceName(Input_DeviceInfo *deviceInfo, char **name)
+__attribute__((__availability__(ohos, introduced=13.0.0)));
+
+/**
+ * @brief Obtains the capabilities of an input device, for example, a touchscreen, touchpad, or keyboard.
+ *
+ * @param deviceInfo information object. For details, see {@Link Input_DeviceInfo}.
+ * @param capabilities Pointer to the capabilities of the input device.
+ * @return OH_Input_GetCapabilities result code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if deviceInfo or capabilities is a null pointer.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 13
+ */
+Input_Result OH_Input_GetCapabilities(Input_DeviceInfo *deviceInfo, int32_t *capabilities)
+__attribute__((__availability__(ohos, introduced=13.0.0)));
+
+/**
+ * @brief Obtains the version information of an input device.
+ *
+ * @param deviceInfo information object. For details, see {@Link Input_DeviceInfo}.
+ * @param version Pointer to the version information of the input device.
+ * @return OH_Input_GetDeviceVersion result code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if deviceInfo or version is a null pointer.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 13
+ */
+Input_Result OH_Input_GetDeviceVersion(Input_DeviceInfo *deviceInfo, int32_t *version)
+__attribute__((__availability__(ohos, introduced=13.0.0)));
+
+/**
+ * @brief Obtains the product information of an input device.
+ *
+ * @param deviceInfo information object. For details, see {@Link Input_DeviceInfo}.
+ * @param product Pointer to the product information of the input device.
+ * @return OH_Input_GetDeviceProduct result code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if deviceInfo or product is a null pointer.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 13
+ */
+Input_Result OH_Input_GetDeviceProduct(Input_DeviceInfo *deviceInfo, int32_t *product)
+__attribute__((__availability__(ohos, introduced=13.0.0)));
+
+/**
+ * @brief Obtains the vendor information of an input device.
+ *
+ * @param deviceInfo information object. For details, see {@Link Input_DeviceInfo}.
+ * @param vendor Pointer to the vendor information of the input device.
+ * @return OH_Input_GetDeviceVendor result code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if deviceInfo or vendor is a null pointer.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 13
+ */
+Input_Result OH_Input_GetDeviceVendor(Input_DeviceInfo *deviceInfo, int32_t *vendor)
+__attribute__((__availability__(ohos, introduced=13.0.0)));
+
+/**
+ * @brief Obtains the physical address of an input device.
+ *
+ * @param deviceInfo information object. For details, see {@Link Input_DeviceInfo}.
+ * @param address Pointer to the physical address of the input device.
+ * @return OH_Input_GetDeviceAddress result code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if deviceInfo or address is a null pointer.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 13
+ */
+Input_Result OH_Input_GetDeviceAddress(Input_DeviceInfo *deviceInfo, char **address)
+__attribute__((__availability__(ohos, introduced=13.0.0)));
+
+/**
+ * @brief Registers a listener for device hot swap events.
+ *
+ * @param listener Pointer to an {@Link Input_DeviceListener} object.
+ *
+ * @return OH_Input_RegisterDeviceListener status code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;\n
+ *         {@link INPUT_PARAMETER_ERROR} if listener is NULL;
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 13
+ */
+Input_Result OH_Input_RegisterDeviceListener(Input_DeviceListener* listener)
+__attribute__((__availability__(ohos, introduced=13.0.0)));
+
+/**
+ * @brief Unregisters the listener for device hot swap events.
+ *
+ * @param listener Pointer to the listener for device hot swap events. For details, see {@Link Input_DeviceListener}.
+ *
+ * @return OH_Input_UnregisterDeviceListener status code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;\n
+ *         {@link INPUT_PARAMETER_ERROR} if listener is NULL or no listener is registered;
+ *         {@link INPUT_SERVICE_EXCEPTION} if the service is abnormal.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 13
+ */
+Input_Result OH_Input_UnregisterDeviceListener(Input_DeviceListener* listener)
+__attribute__((__availability__(ohos, introduced=13.0.0)));
+
+/**
+ * @brief Unregisters the listener for all device hot swap events.
+ *
+ * @return OH_Input_UnregisterDeviceListeners status code, specifically,
+ *         {@link INPUT_SUCCESS} if the operation is successful;\n
+ *         {@link INPUT_SERVICE_EXCEPTION} if the service is abnormal.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 13
+ */
+Input_Result OH_Input_UnregisterDeviceListeners() __attribute__((__availability__(ohos, introduced=13.0.0)));
+
+/**
+ * @brief Obtains the function key status.
+ *
+ * @param keyCode Function key value. Supported function keys include capsLock, NumLock, and ScrollLock.
+ * @param state Function key status. The value 0 indicates that the function key is disabled,
+ * and the value 1 indicates the opposite.
+ * @return OH_Input_GetFunctionKeyState function api result code
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if keyCode is invalid or state is a null pointer.
+ *         {@link INPUT_KEYBOARD_DEVICE_NOT_EXIST} no keyboard device connected.
+ * @syscap SystemCapability.MultimodalInput.Input.Core
+ * @since 15
+ */
+Input_Result OH_Input_GetFunctionKeyState(int32_t keyCode, int32_t *state)
+__attribute__((__availability__(ohos, introduced=15.0.0)));
+
+/**
+ * @brief Queries the maximum number of touch points supported by the current device.
+ *      If -1 is returned, the number is unknown.
+ *
+ * @param count Maximum number of touch points supported.
+ * @return OH_Input_QueryMaxTouchPoints function api result code
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if count is a null pointer.
+ * @since 20
+ */
+Input_Result OH_Input_QueryMaxTouchPoints(int32_t *count) __attribute__((__availability__(ohos, introduced=20.0.0)));
+
+/**
+ * @brief Get pointer location.
+ *
+ * @param displayId The displayId for the pointer location.
+ * @param displayX The displayX for the pointer location.
+ * @param displayY The displayY for the pointer location.
+ * @return OH_Input_GetPointerLocation function api result code
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if parameter is a null pointer;
+ *         {@link INPUT_APP_NOT_FOCUSED} if the app is not the focused app;
+ *         {@link INPUT_DEVICE_NO_POINTER} if the device has no pointer;
+ *         {@link INPUT_SERVICE_EXCEPTION} if the service is exception.
+ * @since 20
+ */
+Input_Result OH_Input_GetPointerLocation(int32_t *displayId, double *displayX, double *displayY)
+__attribute__((__availability__(ohos, introduced=20.0.0)));
+
+/**
+ * @brief Sets the visible status of the mouse pointer.
+ *
+ * @param visible Whether the mouse pointer is visible. The value true indicates that the pointer
+ * @return OH_Input_SetPointerVisible function api result code
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_DEVICE_NOT_SUPPORTED} if the device is not supported.
+ *         {@link INPUT_SERVICE_EXCEPTION} if the service is exception.
+ * @since 22
+ */
+Input_Result OH_Input_SetPointerVisible(bool visible) __attribute__((__availability__(ohos, introduced=22.0.0)));
+
+/**
+ * @brief Obtains the mouse pointer style.
+ *
+ * @param windowId Window ID. The value is an integer greater than or equal to -1.
+ * @param pointerStyle Pointer to the pointerStyle.
+ * @return OH_Input_GetPointerStyle function api result code
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if parameter is a null pointer or window ID is invalid;
+ *         {@link INPUT_SERVICE_EXCEPTION} if the service is exception.
+ * @since 22
+ */
+Input_Result OH_Input_GetPointerStyle(int32_t windowId, int32_t *pointerStyle)
+__attribute__((__availability__(ohos, introduced=22.0.0)));
+
+/**
+ * @brief Sets the mouse pointer style.
+ *
+ * @param windowId Window ID. The value is an integer greater than or equal to 0.
+ * @param pointerStyle Pointer style.The value should be a member of the {@link Input_PointerStyle} enumeration.
+ * @return OH_Input_SetPointerStyle function api result code
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if window ID is invalid or pointerStyle is invalid;
+ *         {@link INPUT_SERVICE_EXCEPTION} if the service is exception.
+ * @since 22
+ */
+Input_Result OH_Input_SetPointerStyle(int32_t windowId, int32_t pointerStyle)
+__attribute__((__availability__(ohos, introduced=22.0.0)));
+
+/**
+ * @brief Creates a CustomCursor object.
+ *
+ * @param pixelMap Pointer to a {@link OH_PixelmapNative}  object.
+ * @param anchorX Horizontal coordinate of the cursor focus.
+ * @param anchorY Vertical coordinate of the cursor focus.
+ * @return Returns an {@link Input_CustomCursor} pointer object if the operation is successful.
+ * returns a null pointer otherwise.
+ * @since 22
+ */
+Input_CustomCursor* OH_Input_CustomCursor_Create(OH_PixelmapNative* pixelMap, int32_t anchorX, int32_t anchorY)
+__attribute__((__availability__(ohos, introduced=22.0.0)));
+
+/**
+ * @brief Destroys a CustomCursor object.
+ *
+ * @param customCursor Pointer to a pointer to an {@link Input_CustomCursor} object.
+ * @since 22
+ */
+void OH_Input_CustomCursor_Destroy(Input_CustomCursor** customCursor)
+__attribute__((__availability__(ohos, introduced=22.0.0)));
+
+/**
+ * @brief Obtains the pixelMap of the CustomCursor.
+ *
+ * @param customCursor Pointer to an {@link Input_CustomCursor} object.
+ * @param pixelMap Pointer to a {@link OH_PixelmapNative}  object.
+ * @return OH_Input_CustomCursor_GetPixelMap function result code.
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} The customCursor is NULL.
+ * @since 22
+ */
+Input_Result OH_Input_CustomCursor_GetPixelMap(Input_CustomCursor* customCursor, OH_PixelmapNative** pixelMap)
+__attribute__((__availability__(ohos, introduced=22.0.0)));
+
+/**
+ * @brief Obtains the anchor of the CustomCursor.
+ *
+ * @param customCursor Pointer to an {@link Input_CustomCursor} object.
+ * @param anchorX Pointer to horizontal coordinate of the cursor focus.
+ * @param anchorY Pointer to vertical coordinate of the cursor focus.
+ * @return OH_Input_CustomCursor_GetAnchor function result code.
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} The customCursor is NULL.
+ * @since 22
+ */
+Input_Result OH_Input_CustomCursor_GetAnchor(Input_CustomCursor* customCursor, int32_t* anchorX, int32_t* anchorY)
+__attribute__((__availability__(ohos, introduced=22.0.0)));
+
+/**
+ * @brief Creates a CursorConfig object.
+ *
+ * @param followSystem Pointer of the config whether to adjust the cursor size based on system settings
+ * @return Returns an {@link Input_CursorConfig} pointer object if the operation is successful.
+ * returns a null pointer otherwise.
+ * @since 22
+ */
+Input_CursorConfig* OH_Input_CursorConfig_Create(bool followSystem)
+__attribute__((__availability__(ohos, introduced=22.0.0)));
+
+/**
+ * @brief Destroys a CursorConfig object.
+ *
+ * @param cursorConfig Pointer to a pointer to an {@link cursorConfig} object.
+ * @since 22
+ */
+void OH_Input_CursorConfig_Destroy(Input_CursorConfig** cursorConfig)
+__attribute__((__availability__(ohos, introduced=22.0.0)));
+
+/**
+ * @brief Obtains the followSystem of the cursorConfig.
+ *
+ * @param cursorConfig Pointer to an {@link Input_CursorConfig} object.
+ * @param followSystem Pointer of the config whether to adjust the cursor size based on system settings
+ * @return OH_Input_CursorConfig_IsFollowSystem function result code.
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} The cursorOptions or followSystem the is NULL.
+ * @since 22
+ */
+Input_Result OH_Input_CursorConfig_IsFollowSystem(Input_CursorConfig *cursorConfig, bool *followSystem)
+__attribute__((__availability__(ohos, introduced=22.0.0)));
+
+/**
+ * @brief Sets the custom cursor style.
+ *
+ * @param windowId Window ID. The value is an integer greater than or equal to 0.
+ * @param customCursor Pointer to an {@link Input_CustomCursor} object.
+ * @param cursorConfig Pointer to an {@link cursorConfig} object.
+ * @return OH_Input_SetCustomCursor function result code.
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if window ID is abnormal or customCursor is invalid;
+ *         {@link INPUT_INVALID_WINDOWID} if window ID is invaild.
+ *         {@link INPUT_DEVICE_NOT_SUPPORTED} Capability not supported.
+ *         {@link INPUT_SERVICE_EXCEPTION} if the service is exception.
+ * @since 22
+ */
+Input_Result OH_Input_SetCustomCursor(int32_t windowId, Input_CustomCursor* customCursor,
+                                      Input_CursorConfig* cursorConfig)
+                                      __attribute__((__availability__(ohos, introduced=22.0.0)));
+
+/**
+ * @brief Creates a cursor info object.
+ *
+ * @return Returns an {@link Input_CursorInfo} cursor object if the operation is successful.
+ *         Otherwise, a null cursor is returned. The possible cause is memory allocation failure.
+ * @since 22
+ */
+struct Input_CursorInfo* OH_Input_CursorInfo_Create() __attribute__((__availability__(ohos, introduced=22.0.0)));
+ 
+/**
+ * @brief Destroys a cursor info object.
+ *
+ * @param cursorInfo Cursor info object.
+ * @since 22
+ */
+void OH_Input_CursorInfo_Destroy(Input_CursorInfo** cursorInfo)
+__attribute__((__availability__(ohos, introduced=22.0.0)));
+ 
+/**
+ * @brief Obtains the cursor visibility of the cursorInfo.
+ *
+ * @param cursorInfo Cursor info object.
+ * @param visible Visibility of the cursorInfo.
+ * @return OH_Input_CursorInfo_IsVisible function api result code
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if parameter is a null cursor;
+ * @since 22
+ */
+Input_Result OH_Input_CursorInfo_IsVisible(Input_CursorInfo* cursorInfo, bool* visible)
+__attribute__((__availability__(ohos, introduced=22.0.0)));
+ 
+/**
+ * @brief Obtains the cursor style of the cursorInfo.
+ *
+ * @param cursorInfo Cursor info object.
+ * @param style Cursor style of the cursorInfo.
+ * @return OH_Input_CursorInfo_GetStyle function api result code
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if parameter is a null cursor or the cursor is invisible;
+ * @since 22
+ */
+Input_Result OH_Input_CursorInfo_GetStyle(Input_CursorInfo* cursorInfo, Input_PointerStyle* style)
+__attribute__((__availability__(ohos, introduced=22.0.0)));
+ 
+/**
+ * @brief Obtains the cursor sizeLevel of the cursorInfo.
+ *
+ * @param cursorInfo Cursor info object.
+ * @param sizeLevel Cursor size level of the cursorInfo.
+ * @return OH_Input_CursorInfo_GetSizeLevel function api result code
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if parameter is a null cursor or the cursor is invisible;
+ * @since 22
+ */
+Input_Result OH_Input_CursorInfo_GetSizeLevel(Input_CursorInfo* cursorInfo, int32_t* sizeLevel)
+__attribute__((__availability__(ohos, introduced=22.0.0)));
+ 
+/**
+ * @brief Obtains the cursor color of the cursorInfo represented as a 32-bit ARGB integer.
+ *
+ * @param cursorInfo Cursor info object.
+ * @param color Cursor color of the cursorInfo represented as a 32-bit ARGB integer.
+ * @return OH_Input_CursorInfo_GetColor function api result code
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if parameter is a null cursor or the cursor is invisible;
+ * @since 22
+ */
+Input_Result OH_Input_CursorInfo_GetColor(Input_CursorInfo* cursorInfo, uint32_t* color)
+__attribute__((__availability__(ohos, introduced=22.0.0)));
+ 
+/**
+ * @brief Get cursor info of the mouseEvent.
+ *
+ * @param mouseEvent The received mouseEvent.
+ * @param cursorInfo The object to receive the cursor info.
+ * @return OH_Input_GetMouseEventCursorInfo function api result code
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if parameter is a null cursor;
+ * @since 22
+ */
+Input_Result OH_Input_GetMouseEventCursorInfo(const struct Input_MouseEvent* mouseEvent, Input_CursorInfo* cursorInfo)
+__attribute__((__availability__(ohos, introduced=22.0.0)));
+ 
+/**
+ * @brief Retrieves cursor information. If the pixelmap parameter is specified, and the cursor is user-defined type
+ * currently, the cursor's pixelmap will be returned along with it.
+ *
+ * @param cursorInfo The object to receive the cursor info.
+ * @param pixelmap The object to receive the cursor pixelmap, null value will be ignored.
+ * @return OH_Input_GetCursorInfo function api result code
+ *         {@link INPUT_SUCCESS} if the operation is successful;
+ *         {@link INPUT_PARAMETER_ERROR} if parameter is a null cursor;
+ *         {@link INPUT_SERVICE_EXCEPTION} if the service is exception.
+ * @since 22
+ */
+Input_Result OH_Input_GetCursorInfo(Input_CursorInfo* cursorInfo, OH_PixelmapNative** pixelmap)
+__attribute__((__availability__(ohos, introduced=22.0.0)));
+#ifdef __cplusplus
+}
+#endif
+/** @} */
+
+#endif /* OH_INPUT_MANAGER_H */

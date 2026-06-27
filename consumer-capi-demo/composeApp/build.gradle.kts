@@ -29,10 +29,9 @@ kotlin {
         // platform.PerformanceAnalysisKit.HiLog etc.) — no local cinterop here.
         binaries.sharedLib {
             baseName = "kn"
-            // HMS sysroot (additionalTargetSysRoot in cpf 0.4 konan.properties) holds the .so
-            // stubs for the HarmonyOS-SDK-Only Kits (colorpicker/securityantivirus/aip/etc.)
-            // that the main ohos sysroot lacks. Add -L so the linker finds them.
-            freeCompilerArgs += "-linker-options=-L/Users/ohoskt/.konan/dependencies/sysroot-hms-aarch64-6.0.2.640-02/usr/lib/aarch64-linux-ohos"
+            // HMS sysroot (.so stubs for HarmonyOS-SDK-Only Kits) checked into the repo.
+            val hmsLib = "${rootProject.projectDir.parentFile}/sysroot/sysroot-hms-aarch64-6.0.2.640-02/usr/lib/aarch64-linux-ohos"
+            freeCompilerArgs += "-linker-options=-L$hmsLib"
             // Set SONAME so the NAPI libentry.so's NEEDED records bare "libkn.so" (not a host
             // absolute path), letting the device dlopen it from the app's libs dir.
             freeCompilerArgs += "-linker-options=-Wl,-soname,libkn.so"

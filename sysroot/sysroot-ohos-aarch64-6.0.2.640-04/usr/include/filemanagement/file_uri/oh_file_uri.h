@@ -1,0 +1,136 @@
+/*
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * @addtogroup fileUri
+ * @{
+ *
+ * @brief This module provides URI format validation and URI conversion processing,
+ * as well as obtaining URI-related information
+ *
+ * @since 12
+ */
+
+/**
+ * @file oh_file_uri.h
+ * @kit CoreFileKit
+ *
+ * @brief uri verification and conversion
+ * This class is mainly for URI format verification and URI conversion processing;
+ * The conversion and operation of the media library type URI is not supported,
+ * and the class only converts according to the existing specifications,
+ * and there is no guarantee that the conversion result will actually exist.
+ * @library libohfileuri.so
+ * @syscap SystemCapability.FileManagement.AppFileService
+ * @since 12
+ */
+
+#ifndef FILE_MANAGEMENT_OH_FILE_URI_H
+#define FILE_MANAGEMENT_OH_FILE_URI_H
+
+#include "info/application_target_sdk_version.h"
+#include "error_code.h"
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @brief Get uri From path.
+ *
+ * @param path Input a pointer to the path string.
+ * @param length The length of the input path.
+ * @param result Output a pointer to a uri string. Please use free() to clear the resource.
+ * @return Returns the status code of the execution.
+ *         {@link ERR_PARAMS}  401 - Invalid input parameter.
+ *         {@link ERR_UNKNOWN} 13900042 - Unknow error. The length of the output uri string is 0.
+ *         {@link ERR_ENOMEM}  13900011 - Failed to apply for memory or failed to copy memory.
+ *         {@link ERR_OK} 0 - This operation was successfully executed.
+ * @syscap SystemCapability.FileManagement.AppFileService
+ * @since 12
+ */
+FileManagement_ErrCode OH_FileUri_GetUriFromPath(const char *path, unsigned int length, char **result)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Get path From uri.
+ *
+ * @param uri Input a pointer to the uri string.
+ * @param length The length of the input uri.
+ * @param result Output a pointer to a path string. Please use free() to clear the resource.
+ * @return Returns the status code of the execution.
+ *         {@link ERR_PARAMS} 401 - Invalid input parameter.
+ *         {@link ERR_UNKNOWN} 13900042 - Unknow error. The length of the output path string is 0.
+ *         {@link ERR_ENOMEM} 13900011 - Failed to apply for memory or failed to copy memory.
+ *         {@link ERR_OK} 0 - This operation was successfully executed.
+ * @syscap SystemCapability.FileManagement.AppFileService
+ * @since 12
+ */
+FileManagement_ErrCode OH_FileUri_GetPathFromUri(const char *uri, unsigned int length, char **result)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Gets the uri of the path or directory where the uri is located.
+ *
+ * @param uri Input a pointer to the uri string.
+ * @param length  The length of the input uri.
+ * @param result Output a pointer to a uri string. Please use free() to clear the resource.
+ * @return Returns the status code of the execution.
+ *         {@link ERR_PARAMS} 401 - Invalid input parameter.
+ *         {@link ERR_ENOMEM} 13900011 - Failed to apply for memory or failed to copy memory.
+ *         {@link ERR_ENOENT} 13900002 - No such file or directory.
+ *         {@link ERR_UNKNOWN} - Unknow error. The length of the output path string is 0.
+ *         {@link ERR_OK} 0 - This operation was successfully executed.
+ * @syscap SystemCapability.FileManagement.AppFileService
+ * @since 12
+ */
+FileManagement_ErrCode OH_FileUri_GetFullDirectoryUri(const char *uri, unsigned int length, char **result)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+ * @brief Check that the incoming uri is valid
+ *
+ * @param uri Input a pointer to the uri string.
+ * @param length The length of the input uri.
+ * @return Returns true: Valid incoming uri, false: Invalid incoming uri.
+ * @syscap SystemCapability.FileManagement.AppFileService
+ * @since 12
+ */
+bool OH_FileUri_IsValidUri(const char *uri, unsigned int length)
+__attribute__((__availability__(ohos, introduced=12.0.0)));
+
+/**
+* @brief Gets the fileName From uri.
+* This function obtains that the last segment of the URI string is the return value of the function,
+* and the URI of the media type is not supported
+* @param uri Input a pointer to the uri string.
+* @param length  The length of the input uri.
+* @param result Output a pointer to a FileName string. Please use free() to clear the resource.
+* @return Returns the status code of the execution.
+*         {@link ERR_PARAMS} 401 - Invalid input parameter.
+*         {@link ERR_ENOMEM} 13900011 - Failed to apply for memory or failed to copy memory.
+*         {@link ERR_OK} 0 - This operation was successfully executed.
+* @syscap SystemCapability.FileManagement.AppFileService
+* @since 13
+ */
+FileManagement_ErrCode OH_FileUri_GetFileName(const char *uri, unsigned int length, char **result)
+__attribute__((__availability__(ohos, introduced=13.0.0)));
+#ifdef __cplusplus
+};
+#endif
+/** @} */
+#endif // FILE_MANAGEMENT_OH_FILE_URI_H

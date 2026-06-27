@@ -26,12 +26,12 @@ kotlin {
                 // libc2k.so. The klib aggregate carries linkerOpts for all 159 defs incl. HMS Kits
                 // whose .so the consumer sysroot may lack; --as-needed drops the unreferenced ones.
                 freeCompilerArgs += "-linker-options=-Wl,--as-needed"
-                // HMS sysroot (cpf 0.4 additionalTargetSysRoot) holds the HarmonyOS-SDK-Only Kit
-                // .so stubs (colorpicker/securityantivirus/aip/etc.) that the main ohos sysroot
-                // (DevEco, used by HUAWEI's targetSysRoot) lacks. The hilog-klib aggregate carries
-                // linkerOpts for all 159 defs incl. these; --as-needed drops unused ones from
-                // NEEDED but ld still must locate them to judge unreferenced, so add -L here.
-                freeCompilerArgs += "-linker-options=-L/Users/ohoskt/.konan/dependencies/sysroot-hms-aarch64-6.0.2.640-02/usr/lib/aarch64-linux-ohos"
+                // HMS sysroot (.so stubs for HarmonyOS-SDK-Only Kits) checked into the repo.
+                // The hilog-klib aggregate carries linkerOpts for all 159 defs incl. HMS Kits;
+                // --as-needed drops unused ones from NEEDED but ld must locate them to judge
+                // unreferenced, so add -L here. (After #14 split, non-HMS consumers won't need this.)
+                val hmsLib = "${rootProject.projectDir.parentFile}/sysroot/sysroot-hms-aarch64-6.0.2.640-02/usr/lib/aarch64-linux-ohos"
+                freeCompilerArgs += "-linker-options=-L$hmsLib"
             }
         }
     }

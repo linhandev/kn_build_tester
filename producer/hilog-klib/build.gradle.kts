@@ -18,8 +18,13 @@ base.archivesName.set("hilog-klib")
 
 val defDir = file("$projectDir/nativeInterop/ohosArm64")
 val cinteropOutDir = layout.buildDirectory.dir("classes/kotlin/ohosArm64/main/cinterop")
-// HMS sysroot (additionalTargetSysRoot.ohos in cpf 0.4 konan.properties) — HarmonyOS-SDK-Only Kits.
-val hmsInclude = file("${System.getProperty("user.home")}/.konan/dependencies/sysroot-hms-aarch64-6.0.2.640-02/usr/include")
+// Sysroots are checked into the repo (sysroot/ at repo root, parent of producer/).
+val repoRoot = rootProject.projectDir.parentFile!!
+val hmsSysroot = file("$repoRoot/sysroot/sysroot-hms-aarch64-6.0.2.640-02")
+// HMS sysroot (additionalTargetSysRoot.ohos in cpf 0.4 konan.properties) — HarmonyOS-SDK-Only Kits
+// (AppGalleryKit/CANNKit/DeviceSecurityKit/dataaugmentation/xengine etc.) whose headers the main
+// ohos sysroot lacks. cinterop doesn't auto-add it, so add -I here.
+val hmsInclude = file("$hmsSysroot/usr/include")
 
 // Parse each def: name -> depends (by short_name as written in the def).
 data class DefInfo(val name: String, val depends: List<String>)

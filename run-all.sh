@@ -9,8 +9,8 @@ BARE="$ROOT/consumer-bare"
 CAPI="$ROOT/consumer-capi-demo"
 DEV="/Applications/DevEco-Studio.app"
 CPF_DIST="$HOME/.konan/kotlin-native-prebuilt-macos-aarch64-2.2.21-0.4.0-03"
-HMS_SYSROOT="$HOME/.konan/dependencies/sysroot-hms-aarch64-6.0.2.640-02"
-READELF="$HOME/.konan/dependencies/cpf-llvm-19-aarch64-macos-dev-14/bin/llvm-readelf"
+HMS_SYSROOT="$ROOT/sysroot/sysroot-hms-aarch64-6.0.2.640-02"
+READELF="$DEV/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf"
 
 # --- color ---
 green() { printf "\033[32m%s\033[0m\n" "$*"; }

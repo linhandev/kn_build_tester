@@ -9,6 +9,12 @@
 *.ll
 *.log
 
+# sysroot/ is checked into the repo (binaries via git-lfs); exempt from the *.so/*.o ignores above
+!sysroot/**
+!sysroot/**/*.so
+!sysroot/**/*.a
+!sysroot/**/*.o
+
 # === Kotlin/KN specific ===
 **/kotlinApp/build/
 **/klib-cache/
