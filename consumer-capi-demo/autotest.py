@@ -125,6 +125,34 @@ class ModuleTestRunner:
         except Exception as e:
             print(f"❌ 命令失败: {e}")
             return subprocess.CompletedProcess(args, 1, "", str(e))
+
+    def _dump_layout(self) -> str:
+        """dump 当前页面布局并返回文本"""
+        layout_file = "/data/local/tmp/_autotest_layout.json"
+        self._hdc(["shell", "uitest", "dumpLayout", "-p", layout_file], timeout=15)
+        return self._hdc(["shell", "cat", layout_file], timeout=15).stdout
+
+    def _poll_text(self, needles, timeout: int = 10, interval: float = 0.5) -> Optional[str]:
+        """轮询 dumpLayout 直到页面出现任一目标文字（短 sleep + 断言），超时返回 None。"""
+        if isinstance(needles, str):
+            needles = [needles]
+        deadline = time.time() + timeout
+        while time.time() < deadline:
+            last = self._dump_layout()
+            if any(n in last for n in needles):
+                return last
+            time.sleep(interval)
+        return None
+
+    def _poll_button(self, patterns, timeout: int = 10, interval: float = 0.5) -> Optional[Tuple[int, int]]:
+        """轮询 dumpLayout 直到目标按钮出现，返回坐标，超时返回 None。"""
+        deadline = time.time() + timeout
+        while time.time() < deadline:
+            pos = self.find_button(self._dump_layout(), patterns)
+            if pos:
+                return pos
+            time.sleep(interval)
+        return None
     
     def parse_csv(self):
         """解析测试用例CSV"""
@@ -468,80 +496,52 @@ class ModuleTestRunner:
         ABILITY = "EntryAbility"
         layout_file = "/data/local/tmp/_autotest_layout.json"
         
-        # 1. 启动App回到主页
+        # 1. 启动App回到主页（轮询等主页渲染，不固定 sleep）
         print("🚀 启动App...")
         self._hdc(["shell", "aa", "start", "-a", ABILITY, "-b", BUNDLE], timeout=15)
-        time.sleep(3)
-        
-        # 2. 查找模块按钮
+        # 2. 轮询查找模块按钮（短 sleep + 断言按钮出现）
         module_patterns = MODULE_UI_LABELS.get(module_name, [module_name])
         print(f"🔍 查找模块按钮: {module_patterns}")
-        
-        self._hdc(["shell", "uitest", "dumpLayout", "-p", layout_file], timeout=15)
-        r = self._hdc(["shell", "cat", layout_file], timeout=15)
-        
-        # 记录调试信息
-        self.debug_log.append(f"\n{'='*70}")
-        self.debug_log.append(f"模块: {module_name} - 主页布局")
-        self.debug_log.append(f"{'='*70}")
-        self.debug_log.append(r.stdout[:2000])  # 只保存前2000字符
-        
-        btn_pos = self.find_button(r.stdout, module_patterns)
-        if not btn_pos:
+        home_layout = self._poll_button(module_patterns, timeout=10)
+        if not home_layout:
             print(f"❌ 未找到模块按钮")
+            self.debug_log.append(f"\n模块: {module_name} - 主页未找到按钮\n{self._dump_layout()[:2000]}")
             return False
-        
+        btn_pos = home_layout
+        # 记录主页布局用于调试
+        self.debug_log.append(f"\n{'='*70}\n模块: {module_name} - 主页布局\n{'='*70}\n{self._dump_layout()[:2000]}")
         print(f"✅ 按钮位置: {btn_pos}")
-        
+
         # 3. 点击模块按钮
         print(f"👆 点击模块...")
         self._hdc(["shell", "uitest", "uiInput", "click", str(btn_pos[0]), str(btn_pos[1])], timeout=10)
-        time.sleep(3)
-        
-        # 4. 查找"运行验证"按钮
+
+        # 4. 轮询查找"运行验证"按钮（断言页面切换后按钮出现）
         print(f"🔍 查找运行验证按钮...")
-        self._hdc(["shell", "uitest", "dumpLayout", "-p", layout_file], timeout=15)
-        r = self._hdc(["shell", "cat", layout_file], timeout=15)
-        
-        # 记录调试信息
-        self.debug_log.append(f"\n模块: {module_name} - 模块页面布局")
-        self.debug_log.append(r.stdout[:2000])
-        
-        run_btn_pos = self.find_button(r.stdout, ["运行验证", "运行"])
+        run_btn_pos = self._poll_button(["运行验证", "运行"], timeout=10)
         if not run_btn_pos:
             print(f"❌ 未找到运行验证按钮")
+            self.debug_log.append(f"\n模块: {module_name} - 模块页面未找到运行按钮\n{self._dump_layout()[:2000]}")
             return False
-        
+        self.debug_log.append(f"\n模块: {module_name} - 模块页面布局\n{self._dump_layout()[:2000]}")
         print(f"✅ 按钮位置: {run_btn_pos}")
-        
+
         # 5. 点击运行验证
         print(f"👆 点击运行验证...")
         self._hdc(["shell", "uitest", "uiInput", "click", str(run_btn_pos[0]), str(run_btn_pos[1])], timeout=10)
-        
-        # 6. 等待测试完成
-        wait_time = MODULE_WAIT_TIME.get(module_name, 15)
-        print(f"⏳ 等待测试完成 ({wait_time}秒)...")
-        
-        for i in range(wait_time):
-            time.sleep(1)
-            if (i + 1) % 5 == 0:
-                print(f"  ... {i+1}秒")
-        
+
+        # 6. 轮询等待测试完成：断言"清单统计/清单汇总"出现，上限 MODULE_WAIT_TIME
+        wait_max = MODULE_WAIT_TIME.get(module_name, 15)
+        print(f"⏳ 等待测试完成 (最多 {wait_max}秒，结果出现即继续)...")
+        layout = self._poll_text(["清单统计", "清单汇总"], timeout=wait_max, interval=0.5)
+        if layout is None:
+            print(f"⚠️  {module_name} 等待 {wait_max}秒 未检测到清单统计")
+            layout = self._dump_layout()
+
         # 7. 读取页面内容
         print(f"📱 读取页面结果...")
-        self._hdc(["shell", "uitest", "dumpLayout", "-p", layout_file], timeout=15)
-        r = self._hdc(["shell", "cat", layout_file], timeout=15)
-        
-        if r.returncode != 0:
-            print(f"❌ 读取页面失败")
-            return False
-        
-        # 8. 提取并解析文本
-        page_text = self.extract_page_text(r.stdout)
-        
-        # 记录页面文本
-        self.debug_log.append(f"\n模块: {module_name} - 测试结果页面")
-        self.debug_log.append(page_text)
+        page_text = self.extract_page_text(layout)
+        self.debug_log.append(f"\n模块: {module_name} - 测试结果页面\n{page_text}")
         
         # 9. 解析清单统计
         results = self.parse_manifest(page_text)
@@ -552,24 +552,21 @@ class ModuleTestRunner:
         else:
             print(f"⚠️  {module_name} 未找到清单统计")
         
-        # 10. 返回主页（重要！确保下个模块能找到按钮）
+        # 10. 返回主页（轮询找返回按钮 + 点击后断言主页出现，不固定 sleep）
         print(f"🔙 返回主页...")
-        
-        # 获取当前页面布局
-        self._hdc(["shell", "uitest", "dumpLayout", "-p", layout_file], timeout=15)
-        r = self._hdc(["shell", "cat", layout_file], timeout=15)
-        
-        # 查找并点击"返回"按钮
-        back_btn_pos = self.find_button(r.stdout, ["返回"])
+        back_btn_pos = self._poll_button(["返回"], timeout=5)
         if back_btn_pos:
             print(f"✅ 找到返回按钮，坐标: {back_btn_pos}")
             self._hdc(["shell", "uitest", "uiInput", "click", str(back_btn_pos[0]), str(back_btn_pos[1])], timeout=5)
-            time.sleep(1.5)  # 等待页面切换
-            print(f"✅ 已返回主页")
+            # 轮询等主页标志出现（任意已知模块标签）
+            if self._poll_text(["RDB", "CommonEvent", "HiLog", "HuksKeyApi"], timeout=5, interval=0.3):
+                print(f"✅ 已返回主页")
+            else:
+                print(f"⚠️  返回后未确认主页，继续下个模块")
         else:
             print(f"⚠️ 未找到返回按钮，使用物理返回键")
             self._hdc(["shell", "uitest", "uiInput", "keyEvent", "Back"], timeout=5)
-            time.sleep(1)
+            self._poll_text(["RDB", "CommonEvent", "HiLog", "HuksKeyApi"], timeout=3, interval=0.3)
         
         return len(results) > 0 if results else False
     
@@ -592,9 +589,11 @@ class ModuleTestRunner:
         success_count = 0
         for idx, module in enumerate(modules, 1):
             print(f"\n进度: [{idx}/{len(modules)}]")
+            t0 = time.time()
             if self.run_module(module):
                 success_count += 1
-            time.sleep(2)
+            print(f"⏱️  {module} 耗时 {time.time() - t0:.1f}s")
+            # 模块间不再固定 sleep：run_module 结尾已轮询确认返回主页
         
         print(f"\n{'='*70}")
         print(f"✅ 完成！成功: {success_count}/{len(modules)} 个模块")
