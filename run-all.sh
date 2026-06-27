@@ -8,7 +8,6 @@ PROD="$ROOT/producer"
 BARE="$ROOT/consumer-bare"
 CAPI="$ROOT/consumer-capi-demo"
 DEV="/Applications/DevEco-Studio.app"
-CPF_DIST="$HOME/.konan/kotlin-native-prebuilt-macos-aarch64-2.2.21-0.4.0-03"
 HMS_SYSROOT="$ROOT/sysroot/sysroot-hms-aarch64-6.0.2.640-02"
 READELF="$DEV/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf"
 
@@ -28,13 +27,12 @@ step "0/4  前置检查"
 command -v java >/dev/null || fail "java 未找到"
 command -v hdc  >/dev/null || fail "hdc 未找到(DevEco toolchain 不在 PATH?)"
 [ -d "$DEV" ] || fail "DevEco 未安装在 $DEV"
-[ -d "$CPF_DIST" ] || fail "cpf 0.4 dist 不在 $CPF_DIST"
 [ -d "$HMS_SYSROOT" ] || fail "HMS sysroot 不在 $HMS_SYSROOT"
 hdc list targets 2>/dev/null | LC_ALL=C tr -d '\r' | grep -q . || fail "无 hdc 设备在线"
 for p in "$BARE" "$CAPI"; do
   [ -f "$p/local.properties" ] || fail "$p/local.properties 缺失(需 huaweiMavenUser/Pass)"
 done
-green "✅ java/hdc/DevEco/cpf dist/HMS sysroot/设备/凭据 齐全"
+green "✅ java/hdc/DevEco/HMS sysroot/设备/凭据 齐全"
 
 # ============ 1/4  producer: publish klib to maven local ============
 step "1/4  producer: publishToMavenLocal (cpf 0.4 → com.example:hilog-klib:1.0-SNAPSHOT)"
