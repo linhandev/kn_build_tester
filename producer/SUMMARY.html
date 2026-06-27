@@ -154,8 +154,8 @@ publishing { publications { withType&lt;MavenPublication&gt; { artifactId = "hil
 <table>
   <tr><th>问题</th><th>处理</th></tr>
   <tr>
-    <td>cpf 0.4 dist 的 ohos_arm64 内置 platform klib 与我们要发的重复</td>
-    <td>把 170 个 def/klib 移到同级 <code>ohos_arm64_backup/</code>，原目录清空；但 11 个共享 def（posix/linux/gles3 等）移回，因为别的 def <code>depends = posix</code></td>
+    <td>cpf 0.4 dist 的 ohos_arm64 内置 platform klib 与我们要发的 package 同名</td>
+    <td><b>不清空 dist</b>（保持原版）。cinterops 生成的 klib <code>unique_name</code> 不同（<code>com.example:hilog-klib-cinterop-HiLog</code> vs dist 的 <code>org.jetbrains.kotlin.native.platform.HiLog</code>），<code>package</code> 相同不冲突。消费者（HUAWEI，无 cpf dist 的 ohos platform lib）依赖我们的 maven klib，<code>platform.PerformanceAnalysisKit.HiLog</code> 从我们的 klib 解析，import 包名跟 cpf 内置一致</td>
   </tr>
   <tr>
     <td>159 个 def 都有 <code class="warn">enableUndefinedApiProtection=true</code></td>
@@ -174,8 +174,8 @@ publishing { publications { withType&lt;MavenPublication&gt; { artifactId = "hil
     <td>settings.gradle.kts 加 devcloud 仓库（凭据放 local.properties）+ BasicAuthentication 强制认证头（devcloud 缺凭据返回 403 非 401，Gradle 默认不发认证）</td>
   </tr>
   <tr>
-    <td>cpf 0.4 的 <code>kotlin-native-compiler-embeddable</code> Maven 坐标待确认</td>
-    <td>当前 <code>gradle.properties</code> 设 <code>kotlin.native.home=~/.konan/.../2.2.21-0.4.0-03</code> 让 KGP 从本地 dist 加载 embeddable jar。<i>待 #11 确认是否能从 Maven 下载后去掉</i></td>
+    <td>cpf 0.4 的 <code>kotlin-native-compiler-embeddable</code> 从 Maven 解析</td>
+    <td>KGP 的 <code>downloadKotlinNativeDistribution</code> 从 eazytec 仓库拉 0.4.0-03 embeddable jar，无需 <code>kotlin.native.home</code> 指本地 dist（已去掉）</td>
   </tr>
 </table>
 </div>
