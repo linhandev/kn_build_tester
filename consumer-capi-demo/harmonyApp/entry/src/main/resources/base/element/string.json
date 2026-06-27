@@ -1,0 +1,33 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "label"
+    },
+    {
+      "name": "camera_desc",
+      "value": "用于相机能力演示"
+    },
+    {
+      "name": "get_bundle_info_desc",
+      "value": "用于获取应用信息"
+    }
+    ,
+    {
+      "name": "internet_desc",
+      "value": "用于访问网络媒体资源"
+    },
+    {
+      "name": "get_network_info_desc",
+      "value": "用于 NetConnection 等网络状态与代理相关 CAPI 验证"
+    }
+  ]
+}

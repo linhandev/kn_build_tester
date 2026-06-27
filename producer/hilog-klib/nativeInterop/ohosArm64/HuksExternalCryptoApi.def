@@ -1,0 +1,7 @@
+package = platform.UniversalKeystoreKit.HuksExternalCryptoApi
+headers = huks/native_huks_external_crypto_api.h
+headerFilter = huks/native_huks_external_crypto_api.h
+depends = HuksExternalCryptoTypeApi
+linkerOpts =  -lhuks_external_crypto.z
+language = C++
+compilerOpts = -std=c++17

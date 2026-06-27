@@ -1,0 +1,13 @@
+package = platform.GraphicsAccelerateKit.GraphicsAccelerate
+headers = graphics_game_sdk/abr_base.h \
+    graphics_game_sdk/abr_gles.h \
+    graphics_game_sdk/opengtx_base.h \
+    graphics_game_sdk/frame_generation_base.h \
+    graphics_game_sdk/frame_generation_gles.h \
+    graphics_game_sdk/frame_generation_vk.h
+headerFilter = graphics_game_sdk/**
+linkerOpts = -labr -lopengtx -lframegeneration
+language = C++
+compilerOpts = -std=c++17
+depends = vulkan
+#harmonyOS SDK Only

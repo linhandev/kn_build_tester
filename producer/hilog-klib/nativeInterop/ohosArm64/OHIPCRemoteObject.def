@@ -1,0 +1,7 @@
+package = platform.IPCKit.OHIPCRemoteObject
+headers = IPCKit/ipc_cremote_object.h
+headerFilter = IPCKit/ipc_cremote_object.h
+depends = OHIPCParcel
+linkerOpts = -lipc_capi
+language = C++
+compilerOpts = -std=c++17

@@ -1,0 +1,6 @@
+package = platform.AssetStoreKit.AssetType
+headers = asset/asset_type.h
+headerFilter = asset/asset_type.h
+linkerOpts = -lasset_ndk.z
+language = C++
+compilerOpts = -std=c++17

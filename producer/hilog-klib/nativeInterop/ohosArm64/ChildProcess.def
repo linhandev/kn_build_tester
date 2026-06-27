@@ -1,0 +1,7 @@
+package = platform.AbilityKit.ChildProcess
+headers = AbilityKit/native_child_process.h
+headerFilter = AbilityKit/native_child_process.h
+depends = OHIPCParcel
+linkerOpts = -lchild_process
+language = C++
+compilerOpts = -std=c++17

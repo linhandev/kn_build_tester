@@ -1,0 +1,7 @@
+package = platform.CryptoArchitectureKit.CryptoSymKeyApi
+headers = CryptoArchitectureKit/crypto_sym_key.h
+headerFilter = CryptoArchitectureKit/crypto_sym_key.h
+depends = CryptoCommonApi
+linkerOpts = -lohcrypto
+language = C++
+compilerOpts = -std=c++17

@@ -1,0 +1,6 @@
+package = platform.ArkGraphics2D.NativeVsync
+headers = native_vsync/native_vsync.h
+headerFilter = native_vsync/native_vsync.h
+linkerOpts = -lnative_vsync
+language = C++
+compilerOpts = -std=c++17

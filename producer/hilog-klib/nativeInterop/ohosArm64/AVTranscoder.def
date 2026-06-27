@@ -1,0 +1,7 @@
+package = platform.MediaKit.AVTranscoder
+headers = multimedia/player_framework/avtranscoder_base.h multimedia/player_framework/avtranscoder.h
+headerFilter = multimedia/player_framework/**
+depends = CodecBase Core
+linkerOpts = -lavtranscoder
+language = C++
+compilerOpts = -std=c++17

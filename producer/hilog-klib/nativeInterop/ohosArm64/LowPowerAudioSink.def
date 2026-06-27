@@ -1,0 +1,7 @@
+package = platform.MediaKit.LowPowerAudioSink
+headers = multimedia/player_framework/lowpower_audio_sink_base.h multimedia/player_framework/lowpower_audio_sink.h
+headerFilter = multimedia/player_framework/**
+depends = AVSinkBase Core OHAudio
+linkerOpts = -llowpower_avsink
+language = C++
+compilerOpts = -std=c++17

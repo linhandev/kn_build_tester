@@ -1,0 +1,6 @@
+package = platform.IPCKit.OHIPCParcel
+headers = IPCKit/ipc_cparcel.h
+headerFilter = IPCKit/ipc_cparcel.h
+linkerOpts = -lipc_capi
+language = C++
+compilerOpts = -std=c++17

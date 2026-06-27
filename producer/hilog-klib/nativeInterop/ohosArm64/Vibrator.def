@@ -1,0 +1,6 @@
+package = platform.SensorServiceKit.Vibrator
+headers = sensors/vibrator.h sensors/vibrator_type.h
+headerFilter = sensors/**
+linkerOpts = -lohvibrator.z
+language = C++
+compilerOpts = -std=c++17

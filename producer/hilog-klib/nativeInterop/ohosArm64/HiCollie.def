@@ -1,0 +1,6 @@
+package = platform.PerformanceAnalysisKit.HiCollie
+headers = hicollie/hicollie.h
+headerFilter = hicollie/hicollie.h
+linkerOpts = -lohhicollie
+language = C++
+compilerOpts = -std=c++17

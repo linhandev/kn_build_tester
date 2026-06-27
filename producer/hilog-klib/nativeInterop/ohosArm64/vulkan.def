@@ -1,0 +1,9 @@
+depends = posix
+package = platform.vulkan
+headers = vulkan/vk_platform.h vulkan/vulkan_core.h vulkan/vulkan_ohos.h vulkan/vulkan.h \
+          vk_video/vulkan_video_codec_av1std_decode.h vk_video/vulkan_video_codec_av1std_encode.h \
+          vk_video/vulkan_video_codec_av1std.h  vk_video/vulkan_video_codec_h264std_decode.h \
+          vk_video/vulkan_video_codec_h264std_encode.h  vk_video/vulkan_video_codec_h264std.h \
+          vk_video/vulkan_video_codec_h265std_decode.h  vk_video/vulkan_video_codec_h265std_encode.h \
+          vk_video/vulkan_video_codec_h265std.h vk_video/vulkan_video_codecs_common.h
+headerFilter = vulkan/** vk_video/**

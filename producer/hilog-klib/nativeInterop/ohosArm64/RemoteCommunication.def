@@ -1,0 +1,7 @@
+package = platform.RemoteCommunicationKit.RemoteCommunication
+headers = RemoteCommunicationKit/rcp.h
+headerFilter = RemoteCommunicationKit/rcp.h
+linkerOpts = -lrcp_c
+language = C++
+compilerOpts = -std=c++17
+#harmonyOS SDK Only

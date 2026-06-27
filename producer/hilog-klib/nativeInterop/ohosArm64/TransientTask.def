@@ -1,0 +1,6 @@
+package = platform.BackgroundTasksKit.TransientTask
+headers = transient_task/transient_task_type.h transient_task/transient_task_api.h
+headerFilter = transient_task/**
+linkerOpts = -ltransient_task
+language = C++
+compilerOpts = -std=c++17

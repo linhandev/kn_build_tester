@@ -1,0 +1,7 @@
+package = platform.BasicServicesKit.Pasteboard
+headers = database/pasteboard/oh_pasteboard.h database/pasteboard/oh_pasteboard_err_code.h
+headerFilter = database/pasteboard/**
+depends = UDMF
+linkerOpts = -lpasteboard
+language = C++
+compilerOpts = -std=c++17

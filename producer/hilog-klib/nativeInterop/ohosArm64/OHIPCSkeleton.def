@@ -1,0 +1,7 @@
+package = platform.IPCKit.OHIPCSkeleton
+headers = IPCKit/ipc_cskeleton.h
+headerFilter = IPCKit/ipc_cskeleton.h
+depends = OHIPCParcel
+linkerOpts = -lipc_capi
+language = C++
+compilerOpts = -std=c++17

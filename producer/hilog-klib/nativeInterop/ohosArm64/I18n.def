@@ -1,0 +1,6 @@
+package = platform.LocalizationKit.I18n
+headers = i18n/errorcode.h i18n/timezone.h
+headerFilter = i18n/**
+linkerOpts = -lohi18n
+language = C++
+compilerOpts = -std=c++17

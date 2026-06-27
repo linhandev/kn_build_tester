@@ -1,0 +1,6 @@
+package = platform.AbilityKit.AbilityAccessControl
+headers = accesstoken/ability_access_control.h
+headerFilter = accesstoken/ability_access_control.h
+linkerOpts = -lability_access_control
+language = C++
+compilerOpts = -std=c++17

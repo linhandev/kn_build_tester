@@ -1,0 +1,7 @@
+package = platform.AVCodecKit.Multimedia_Drm
+headers = multimedia/player_framework/native_cencinfo.h
+headerFilter = multimedia/player_framework/native_cencinfo.h
+depends = Core
+linkerOpts = -lnative_media_avcencinfo
+language = C++
+compilerOpts = -std=c++17

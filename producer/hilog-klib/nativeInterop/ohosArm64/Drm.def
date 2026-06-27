@@ -1,0 +1,6 @@
+package = platform.DRMKit.Drm
+headers = multimedia/drm_framework/native_drm_err.h multimedia/drm_framework/native_mediakeysession.h multimedia/drm_framework/native_mediakeysystem.h multimedia/drm_framework/native_drm_common.h
+headerFilter = multimedia/drm_framework/**
+linkerOpts = -lnative_drm
+language = C++
+compilerOpts = -std=c++17

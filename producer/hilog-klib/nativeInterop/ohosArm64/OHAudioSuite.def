@@ -1,0 +1,7 @@
+package = platform.AudioKit.OHAudioSuite
+headers = ohaudiosuite/native_audio_suite_base.h ohaudiosuite/native_audio_suite_engine.h
+headerFilter = ohaudiosuite/**
+depends = Core
+linkerOpts = -lohaudiosuite
+language = C++
+compilerOpts = -std=c++17

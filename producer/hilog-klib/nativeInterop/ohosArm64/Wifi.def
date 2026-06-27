@@ -1,0 +1,6 @@
+package = platform.ConnectivityKit.Wifi
+headers = ConnectivityKit/wifi/oh_wifi.h
+headerFilter = ConnectivityKit/wifi/oh_wifi.h
+linkerOpts = -lwifi_ndk
+language = C++
+compilerOpts = -std=c++17

@@ -1,0 +1,6 @@
+package = platform.ConnectivityKit.Bluetooth
+headers = ConnectivityKit/bluetooth/oh_bluetooth.h
+headerFilter = ConnectivityKit/bluetooth/oh_bluetooth.h
+linkerOpts = -lbluetooth_ndk
+language = C++
+compilerOpts = -std=c++17

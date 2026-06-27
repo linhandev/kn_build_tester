@@ -1,0 +1,7 @@
+package = platform.MediaKit.LowPowerVideoSink
+headers = multimedia/player_framework/lowpower_video_sink.h multimedia/player_framework/lowpower_video_sink_base.h
+headerFilter = multimedia/player_framework/**
+depends = AVSinkBase Core LowPowerAudioSink NativeWindow
+linkerOpts = -llowpower_avsink
+language = C++
+compilerOpts = -std=c++17

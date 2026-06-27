@@ -1,0 +1,6 @@
+package = platform.ArkGraphics2D.EffectKit
+headers = native_effect/effect_filter.h native_effect/effect_types.h
+headerFilter = native_effect/**
+linkerOpts = -lnative_effect
+language = C++
+compilerOpts = -std=c++17

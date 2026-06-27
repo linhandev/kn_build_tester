@@ -1,0 +1,7 @@
+package = platform.DeviceSecurityKit.SecurityAudit
+headers = DeviceSecurityKit/security_audit.h
+headerFilter = DeviceSecurityKit/security_audit.h
+linkerOpts = -lsecurityaudit_ndk.z
+language = C++
+compilerOpts = -std=c++17
+#harmonyOS SDK Only

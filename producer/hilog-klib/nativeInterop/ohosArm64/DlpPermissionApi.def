@@ -1,0 +1,6 @@
+package = platform.DataProtectionKit.DlpPermissionApi
+headers = DataProtectionKit/dlp_permission_api.h
+headerFilter = DataProtectionKit/dlp_permission_api.h
+linkerOpts = -lohdlp_permission
+language = C++
+compilerOpts = -std=c++17

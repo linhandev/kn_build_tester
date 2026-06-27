@@ -1,0 +1,7 @@
+package = platform.DeviceSecurityKit.SecurityAntivirus
+headers = DeviceSecurityKit/security_antivirus.h
+headerFilter = DeviceSecurityKit/security_antivirus.h
+linkerOpts = -lsecurityantivirus_ndk.z
+language = C++
+compilerOpts = -std=c++17
+#harmonyOS SDK Only

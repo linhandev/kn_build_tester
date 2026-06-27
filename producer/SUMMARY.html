@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ohos-only klib 封装 · 实现总结与问题</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --card: #171a21;
+    --card-2: #1e222b;
+    --border: #2a2f3a;
+    --text: #e6e8eb;
+    --muted: #9aa3b2;
+    --accent: #6ea8fe;
+    --green: #4ade80;
+    --red: #f87171;
+    --yellow: #fbbf24;
+    --orange: #fb923c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 32px 16px;
+    background: var(--bg); color: var(--text);
+    font: 15px/1.65 -apple-system, "SF Pro Text", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  h2 { font-size: 20px; margin: 36px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 16px; margin: 22px 0 8px; color: var(--accent); }
+  .sub { color: var(--muted); margin: 0 0 24px; font-size: 14px; }
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px; margin: 14px 0;
+  }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+  .stat { background: var(--card-2); border-radius: 8px; padding: 14px 16px; }
+  .stat .n { font-size: 28px; font-weight: 700; }
+  .stat .l { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .ok { color: var(--green); }
+  .bad { color: var(--red); }
+  .warn { color: var(--yellow); }
+  code, .mono {
+    font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    background: #0c0e12; padding: 2px 6px; border-radius: 4px; font-size: 13px;
+    color: #e6ac5a;
+  }
+  pre {
+    background: #0c0e12; border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px; overflow-x: auto; font-size: 13px; line-height: 1.5;
+    color: #cfd3da;
+  }
+  pre code { background: none; padding: 0; color: inherit; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; }
+  .pill {
+    display: inline-block; padding: 2px 9px; border-radius: 12px;
+    font-size: 12px; font-weight: 600;
+  }
+  .pill.ok { background: rgba(74,222,128,.15); color: var(--green); }
+  .pill.bad { background: rgba(248,113,113,.15); color: var(--red); }
+  .pill.warn { background: rgba(251,191,36,.15); color: var(--yellow); }
+  ul { margin: 8px 0; padding-left: 22px; }
+  li { margin: 4px 0; }
+  .tag { color: var(--accent); font-weight: 600; }
+  .arrow { color: var(--muted); margin: 0 6px; }
+  .small { font-size: 13px; color: var(--muted); }
+  .path { word-break: break-all; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>ohos-only klib 封装 · 实现总结</h1>
+<p class="sub">
+  用 cpf 0.4（Kotlin 2.2.21-0.4.0-03）把 HarmonyOS 独有的 159 个 cinterop def 封装成一个 Maven klib，
+  给基于 2.3.20-HUAWEI 的消费者项目用，并通过 IR001-kmp-capi 的 UI 自动化测试端到端验证。
+</p>
+
+<div class="grid">
+  <div class="stat"><div class="n ok">159</div><div class="l">ohos-only def 全部封装成功</div></div>
+  <div class="stat"><div class="n">160</div><div class="l">klib 发布到 maven local（159 cinterop + 1 main）</div></div>
+  <div class="stat"><div class="n ok">9/9</div><div class="l">IR001 测试模块跑通</div></div>
+  <div class="stat"><div class="n ok">139</div><div class="l">自动化用例执行（132 成功 + 7 预期失败）</div></div>
+</div>
+
+<h2>整体架构</h2>
+<div class="card">
+<p>
+  <span class="tag">生产者</span> <span class="path mono">kn_samples-ohos-def</span>
+  <span class="arrow">→</span>
+  <span class="mono">com.example:hilog-klib:1.0-SNAPSHOT</span>（maven local）
+  <span class="arrow">→</span>
+  <span class="tag">消费者</span> <span class="path mono">kn_samples-bare</span> /
+  <span class="path mono">kmp-cmp-test-demo</span>（2.3.20-HUAWEI）
+</p>
+<table>
+  <tr><th>角色</th><th>仓库 / 路径</th><th>Kotlin</th><th>职责</th></tr>
+  <tr>
+    <td>生产者</td>
+    <td class="path">/Users/ohoskt/git/worktree/kn_samples-ohos-def<br><span class="small">模块 hilog-klib</span></td>
+    <td><code>2.2.21-0.4.0-03</code><br><span class="small">(cpf 0.4)</span></td>
+    <td>遍历 159 个 def 跑 cinterop，打成一个 Maven 坐标发布到 <code>~/.m2</code></td>
+  </tr>
+  <tr>
+    <td>消费者 A</td>
+    <td class="path">/Users/ohoskt/git/worktree/kn_samples-bare</td>
+    <td><code>2.3.20-HUAWEI</code></td>
+    <td>简单 HiLog demo，最早验证 maven klib 可编译/链接/运行</td>
+  </tr>
+  <tr>
+    <td>消费者 B</td>
+    <td class="path">/Users/ohoskt/git/worktree/kmp-cmp-test-demo<br><span class="small">分支 IR001-kmp-capi-newVersion</span></td>
+    <td><code>2.3.20-HUAWEI</code></td>
+    <td>真实 KMP 项目，含 9 模块 CAPI smoke test + autotest.py UI 自动化</td>
+  </tr>
+</table>
+</div>
+
+<h2>具体实现</h2>
+
+<h3>1. 生产者：自动化 build.gradle.kts</h3>
+<div class="card">
+<p>遍历 <code>nativeInterop/ohosArm64/*.def</code>，为每个 def 注册一个 cinterop，全部打进同一个 Maven 坐标。关键点：</p>
+<pre><code>kotlin {
+  ohosArm64 { compilations { val main by getting {
+    cinterops {
+      defs.forEach { d ->
+        create(d.name) {
+          defFile("$defDir/${d.name}.def")
+          extraOpts("-Xshort-module-name", d.name)                 <span class="small">// ① 让 klib 有 short_name，供 depends 解析</span>
+          extraOpts("-compiler-option", "-I$hmsInclude")            <span class="small">// ② HMS sysroot 的扩展 Kit 头</span>
+          transitiveClosure(d.name).forEach { dep ->                <span class="small">// ③ 传递闭包全部 -library</span>
+            extraOpts("-library", "$cinteropDir/hilog-klib-cinterop-${dep}")
+          }
+        }
+      }
+    }
+  } }
+}
+<span class="small">// ④ 任务拓扑排序：cinterop&lt;Name 首字母大写&gt;OhosArm64 dependsOn 闭包内各 dep</span>
+fun cinteropTaskName(name: String) = "cinterop${name.replaceFirstChar { it.uppercase() }}OhosArm64"
+defs.forEach { d -> transitiveClosure(d.name).forEach { dep ->
+  tasks.findByName(cinteropTaskName(d.name))?.dependsOn(cinteropTaskName(dep))
+} }
+
+publishing { publications { withType&lt;MavenPublication&gt; { artifactId = "hilog-klib" } } }</code></pre>
+</div>
+
+<h3>2. 关键工程处理</h3>
+<div class="card">
+<table>
+  <tr><th>问题</th><th>处理</th></tr>
+  <tr>
+    <td>cpf 0.4 dist 的 ohos_arm64 内置 platform klib 与我们要发的重复</td>
+    <td>把 170 个 def/klib 移到同级 <code>ohos_arm64_backup/</code>，原目录清空；但 11 个共享 def（posix/linux/gles3 等）移回，因为别的 def <code>depends = posix</code></td>
+  </tr>
+  <tr>
+    <td>159 个 def 都有 <code class="warn">enableUndefinedApiProtection=true</code></td>
+    <td><b class="bad">全部删掉</b>。该 flag 让 cinterop stub 引用 <code>ThrowIllegalStateExceptionFromCString</code>，cpf 0.4 runtime 有此符号但 2.3.20-HUAWEI 没有 → 消费者 <code>libc2k.so</code> 加载时 relocation 失败</td>
+  </tr>
+  <tr>
+    <td>19 个扩展 Kit def（AIP/CANN/DeviceSecurity/HandWrite/XEngine 等）头找不到</td>
+    <td>cpf 0.4 的 <code>additionalTargetSysRoot = sysroot-hms-aarch64-6.0.2.640-02</code>（HMS sysroot）有这些头，但 cinterop 不自动加。全局给每个 cinterops 传 <code>-compiler-option -I&lt;HMS&gt;/usr/include</code></td>
+  </tr>
+  <tr>
+    <td>cinterop 的 <code>depends = A</code> 不自动解析</td>
+    <td><code>-libraryPath</code> 只是搜索路径不自动加载；必须用 <code>-library &lt;dep klib path&gt;</code> 显式加载，且传<b>传递闭包</b>（直接依赖的 klib 自己的 depends 也要解析）</td>
+  </tr>
+  <tr>
+    <td>HUAWEI 的 KGP/stdlib 来自 devcloud 私有仓库</td>
+    <td>settings.gradle.kts 加 devcloud 仓库 + BasicAuthentication 强制认证头（devcloud 缺凭据返回 403 非 401，Gradle 默认不发认证）</td>
+  </tr>
+  <tr>
+    <td>cpf 0.4 的 <code>kotlin-native-compiler-embeddable</code> 无 Maven 坐标</td>
+    <td><code>gradle.properties</code> 设 <code>kotlin.native.home=~/.konan/.../2.2.21-0.4.0-03</code>，KGP 从本地 dist 加载 embeddable jar</td>
+  </tr>
+</table>
+</div>
+
+<h3>3. 消费者侧：链接 + 运行时修复</h3>
+<div class="card">
+<table>
+  <tr><th>问题</th><th>症状</th><th>修复</th></tr>
+  <tr>
+    <td>KN 产出的 <code>libc2k.so</code> / <code>libkn.so</code> 无 SONAME</td>
+    <td>CMake 用 IMPORTED_LOCATION 绝对路径链接后，<code>libentry.so</code> 的 NEEDED 记成宿主机绝对路径，设备 dlopen 失败：<code>runHelloWorld failed: {}</code></td>
+    <td><code>freeCompilerArgs += "-linker-options=-Wl,-soname,libc2k.so"</code>，NEEDED 变成裸 soname</td>
+  </tr>
+  <tr>
+    <td>libkn.so NEEDED 了所有 159 个 def 的 <code>-l</code> 库，含设备没有的 HMS 扩展 Kit .so</td>
+    <td>设备加载 <code>libsecurityantivirus_ndk.z.so</code> 失败 → <code>load module default/entry failed</code></td>
+    <td><code>-linker-options=-Wl,--as-needed</code>，只对实际引用符号的库记 NEEDED（159→15）；并加 <code>-L&lt;HMS&gt;/usr/lib/aarch64-linux-ohos</code> 让 link 阶段找得到扩展 Kit .so stub</td>
+  </tr>
+  <tr>
+    <td>IR001 项目原用 0.3.0-07 + 自带 cinterop hilog</td>
+    <td>切 2.3.20-HUAWEI 后无内置 platform klib</td>
+    <td>删自己的 cinterops，<code>ohosArm64Main { dependencies { implementation("com.example:hilog-klib:1.0-SNAPSHOT") } }</code>；项目用到的 15 个 platform 包被 159 def 全覆盖</td>
+  </tr>
+  <tr>
+    <td>IR001 项目无签名配置</td>
+    <td>unsigned HAP 装不上</td>
+    <td>从 bare 仓库借 debug 签名配置（build-profile.json5 signingConfigs），bundleName 临时改为 <code>com.kotlin.demo</code> 匹配证书</td>
+  </tr>
+</table>
+</div>
+
+<h3>4. 端到端验证（autotest.py）</h3>
+<div class="card">
+<p><code>autotest.py</code> 用 hdc <code>uitest dumpLayout</code> + <code>uiInput click</code> 驱动 UI：启动 App → 逐模块点"运行验证" → 读页面清单统计 → 生成 CSV/HTML 报告。触发的 smoke test 函数（<code>OH_Rdb_*</code> / <code>OH_Huks_*</code> / <code>OH_LOG_Print</code> / <code>OH_Drawing_*</code> / <code>OH_CommonEvent_*</code> 等）都在 <code>libkn.so</code> 里，符号来自我们的 maven klib。</p>
+<table>
+  <tr><th>模块</th><th>用例数</th><th>结果</th></tr>
+  <tr><td>RDB</td><td>—</td><td><span class="pill ok">通过</span></td></tr>
+  <tr><td>CommonEvent</td><td>—</td><td><span class="pill ok">通过</span></td></tr>
+  <tr><td>HuksKeyApi</td><td>—</td><td><span class="pill ok">通过</span></td></tr>
+  <tr><td>NetConnection</td><td>—</td><td><span class="pill ok">通过</span></td></tr>
+  <tr><td>HiAppEvent</td><td>—</td><td><span class="pill ok">通过</span></td></tr>
+  <tr><td>HiLog</td><td>—</td><td><span class="pill ok">通过</span></td></tr>
+  <tr><td>Drawing</td><td>—</td><td><span class="pill ok">通过</span></td></tr>
+  <tr><td>Failure（故意传坏参数验证错误码）</td><td>7</td><td><span class="pill warn">预期错误返回</span> 脚本标"失败"实为正确</td></tr>
+  <tr><td>VersionGuard</td><td>7 函数+2 常量</td><td><span class="pill ok">7/7 成功</span></td></tr>
+</table>
+<p class="small">报告：<code>test_reports/test_report.csv</code> + <code>test_report.html</code>（139 用例：132 成功 + 7 Failure 模块预期错误）</p>
+</div>
+
+<h2>.so 链接策略（探索过程与最终方案）</h2>
+<div class="card">
+<p>
+  这块绕了弯路,完整记录下来,避免重蹈覆辙。核心问题:<b>klib 怎么让消费者 link 时找到 ohos 的 .so</b>。
+  探索了 4 条路,最终落定 (c) 方案。
+</p>
+
+<h3>目标（你定的）</h3>
+<ul>
+  <li>klib 自带 .so 供消费者编译时 ld 用 —— 不假定消费者 Kotlin 版本的 <code>-L</code>/sysroot 能找到所有 .so</li>
+  <li>libkn.so 的 NEEDED 只含<b>实际有调用关系</b>的库（经过编译优化/LTO 后真正 UND 的）,不是全部 159 个</li>
+  <li>.so 不打进 HAP,运行时按 soname 走设备 ROM 的系统库</li>
+  <li>低版本 ROM 缺库时,只缺"真正用到的"才报错,不因 NEEDED 没用的而失败</li>
+</ul>
+
+<h3>探索过的 4 条路</h3>
+<table>
+  <tr><th>方案</th><th>做法</th><th>结果</th><th>为什么</th></tr>
+  <tr>
+    <td>(a) klib 内嵌 .so,消费者解压 -L</td>
+    <td>cinterops <code>-staticLibrary</code> 把 .so 塞进 klib 的 <code>included/</code>;消费者 build 解出来 <code>-L</code> 指向</td>
+    <td><span class="pill bad">否决</span> 消费者要手动解压</td>
+    <td>你要求消费者零配置</td>
+  </tr>
+  <tr>
+    <td>(b) klib 内嵌 .so,靠 KGP 自动 -L</td>
+    <td>同 (a),但期望 KGP 自动把 included .so 加进 link 的 -L</td>
+    <td><span class="pill bad">否决</span> KGP 不自动</td>
+    <td>实测:KGP 对 maven 传递的 cinterops klib,创建了 <code>included/</code> 目录但<b>是空的</b>(不解压依赖 klib 的 .so),link 命令无 -L 指向 included。KN 文档说 resources "Not used yet"。<br>外部 issue(socket-quic #162,2026-06)确认:maven 发布的 cinterops klib,linkerOpts 不传递,included .a 才自动 link,.so 不自动</td>
+  </tr>
+  <tr>
+    <td>(c) <span class="ok">klib 只声明 linkerOpts,消费者用自己 sysroot</span></td>
+    <td>klib manifest 带 <code>linkerOpts=-lxxx</code>;消费者 link 用自己 ohos sysroot(DevEco)的 .so stub;<code>--as-needed</code> 让 NEEDED 只含实际 UND 的;soname 让 NEEDED 记裸名</td>
+    <td><span class="pill ok">采用</span> 已验证</td>
+    <td>消费者本就有 ohos sysroot(DevEco),(c) 方案前提是"消费者有 sysroot"</td>
+  </tr>
+  <tr>
+    <td>(d) 用 .a(staticLibraries)</td>
+    <td>把 .so 转 .a,用 <code>staticLibraries</code> 嵌入,KGP 自动 link .a</td>
+    <td><span class="pill bad">否决</span></td>
+    <td>cpf sysroot 只有 .so 没 .a;.a 静态链入会增大体积且不走系统运行时,违背"运行时走 ROM"</td>
+  </tr>
+</table>
+
+<h3>为什么 .so 不能像 .a 那样自动 link（关键发现）</h3>
+<ul>
+  <li><b>cinterops <code>-staticLibrary</code> 不校验后缀</b>:实测能嵌 .so 进 klib 的 <code>default/targets/&lt;target&gt;/included/</code>(尽管名字叫 static)。.a 和 .so 嵌入后 manifest 字段完全一样(都不新增 staticLibraries 字段)</li>
+  <li><b>但 KGP link 时区分处理</b>:对 maven 传递的 cinterops klib,KGP 创建了消费者 build 的 <code>included/</code> 目录但<b>留空</b>(没解压依赖 klib 的 included .so 进去),link 命令也没有 -L 指向 included 目录</li>
+  <li><b>外部印证</b>:socket-quic issue #162(2026-06-13,很新)遇到完全相同问题——"maven 发布的 cinterops klib carries the bindings, not the .a; linkerOpts don't propagate to downstream consumers"。KN 社区 napperoley 也说:".so 必须在 def 定义的路径,即使消费者项目也要;要自包含只能 staticLibraries + .a"</li>
+  <li><b>结论</b>:KGP 当前机制下,"消费者零配置 + .so + 运行时走系统"三者不可兼得。要零配置必须 .a(但 cpf 没 .a 且不走系统);要 .so 走系统必须消费者配 -L</li>
+</ul>
+
+<h3>最终方案 (c) 的完整链路</h3>
+<pre><code>生产者 klib (cpf 0.4 构建)
+  └─ manifest: linkerOpts = -lhilog_ndk.z  <span class="small">// 只声明依赖,不嵌 .so</span>
+
+消费者 link libkn.so (2.3.20-HUAWEI)
+  ├─ KN 用 HUAWEI dist 的 targetSysRoot = DevEco native/sysroot  <span class="small">// 主 ohos sysroot,供基础 Kit .so stub</span>
+  ├─ freeCompilerArgs += "-linker-options=-L&lt;HMS sysroot&gt;/usr/lib/aarch64-linux-ohos"  <span class="small">// 补扩展 Kit .so stub</span>
+  ├─ freeCompilerArgs += "-linker-options=-Wl,--as-needed"  <span class="small">// NEEDED 只含实际 UND 的库</span>
+  └─ freeCompilerArgs += "-linker-options=-Wl,-soname,libkn.so"  <span class="small">// NEEDED 记裸名,设备 dlopen 成功</span>
+
+运行时(设备)
+  └─ libkn.so 的 NEEDED = [libhilog_ndk.z.so, libasset_ndk.z.so, ...实际引用的]
+      └─ 设备 ROM 的 ld 按 soname 从系统库解析(基础 Kit 高版本 ROM 都有)</code></pre>
+
+<h3>NEEDED 精准化的实际效果（bare 仓库 helloworld 实测）</h3>
+<table>
+  <tr><th>场景</th><th>NEEDED</th><th>说明</th></tr>
+  <tr>
+    <td>无 --as-needed</td>
+    <td>159 个库全 NEEDED（含未引用的扩展 Kit）</td>
+    <td>ld 要找所有 .so,DevEco sysroot 缺扩展 Kit → link 失败;即使 link 过,设备加载时缺库也失败</td>
+  </tr>
+  <tr>
+    <td>有 --as-needed</td>
+    <td>4 个：<code>libc.so</code> <code>libhilog_ndk.z.so</code> <code>libasset_ndk.z.so</code> <code>libc++_shared.so</code></td>
+    <td>helloworld 只用 HiLog + Asset,as-needed 按 UND 精准裁剪。低版本 ROM 只需这 4 个</td>
+  </tr>
+</table>
+<p class="small">注：<code>--as-needed</code> 不是"不查找",是"找到 .so 后判断未引用则不记 NEEDED"。所以 ld 仍要能 <b>找到</b> 所有 -l 声明的 .so(在 -L 路径),才能判断是否引用——这就是消费者要加 <code>-L&lt;HMS&gt;</code> 的原因（即使不用扩展 Kit）。</p>
+</div>
+
+<h2>遗留问题与注意事项</h2>
+<div class="card">
+<h3 class="ok">已解决（验证通过）</h3>
+<ul>
+  <li><b>跨版本 ABI</b>：cpf 0.4（abi_version 2.2.0）构建的 klib 被 2.3.20-HUAWEI（abi_version 2.3.0）读取 —— 同 major 兼容，编译/链接/运行均通过</li>
+  <li><b>符号导出</b>：消费者 <code>libkn.so</code> 的 NEEDED 含 <code>libhilog_ndk.z.so</code>/<code>libasset_ndk.z.so</code>/<code>libhuks_ndk.z.so</code> 等，设备进程 maps 全部加载</li>
+  <li><b>159 def 全 cinterop 成功</b>，0 失败</li>
+  <li><b>NEEDED 精准化</b>：<code>--as-needed</code> 让 libkn.so 只 NEEDED 实际 UND 的库（bare 的 helloworld 只 NEEDED 4 个），低版本 ROM 只缺真用到的才报错</li>
+  <li><b>soname</b>：<code>-Wl,-soname,libkn.so</code> 让 NEEDED 记裸名，设备 dlopen 从 App libs 目录成功</li>
+  <li><b>运行时走系统</b>：NEEDED 是裸 soname，设备 ROM 的 ld 按名从系统库解析，.so 不进 HAP</li>
+  <li><b>.so 链接策略落定 (c)</b>：klib 只声明 linkerOpts，消费者用自己 ohos sysroot + 加 <code>-L&lt;HMS&gt;</code> 供扩展 Kit stub，<code>--as-needed</code> 精准 NEEDED。探索过自包含（嵌 .so）但 KGP 不支持，详见上文 .so 链接策略节</li>
+</ul>
+
+<h3 class="warn">需注意 / 待优化</h3>
+<ul>
+  <li><b>消费者要装 HMS sysroot 并加 <code>-L</code></b>（(c) 方案核心 gap）：聚合 klib 带了 19 个扩展 Kit def 的 <code>linkerOpts</code>，<code>--as-needed</code> 下 ld 仍要<b>找到</b>这些 .so 才能判断未引用，而 DevEco 主 sysroot 没有它们。所以<b>任何</b>依赖聚合 hilog-klib 的消费者都要在 sharedLib 加 <code>-linker-options=-L&lt;HMS sysroot&gt;/usr/lib/aarch64-linux-ohos</code>，且本机要有这个 HMS sysroot（cpf 0.4 的依赖 <code>~/.konan/dependencies/sysroot-hms-aarch64-6.0.2.640-02</code>，DevEco 不自带）。即使消费者代码不用扩展 Kit 也得加。bare 和 kmp-cmp-test-demo 都加了这行</li>
+  <li><b>不用扩展 Kit 的消费者也被迫加 -L</b>（聚合代价）：理想是拆分——主 140 个 def 一个坐标（消费者主 sysroot 够，不需 -L HMS），19 个扩展 Kit 单独坐标（要用才依赖 + 加 -L）。当前未拆分，接受在应用加 -L</li>
+  <li><b>路径硬编码</b>：生产者 build 的 <code>-I&lt;HMS include&gt;</code>、<code>kotlin.native.home</code>，消费者 build 的 <code>-L&lt;HMS&gt;</code>，都是 <code>/Users/ohoskt/...</code> 绝对路径，换机器/CI 要改。建议抽成 <code>local.properties</code> 或环境变量</li>
+  <li><b>覆盖范围</b>：只封装了 159 个 ohos-only def。11 个共享 def（posix/linux/gles3 等）仍在 cpf 0.4 dist 内置，<b>未进 maven klib</b>。若消费者也缺这些，需另行封装</li>
+  <li><b>Failure 模块 7 个"失败"</b>不是 klib 问题，是测试设计（故意传坏参数验证错误码）。脚本按"返回成功码"判定，可改为按"返回预期错误码"判定以消除误报</li>
+  <li><b>IR001 项目改了 bundleName</b>：为匹配 bare 的 debug 证书，<code>com.example.harmonyapp</code> → <code>com.kotlin.demo</code>。正式应给 IR001 生成专属证书</li>
+  <li><b>ohosX64 被注释</b>：IR001 项目原本支持 x64（Windows 模拟器），我们的 klib 只发了 ohosArm64，x64 target 暂时禁用</li>
+  <li><b>publication 覆盖警告</b>：<code>kotlinMultiplatform</code> 与 <code>ohosArm64</code> 同坐标 .pom 互相覆盖（benign，module metadata 仍正确解析）</li>
+</ul>
+
+<h3 class="bad">未做的事</h3>
+<ul>
+  <li><b>消费者零配置（klib 自带 .so 供 ld）</b>：探索过 <code>-staticLibrary</code> 嵌 .so 进 klib 的 <code>included/</code>，但 KGP 对 maven 传递的 cinterops klib 不自动 -L（included 目录留空）。KGP 现有机制下"零配置 + .so + 运行时走系统"不可兼得，要零配置必须用 .a（cpf 没 .a 且不走系统）。见上文 .so 链接策略节</li>
+  <li><b>commonTest 的 JVM 执行</b>：IR001 的 commonTest 跑 Android 单元测试需 ANDROID_HOME，未配置；但 ohosArm64 侧已通过 autotest.py 设备测试充分验证</li>
+  <li><b>扩展 Kit 运行时 .so</b>：当前 NEEDED 不含扩展 Kit（as-needed 去掉未引用）。若未来某模块真要用 securityantivirus/aip 等，设备需有对应 HMS 服务运行时（sysroot 的 .so stub 只供 link，不供运行）</li>
+  <li><b>CI 化</b>：整套仍是本地手动跑，未写成 CI 脚本</li>
+</ul>
+</div>
+
+<h2>关键文件</h2>
+<div class="card">
+<table>
+  <tr><th>文件</th><th>作用</th></tr>
+  <tr><td class="path"><code>kn_samples-ohos-def/hilog-klib/build.gradle.kts</code></td><td>生产者：自动遍历 def + 传递闭包 -library + HMS -I + 发布</td></tr>
+  <tr><td class="path"><code>kn_samples-ohos-def/ohos-only-defs.txt</code></td><td>159 个 ohos-only def 清单（ohos 有、其他 target 无）</td></tr>
+  <tr><td class="path"><code>kn_samples-ohos-def/PLAN.md</code></td><td>原始 6 步计划</td></tr>
+  <tr><td class="path"><code>kmp-cmp-test-demo/autotest.py</code></td><td>UI 自动化测试（hdc uitest 驱动，9 模块 139 用例）</td></tr>
+  <tr><td class="path"><code>kmp-cmp-test-demo/test_reports/</code></td><td>测试报告 CSV + HTML</td></tr>
+  <tr><td class="path"><code>~/.m2/repository/com/example/hilog-klib/1.0-SNAPSHOT/</code></td><td>发布的 160 个 klib</td></tr>
+</table>
+</div>
+
+<p class="small" style="margin-top:32px; color:var(--muted)">
+  生成时间：2026-06-27 · 生产者 Kotlin 2.2.21-0.4.0-03 · 消费者 Kotlin 2.3.20-HUAWEI ·
+  端到端验证：autotest.py 9/9 模块 139 用例
+</p>
+
+</div>
+</body>
+</html>

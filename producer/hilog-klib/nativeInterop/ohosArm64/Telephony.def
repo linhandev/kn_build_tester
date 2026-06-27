@@ -1,0 +1,6 @@
+package = platform.TelephonyKit.Telephony
+headers = telephony/cellular_data/telephony_data.h telephony/core_service/telephony_radio.h telephony/core_service/telephony_radio_type.h
+headerFilter = telephony/cellular_data/telephony_data.h telephony/core_service/**
+linkerOpts = -ltelephony_data -ltelephony_radio
+language = C++
+compilerOpts = -std=c++17

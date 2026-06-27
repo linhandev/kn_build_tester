@@ -1,0 +1,7 @@
+package = platform.CryptoArchitectureKit.CryptoKdfApi
+headers = CryptoArchitectureKit/crypto_kdf.h
+headerFilter = CryptoArchitectureKit/crypto_kdf.h
+depends = CryptoCommonApi
+linkerOpts = -lohcrypto
+language = C++
+compilerOpts = -std=c++17

@@ -1,0 +1,7 @@
+package = platform.AVCodecKit.AudioDecoder
+headers = multimedia/player_framework/native_avcodec_audiodecoder.h
+headerFilter = multimedia/player_framework/native_avcodec_audiodecoder.h
+depends = CodecBase
+linkerOpts = -lnative_media_adec
+language = C++
+compilerOpts = -std=c++17

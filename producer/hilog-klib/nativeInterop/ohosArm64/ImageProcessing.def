@@ -1,0 +1,6 @@
+package = platform.ImageKit.ImageProcessing
+headers = multimedia/video_processing_engine/image_processing_types.h multimedia/video_processing_engine/image_processing.h
+headerFilter = multimedia/video_processing_engine/**
+linkerOpts = -limage_processing
+language = C++
+compilerOpts = -std=c++17

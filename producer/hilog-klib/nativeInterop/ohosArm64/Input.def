@@ -1,0 +1,6 @@
+package = platform.InputKit.Input
+headers = multimodalinput/oh_input_manager.h multimodalinput/oh_axis_type.h multimodalinput/oh_key_code.h multimodalinput/oh_pointer_style.h
+headerFilter = multimodalinput/**
+linkerOpts = -lohinput
+language = C++
+compilerOpts = -std=c++17

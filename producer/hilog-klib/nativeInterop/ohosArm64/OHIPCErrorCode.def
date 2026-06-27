@@ -1,0 +1,6 @@
+package = platform.IPCKit.OHIPCErrorCode
+headers = IPCKit/ipc_error_code.h
+headerFilter = IPCKit/ipc_error_code.h
+linkerOpts = -lipc_capi
+language = C++
+compilerOpts = -std=c++17

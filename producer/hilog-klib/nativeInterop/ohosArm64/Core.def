@@ -1,0 +1,6 @@
+package = platform.AVCodecKit.Core
+headers = multimedia/native_audio_channel_layout.h multimedia/player_framework/native_averrors.h multimedia/player_framework/native_avbuffer_info.h multimedia/player_framework/media_types.h multimedia/player_framework/native_avformat.h multimedia/player_framework/native_avmemory.h multimedia/player_framework/native_avbuffer.h
+headerFilter = multimedia/native_audio_channel_layout.h multimedia/player_framework/**
+linkerOpts = -lnative_media_core
+language = C++
+compilerOpts = -std=c++17

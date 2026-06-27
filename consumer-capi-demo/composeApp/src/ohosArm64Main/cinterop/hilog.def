@@ -1,0 +1,6 @@
+package = platform.User.HiLog
+headers = log.h
+headerFilter = log.h
+linkerOpts = -lhilog_ndk.z
+language = C++
+compilerOpts = -std=c++17

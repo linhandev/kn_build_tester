@@ -1,0 +1,7 @@
+package = platform.MediaKit.AVSinkBase
+headers = multimedia/player_framework/lowpower_avsink_base.h
+headerFilter = multimedia/player_framework/lowpower_avsink_base.h
+depends = Core
+linkerOpts = -llowpower_avsink
+language = C++
+compilerOpts = -std=c++17

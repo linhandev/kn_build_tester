@@ -1,0 +1,1131 @@
+Depth,特性_名称,特性_编号,用例_名称,用例_编号,用例_级别,用例_自动化类型,用例_特性,用例_子特性,用例_适用版本,用例_适用产品,用例_适用API,用例_适用处理器架构,用例_工程类型,用例_预置条件,用例_测试步骤,用例_预期结果,用例_备注,用例_执行平台,用例_测试环境类型,用例_自动化工程(测试套),需求单编号,测试结果
+..,CAPI_Encapsulation,,,,,,,,,,,,,,,,,,,,,
+...,capi封装测试-MacArm,KMP_CAPI_Encapsulation_MacArm_Function,,,,,,,,,,,,,,,,,,,,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_CreateConfig,KMP_CAPI_Encapsulation_MacArm_Function_004,Level 0,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_CreateConfig返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_SetDatabaseDir,KMP_CAPI_Encapsulation_MacArm_Function_005,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_SetDatabaseDir返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_SetStoreName,KMP_CAPI_Encapsulation_MacArm_Function_006,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_SetStoreName返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_SetEncrypted,KMP_CAPI_Encapsulation_MacArm_Function_007,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_SetEncrypted返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_SetSecurityLevel,KMP_CAPI_Encapsulation_MacArm_Function_008,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_SetSecurityLevel返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_SetDbType,KMP_CAPI_Encapsulation_MacArm_Function_009,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_SetDbType返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_CreateOrOpen,KMP_CAPI_Encapsulation_MacArm_Function_010,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_CreateOrOpen返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_CreateValuesBucket,KMP_CAPI_Encapsulation_MacArm_Function_011,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_CreateValuesBucket返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_VBucket_PutFloatVector,KMP_CAPI_Encapsulation_MacArm_Function_012,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_VBucket_PutFloatVector返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_VBucket_PutAssets,KMP_CAPI_Encapsulation_MacArm_Function_013,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_VBucket_PutAssets返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_CreatePredicates,KMP_CAPI_Encapsulation_MacArm_Function_014,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_CreatePredicates返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_Insert,KMP_CAPI_Encapsulation_MacArm_Function_015,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_Insert返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_Query,KMP_CAPI_Encapsulation_MacArm_Function_016,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_Query返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_GetSupportedDbType,KMP_CAPI_Encapsulation_MacArm_Function_017,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_GetSupportedDbType返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_CloseStore,KMP_CAPI_Encapsulation_MacArm_Function_018,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_CloseStore返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_DestroyConfig,KMP_CAPI_Encapsulation_MacArm_Function_019,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_DestroyConfig返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_RdbTrans_CreateOptions,KMP_CAPI_Encapsulation_MacArm_Function_020,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_RdbTrans_CreateOptions返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_RdbTransOption_SetType,KMP_CAPI_Encapsulation_MacArm_Function_021,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_RdbTransOption_SetType返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_CreateTransaction,KMP_CAPI_Encapsulation_MacArm_Function_022,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_CreateTransaction返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_CreateValueObject,KMP_CAPI_Encapsulation_MacArm_Function_023,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_CreateValueObject返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_RdbTrans_Query,KMP_CAPI_Encapsulation_MacArm_Function_024,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_RdbTrans_Query返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_RdbTrans_DestroyOptions,KMP_CAPI_Encapsulation_MacArm_Function_025,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_RdbTrans_DestroyOptions返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_CreateCryptoParam,KMP_CAPI_Encapsulation_MacArm_Function_026,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_CreateCryptoParam返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Crypto_SetIteration,KMP_CAPI_Encapsulation_MacArm_Function_027,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Crypto_SetIteration返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_SetCryptoParam,KMP_CAPI_Encapsulation_MacArm_Function_028,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_SetCryptoParam返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_DestroyCryptoParam,KMP_CAPI_Encapsulation_MacArm_Function_029,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_DestroyCryptoParam返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_RegisterCorruptedHandler,KMP_CAPI_Encapsulation_MacArm_Function_030,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_RegisterCorruptedHandler返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Rdb_UnregisterCorruptedHandler,KMP_CAPI_Encapsulation_MacArm_Function_031,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块1：RDB模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块1：RDB模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_UnregisterCorruptedHandler返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_CreateSubscribeInfo,KMP_CAPI_Encapsulation_MacArm_Function_032,Level 0,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_CreateSubscribeInfo返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_SetPublisherPermission,KMP_CAPI_Encapsulation_MacArm_Function_033,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_SetPublisherPermission返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_SetPublisherBundleName,KMP_CAPI_Encapsulation_MacArm_Function_034,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_SetPublisherBundleName返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_CreateSubscriber,KMP_CAPI_Encapsulation_MacArm_Function_035,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_CreateSubscriber返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_Subscribe,KMP_CAPI_Encapsulation_MacArm_Function_036,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_Subscribe返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_Publish,KMP_CAPI_Encapsulation_MacArm_Function_037,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_Publish返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_GetEventFromRcvData,KMP_CAPI_Encapsulation_MacArm_Function_038,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_GetEventFromRcvData返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_GetBundleNameFromRcvData,KMP_CAPI_Encapsulation_MacArm_Function_039,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_GetBundleNameFromRcvData返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_GetParametersFromRcvData,KMP_CAPI_Encapsulation_MacArm_Function_040,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_GetParametersFromRcvData返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_HasKeyInParameters,KMP_CAPI_Encapsulation_MacArm_Function_041,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_HasKeyInParameters返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_GetLongFromParameters,KMP_CAPI_Encapsulation_MacArm_Function_042,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_GetLongFromParameters返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_GetDoubleFromParameters,KMP_CAPI_Encapsulation_MacArm_Function_043,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_GetDoubleFromParameters返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_GetCharFromParameters,KMP_CAPI_Encapsulation_MacArm_Function_044,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_GetCharFromParameters返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_UnSubscribe,KMP_CAPI_Encapsulation_MacArm_Function_045,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_UnSubscribe返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_DestroySubscriber,KMP_CAPI_Encapsulation_MacArm_Function_046,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_DestroySubscriber返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_DestroySubscribeInfo,KMP_CAPI_Encapsulation_MacArm_Function_047,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_DestroySubscribeInfo返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_CreateParameters,KMP_CAPI_Encapsulation_MacArm_Function_048,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_CreateParameters返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_SetDoubleToParameters,KMP_CAPI_Encapsulation_MacArm_Function_049,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_SetDoubleToParameters返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_SetLongToParameters,KMP_CAPI_Encapsulation_MacArm_Function_050,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_SetLongToParameters返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_SetCharToParameters,KMP_CAPI_Encapsulation_MacArm_Function_051,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_SetCharToParameters返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_CreatePublishInfo,KMP_CAPI_Encapsulation_MacArm_Function_052,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_CreatePublishInfo返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_SetPublishInfoParameters,KMP_CAPI_Encapsulation_MacArm_Function_053,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_SetPublishInfoParameters返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_CommonEvent_PublishWithInfo,KMP_CAPI_Encapsulation_MacArm_Function_054,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_PublishWithInfo返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm65验证常量COMMON_EVENT_BATTERY_CHANGED,KMP_CAPI_Encapsulation_MacArm_Function_055,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块2：OH_CommonEvent公共事件模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块2：OH_CommonEvent公共事件模块」的验证页面。
+3. 查看清单统计部分，常量COMMON_EVENT_BATTERY_CHANGED返回一致。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Huks_GetSdkVersion,KMP_CAPI_Encapsulation_MacArm_Function_056,Level 0,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块3：HuksKeyApi密钥管理模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块3：HuksKeyApi密钥管理模块」的验证页面。
+3. 查看清单统计部分，函数OH_Huks_GetSdkVersion返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Huks_InitParamSet,KMP_CAPI_Encapsulation_MacArm_Function_057,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块3：HuksKeyApi密钥管理模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块3：HuksKeyApi密钥管理模块」的验证页面。
+3. 查看清单统计部分，函数OH_Huks_InitParamSet返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Huks_AddParams,KMP_CAPI_Encapsulation_MacArm_Function_058,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块3：HuksKeyApi密钥管理模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块3：HuksKeyApi密钥管理模块」的验证页面。
+3. 查看清单统计部分，函数OH_Huks_AddParams返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Huks_FreeParamSet,KMP_CAPI_Encapsulation_MacArm_Function_059,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块3：HuksKeyApi密钥管理模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块3：HuksKeyApi密钥管理模块」的验证页面。
+3. 查看清单统计部分，函数OH_Huks_FreeParamSet返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_NetConn_GetDefaultHttpProxy,KMP_CAPI_Encapsulation_MacArm_Function_060,Level 0,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块4：NetConnection网络连接模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块4：NetConnection网络连接模块」的验证页面。
+3. 查看清单统计部分，函数OH_NetConn_GetDefaultHttpProxy返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_NetConn_QueryProbeResult,KMP_CAPI_Encapsulation_MacArm_Function_061,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块4：NetConnection网络连接模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块4：NetConnection网络连接模块」的验证页面。
+3. 查看清单统计部分，函数OH_NetConn_QueryProbeResult返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_NetConn_SetAppHttpProxy,KMP_CAPI_Encapsulation_MacArm_Function_062,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块4：NetConnection网络连接模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块4：NetConnection网络连接模块」的验证页面。
+3. 查看清单统计部分，函数OH_NetConn_SetAppHttpProxy返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_NetConn_RegisterDefaultNetConnCallback,KMP_CAPI_Encapsulation_MacArm_Function_063,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块4：NetConnection网络连接模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块4：NetConnection网络连接模块」的验证页面。
+3. 查看清单统计部分，函数OH_NetConn_RegisterDefaultNetConnCallback返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_NetConn_UnregisterNetConnCallback,KMP_CAPI_Encapsulation_MacArm_Function_064,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块4：NetConnection网络连接模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块4：NetConnection网络连接模块」的验证页面。
+3. 查看清单统计部分，函数OH_NetConn_UnregisterNetConnCallback返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_HiAppEvent_CreateParamList,KMP_CAPI_Encapsulation_MacArm_Function_065,Level 0,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块5：HiAppEvent用户打点模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块5：HiAppEvent用户打点模块」的验证页面。
+3. 查看清单统计部分，函数OH_HiAppEvent_CreateParamList返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_HiAppEvent_AddInt8Param,KMP_CAPI_Encapsulation_MacArm_Function_066,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块5：HiAppEvent用户打点模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块5：HiAppEvent用户打点模块」的验证页面。
+3. 查看清单统计部分，函数OH_HiAppEvent_AddInt8Param返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_HiAppEvent_AddInt16Param,KMP_CAPI_Encapsulation_MacArm_Function_067,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块5：HiAppEvent用户打点模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块5：HiAppEvent用户打点模块」的验证页面。
+3. 查看清单统计部分，函数OH_HiAppEvent_AddInt16Param返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_HiAppEvent_AddFloatParam,KMP_CAPI_Encapsulation_MacArm_Function_068,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块5：HiAppEvent用户打点模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块5：HiAppEvent用户打点模块」的验证页面。
+3. 查看清单统计部分，函数OH_HiAppEvent_AddFloatParam返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_HiAppEvent_Write,KMP_CAPI_Encapsulation_MacArm_Function_069,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块5：HiAppEvent用户打点模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块5：HiAppEvent用户打点模块」的验证页面。
+3. 查看清单统计部分，函数OH_HiAppEvent_Write返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_HiAppEvent_DestroyParamList,KMP_CAPI_Encapsulation_MacArm_Function_070,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块5：HiAppEvent用户打点模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块5：HiAppEvent用户打点模块」的验证页面。
+3. 查看清单统计部分，函数OH_HiAppEvent_DestroyParamList返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证常量DOMAIN_OS,KMP_CAPI_Encapsulation_MacArm_Function_071,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块5：HiAppEvent用户打点模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块5：HiAppEvent用户打点模块」的验证页面。
+3. 查看清单统计部分，常量DOMAIN_OS返回一致。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证常量EVENT_APP_CRASH,KMP_CAPI_Encapsulation_MacArm_Function_072,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块5：HiAppEvent用户打点模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块5：HiAppEvent用户打点模块」的验证页面。
+3. 查看清单统计部分，常量EVENT_APP_CRASH返回一致。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证常量PARAM_USER_ID,KMP_CAPI_Encapsulation_MacArm_Function_073,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块5：HiAppEvent用户打点模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块5：HiAppEvent用户打点模块」的验证页面。
+3. 查看清单统计部分，常量PARAM_USER_ID返回一致。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_LOG_Print,KMP_CAPI_Encapsulation_MacArm_Function_074,Level 0,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块6：HiLog日志模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块6：HiLog日志模块」的验证页面。
+3. 查看清单统计部分，函数OH_LOG_Print返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证常量LOG_DOMAIN,KMP_CAPI_Encapsulation_MacArm_Function_075,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块6：HiLog日志模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块6：HiLog日志模块」的验证页面。
+3. 查看清单统计部分，常量LOG_DOMAIN返回一致。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证常量LOG_TAG,KMP_CAPI_Encapsulation_MacArm_Function_076,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块6：HiLog日志模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块6：HiLog日志模块」的验证页面。
+3. 查看清单统计部分，常量LOG_TAG返回一致。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_RectCreate,KMP_CAPI_Encapsulation_MacArm_Function_077,Level 0,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_RectCreate返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_RectDestroy,KMP_CAPI_Encapsulation_MacArm_Function_078,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_RectDestroy返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_RoundRectCreate,KMP_CAPI_Encapsulation_MacArm_Function_079,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_RoundRectCreate返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_RoundRectSetCorner,KMP_CAPI_Encapsulation_MacArm_Function_080,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_RoundRectSetCorner返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_RoundRectGetCorner,KMP_CAPI_Encapsulation_MacArm_Function_081,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_RoundRectGetCorner返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_RoundRectDestroy,KMP_CAPI_Encapsulation_MacArm_Function_082,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_RoundRectDestroy返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_ColorFilterCreateMatrix,KMP_CAPI_Encapsulation_MacArm_Function_083,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_ColorFilterCreateMatrix返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_ColorFilterDestroy,KMP_CAPI_Encapsulation_MacArm_Function_084,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_ColorFilterDestroy返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_FontCreate,KMP_CAPI_Encapsulation_MacArm_Function_085,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_FontCreate返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_PathCreate,KMP_CAPI_Encapsulation_MacArm_Function_086,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_PathCreate返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_FontGetPathForGlyph,KMP_CAPI_Encapsulation_MacArm_Function_087,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_FontGetPathForGlyph返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_PathDestroy,KMP_CAPI_Encapsulation_MacArm_Function_088,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_PathDestroy返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_FontDestroy,KMP_CAPI_Encapsulation_MacArm_Function_089,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_FontDestroy返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_FontMgrCreate,KMP_CAPI_Encapsulation_MacArm_Function_090,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_FontMgrCreate返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_FontMgrGetFamilyName,KMP_CAPI_Encapsulation_MacArm_Function_091,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_FontMgrGetFamilyName返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_FontMgrDestroyFamilyName,KMP_CAPI_Encapsulation_MacArm_Function_092,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_FontMgrDestroyFamilyName返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_FontMgrDestroy,KMP_CAPI_Encapsulation_MacArm_Function_093,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_FontMgrDestroy返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_CreateTextStyle,KMP_CAPI_Encapsulation_MacArm_Function_094,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_CreateTextStyle返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_SetTextStyleFontFamilies,KMP_CAPI_Encapsulation_MacArm_Function_095,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_SetTextStyleFontFamilies返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_TextStyleGetFontFamilies,KMP_CAPI_Encapsulation_MacArm_Function_096,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_TextStyleGetFontFamilies返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_DestroyTextStyle,KMP_CAPI_Encapsulation_MacArm_Function_097,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_DestroyTextStyle返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_BitmapCreate,KMP_CAPI_Encapsulation_MacArm_Function_098,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_BitmapCreate返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_BitmapBuild,KMP_CAPI_Encapsulation_MacArm_Function_099,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_BitmapBuild返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_BitmapGetWidth,KMP_CAPI_Encapsulation_MacArm_Function_100,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_BitmapGetWidth返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_BitmapDestroy,KMP_CAPI_Encapsulation_MacArm_Function_101,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_BitmapDestroy返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_CreateFontCollection,KMP_CAPI_Encapsulation_MacArm_Function_102,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_CreateFontCollection返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_RegisterFont,KMP_CAPI_Encapsulation_MacArm_Function_103,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_RegisterFont返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_RegisterFontBuffer,KMP_CAPI_Encapsulation_MacArm_Function_104,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_RegisterFontBuffer返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_DestroyFontCollection,KMP_CAPI_Encapsulation_MacArm_Function_105,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_DestroyFontCollection返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_CreateTypographyStyle,KMP_CAPI_Encapsulation_MacArm_Function_106,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_CreateTypographyStyle返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_CreateTypographyHandler,KMP_CAPI_Encapsulation_MacArm_Function_107,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_CreateTypographyHandler返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_TypographyHandlerPushTextStyle,KMP_CAPI_Encapsulation_MacArm_Function_108,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_TypographyHandlerPushTextStyle返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_TypographyHandlerAddText,KMP_CAPI_Encapsulation_MacArm_Function_109,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_TypographyHandlerAddText返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_TypographyHandlerPopTextStyle,KMP_CAPI_Encapsulation_MacArm_Function_110,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_TypographyHandlerPopTextStyle返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_CreateTypography,KMP_CAPI_Encapsulation_MacArm_Function_111,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_CreateTypography返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_TypographyLayout,KMP_CAPI_Encapsulation_MacArm_Function_112,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_TypographyLayout返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_TypographyGetLineCount,KMP_CAPI_Encapsulation_MacArm_Function_113,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_TypographyGetLineCount返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_TypographyGetTextLines,KMP_CAPI_Encapsulation_MacArm_Function_114,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_TypographyGetTextLines返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_GetTextLineByIndex,KMP_CAPI_Encapsulation_MacArm_Function_115,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_GetTextLineByIndex返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_TextLineGetGlyphRuns,KMP_CAPI_Encapsulation_MacArm_Function_116,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_TextLineGetGlyphRuns返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_GetRunByIndex,KMP_CAPI_Encapsulation_MacArm_Function_117,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_GetRunByIndex返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_GetRunTextDirection,KMP_CAPI_Encapsulation_MacArm_Function_118,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_GetRunTextDirection返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_GetRunGlyphs,KMP_CAPI_Encapsulation_MacArm_Function_119,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_GetRunGlyphs返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_GetRunGlyphsByIndex,KMP_CAPI_Encapsulation_MacArm_Function_120,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_GetRunGlyphsByIndex返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_DestroyRunGlyphs,KMP_CAPI_Encapsulation_MacArm_Function_121,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_DestroyRunGlyphs返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_DestroyRuns,KMP_CAPI_Encapsulation_MacArm_Function_122,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_DestroyRuns返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_DestroyTextLine,KMP_CAPI_Encapsulation_MacArm_Function_123,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_DestroyTextLine返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_DestroyTextLines,KMP_CAPI_Encapsulation_MacArm_Function_124,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_DestroyTextLines返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_DestroyTypography,KMP_CAPI_Encapsulation_MacArm_Function_125,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_DestroyTypography返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_DestroyTypographyHandler,KMP_CAPI_Encapsulation_MacArm_Function_126,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_DestroyTypographyHandler返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_DestroyTypographyStyle,KMP_CAPI_Encapsulation_MacArm_Function_127,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_DestroyTypographyStyle返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64验证函数OH_Drawing_TypographyGetLineMetricsAt,KMP_CAPI_Encapsulation_MacArm_Function_128,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「模块7：Drawing模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「模块7：Drawing模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_TypographyGetLineMetricsAt返回成功。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64在真机验证函数OH_Rdb_CreateOrOpen失败场景,KMP_CAPI_Encapsulation_MacArm_Function_129,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙真机已连接并可用。（模拟器不支持AR Engine，不存在libarengine_napi.z.so，只要引入不存在的so就会导致构建产物失败，所以整个其他语法模块都无法在模拟器端验证）","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「失败场景模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「失败场景模块」的验证页面。
+3. 查看清单统计部分，函数OH_Rdb_CreateOrOpen返回失败。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64在真机验证函数OH_CommonEvent_Subscribe失败场景,KMP_CAPI_Encapsulation_MacArm_Function_130,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙真机已连接并可用。（模拟器不支持AR Engine，不存在libarengine_napi.z.so，只要引入不存在的so就会导致构建产物失败，所以整个其他语法模块都无法在模拟器端验证）","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「失败场景模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「失败场景模块」的验证页面。
+3. 查看清单统计部分，函数OH_CommonEvent_Subscribe返回失败。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64在真机验证函数OH_Huks_GetSdkVersion失败场景,KMP_CAPI_Encapsulation_MacArm_Function_131,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙真机已连接并可用。（模拟器不支持AR Engine，不存在libarengine_napi.z.so，只要引入不存在的so就会导致构建产物失败，所以整个其他语法模块都无法在模拟器端验证）","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「失败场景模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「失败场景模块」的验证页面。
+3. 查看清单统计部分，函数OH_Huks_GetSdkVersion返回失败。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64在真机验证函数OH_NetConn_UnregisterNetConnCallback失败场景,KMP_CAPI_Encapsulation_MacArm_Function_132,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙真机已连接并可用。（模拟器不支持AR Engine，不存在libarengine_napi.z.so，只要引入不存在的so就会导致构建产物失败，所以整个其他语法模块都无法在模拟器端验证）","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「失败场景模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「失败场景模块」的验证页面。
+3. 查看清单统计部分，函数OH_NetConn_UnregisterNetConnCallback返回失败。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64在真机验证函数OH_HiAppEvent_Write失败场景,KMP_CAPI_Encapsulation_MacArm_Function_133,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙真机已连接并可用。（模拟器不支持AR Engine，不存在libarengine_napi.z.so，只要引入不存在的so就会导致构建产物失败，所以整个其他语法模块都无法在模拟器端验证）","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「失败场景模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「失败场景模块」的验证页面。
+3. 查看清单统计部分，函数OH_HiAppEvent_Write返回失败。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64在真机验证函数OH_LOG_Print失败场景,KMP_CAPI_Encapsulation_MacArm_Function_134,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙真机已连接并可用。（模拟器不支持AR Engine，不存在libarengine_napi.z.so，只要引入不存在的so就会导致构建产物失败，所以整个其他语法模块都无法在模拟器端验证）","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「失败场景模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「失败场景模块」的验证页面。
+3. 查看清单统计部分，函数OH_LOG_Print返回失败。",,,,,IR001-SR001,
+....,,,Mac(ARM)主机构建ohosArm64在真机验证函数OH_Drawing_RegisterFont失败场景,KMP_CAPI_Encapsulation_MacArm_Function_135,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程（分支：feature/newVersion），https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙真机已连接并可用。（模拟器不支持AR Engine，不存在libarengine_napi.z.so，只要引入不存在的so就会导致构建产物失败，所以整个其他语法模块都无法在模拟器端验证）","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「失败场景模块」。
+3. 点击「运行验证」按钮。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「失败场景模块」的验证页面。
+3. 查看清单统计部分，函数OH_Drawing_RegisterFont返回失败。",,,,,IR001-SR001,
+..,CAPI_Version,,,,,,,,,,,,,,,,,,,,,
+...,CAPI函数检测机制,KMP_CAPI_Version_Function,,,,,,,,,,,,,,,,,,,,
+....,,,Mac(ARM)主机构建ohosArm64验证API18新增函数OH_Pasteboard_GetChangeCount弱符号校验,KMP_CAPI_Version_001,Level 0,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程，https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「版本检测机制模块」。
+3. 点击「函数验证」的按钮「运行验证」。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「版本检测机制模块」的验证页面。
+3. API18～22设备的验证区域显示“OH_Pasteboard_GetChangeCount（API18）
+是否触发弱版本校验：否”，API17设备的验证区域显示“OH_Pasteboard_GetChangeCount（API18）
+是否触发弱版本校验：是”",,,,,IR001-SR002,
+....,,,Mac(ARM)主机构建ohosArm64验证API19新增函数OH_AudioStreamBuilder_SetVolumeMode弱符号校验,KMP_CAPI_Version_002,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程，https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「版本检测机制模块」。
+3. 点击「函数验证」的按钮「运行验证」。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「版本检测机制模块」的验证页面。
+3. API19～22设备的验证区域显示“OH_AudioStreamBuilder_SetVolumeMode（API19）
+是否触发弱版本校验：否”，API17～18设备的验证区域显示“OH_AudioStreamBuilder_SetVolumeMode（API19）
+是否触发弱版本校验：是”",,,,,IR001-SR002,
+....,,,Mac(ARM)主机构建ohosArm64验证API20新增函数OH_Huks_WrapKey弱符号校验,KMP_CAPI_Version_003,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程，https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「版本检测机制模块」。
+3. 点击「函数验证」的按钮「运行验证」。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「版本检测机制模块」的验证页面。
+3. API20～22设备的验证区域显示“OH_Huks_WrapKey（API20）
+是否触发弱版本校验：否”，API17～19设备的验证区域显示“OH_Huks_WrapKey（API20）
+是否触发弱版本校验：是”",,,,,IR001-SR002,
+....,,,Mac(ARM)主机构建ohosArm64验证API21新增函数OH_HiDebug_GetGraphicsMemorySummary弱符号校验,KMP_CAPI_Version_004,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程，https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「版本检测机制模块」。
+3. 点击「函数验证」的按钮「运行验证」。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「版本检测机制模块」的验证页面。
+3. API21～22设备的验证区域显示“OH_HiDebug_GetGraphicsMemorySummary（API21）
+是否触发弱版本校验：否”，API17～20设备的验证区域显示“OH_HiDebug_GetGraphicsMemorySummary（API21）
+是否触发弱版本校验：是”",,,,,IR001-SR002,
+....,,,Mac(ARM)主机构建ohosArm64验证API22新增函数OH_HiTrace_RegisterTraceListener弱符号校验,KMP_CAPI_Version_005,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程，https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「版本检测机制模块」。
+3. 点击「函数验证」的按钮「运行验证」。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「版本检测机制模块」的验证页面。
+3. API22设备的验证区域显示“OH_HiTrace_RegisterTraceListener（API22）
+是否触发弱版本校验：否”，API17～21设备的验证区域显示“OH_HiTrace_RegisterTraceListener（API22）
+是否触发弱版本校验：是”",,,,,IR001-SR002,
+....,,,Mac(ARM)主机构建ohosArm64验证API20新增常量OH_PLAYER_PLAYBACK_RATE弱符号校验,KMP_CAPI_Version_006,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程，https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「版本检测机制模块」。
+3. 点击「常量验证」的按钮「运行验证」。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「版本检测机制模块」的验证页面。
+3. API20～22设备的验证区域显示“OH_PLAYER_PLAYBACK_RATE（API20）
+是否触发弱版本校验：否”，API17～19设备的验证区域显示“OH_PLAYER_PLAYBACK_RATE（API20）
+是否触发弱版本校验：是”",,,,,IR001-SR002,
+....,,,Mac(ARM)主机构建ohosArm64验证API22新增常量OH_AVCODEC_MIMETYPE_AUDIO_ALAC弱符号校验,KMP_CAPI_Version_007,Level 1,FALSE,三方框架-KMP框架-KMP框架,,HOS单框架,,API17;API18;API19;API20;API21;API22,mac arm,default,"1. Mac(ARM)测试环境已搭建。
+2. 使用已有的KMP工程，https://gitlab.eazytec-cloud.com/eazytec_kmptpc/kmptpc_kotlin_capi_sample。
+3. 产物编译：在Android Studio终端中执行命令./gradlew :composeApp:publishDebugBinariesToHarmonyApp，生成鸿蒙Native二进制产物并自动推送至harmonyApp指定目录
+4. 鸿蒙设备已连接并可用。","1. 在Deveco打开当前工程下的harmonyapp，点击运行按钮，部署到已连接的设备。
+2. 在首页点击「版本检测机制模块」。
+3. 点击「常量验证」的按钮「运行验证」。","1. HAP包成功安装，应用启动正常。
+2. 页面跳转成功，正常展示「版本检测机制模块」的验证页面。
+3. API22设备的验证区域显示“OH_AVCODEC_MIMETYPE_AUDIO_ALAC（API22）
+是否触发弱版本校验：否”，API17～21设备的验证区域显示“OH_AVCODEC_MIMETYPE_AUDIO_ALAC（API22）
+是否触发弱版本校验：是”",,,,,IR001-SR002,

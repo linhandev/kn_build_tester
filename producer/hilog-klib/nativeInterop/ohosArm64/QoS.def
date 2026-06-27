@@ -1,0 +1,6 @@
+package = platform.KernelEnhanceKit.QoS
+headers = qos/qos.h
+headerFilter = qos/qos.h
+linkerOpts = -lqos
+language = C++
+compilerOpts = -std=c++17

@@ -1,0 +1,7 @@
+package = platform.ServiceCollaborationKit.ServiceCollaboration
+headers = service_collaboration/service_collaboration_api.h
+headerFilter = service_collaboration/service_collaboration_api.h
+linkerOpts = -lservice_collaboration_ndk.z
+language = C++
+compilerOpts = -std=c++17
+#harmonyOS SDK Only

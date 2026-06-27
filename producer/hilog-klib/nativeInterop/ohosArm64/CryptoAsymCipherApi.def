@@ -1,0 +1,7 @@
+package = platform.CryptoArchitectureKit.CryptoAsymCipherApi
+headers = CryptoArchitectureKit/crypto_asym_cipher.h
+headerFilter = CryptoArchitectureKit/crypto_asym_cipher.h
+depends = CryptoAsymKeyApi CryptoCommonApi
+linkerOpts = -lohcrypto
+language = C++
+compilerOpts = -std=c++17

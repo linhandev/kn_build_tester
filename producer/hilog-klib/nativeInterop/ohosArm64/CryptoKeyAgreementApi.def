@@ -1,0 +1,7 @@
+package = platform.CryptoArchitectureKit.CryptoKeyAgreementApi
+headers = CryptoArchitectureKit/crypto_key_agreement.h
+headerFilter = CryptoArchitectureKit/crypto_key_agreement.h
+depends = CryptoAsymKeyApi CryptoCommonApi
+linkerOpts = -lohcrypto
+language = C++
+compilerOpts = -std=c++17

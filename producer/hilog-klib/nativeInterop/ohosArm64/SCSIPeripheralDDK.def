@@ -1,0 +1,6 @@
+package = platform.DriverDevelopmentKit.SCSIPeripheralDDK
+headers = scsi_peripheral/scsi_peripheral_types.h scsi_peripheral/scsi_peripheral_api.h
+headerFilter = scsi_peripheral/**
+linkerOpts = -lscsi.z
+language = C++
+compilerOpts = -std=c++17

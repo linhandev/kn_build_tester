@@ -1,0 +1,7 @@
+package = platform.AVCodecKit.AVSource
+headers = multimedia/player_framework/native_avsource.h
+headerFilter = multimedia/player_framework/native_avsource.h
+depends = CodecBase Core
+linkerOpts = -lnative_media_avsource
+language = C++
+compilerOpts = -std=c++17

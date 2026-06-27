@@ -1,0 +1,6 @@
+package = platform.BasicServicesKit.Init
+headers = syscap_ndk.h
+headerFilter = syscap_ndk.h
+linkerOpts = -ldeviceinfo_ndk.z
+language = C++
+compilerOpts = -std=c++17

@@ -1,0 +1,6 @@
+package = platform.CStandardLibrary.MuslMalloc
+headers = malloc.h
+headerFilter = malloc.h
+linkerOpts = -lc
+language = C++
+compilerOpts = -std=c++17

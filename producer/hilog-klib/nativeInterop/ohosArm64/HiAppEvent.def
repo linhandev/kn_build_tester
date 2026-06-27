@@ -1,0 +1,6 @@
+package = platform.PerformanceAnalysisKit.HiAppEvent
+headers = hiappevent/hiappevent_cfg.h hiappevent/hiappevent_event.h hiappevent/hiappevent.h hiappevent/hiappevent_param.h
+headerFilter = hiappevent/**
+linkerOpts = -lhiappevent_ndk.z
+language = C++
+compilerOpts = -std=c++17

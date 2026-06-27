@@ -1,0 +1,7 @@
+package = platform.LocalizationKit.Resourcemanager
+headers = resourcemanager/resmgr_common.h resourcemanager/ohresmgr.h
+headerFilter = resourcemanager/**
+depends = ArkUI_NativeModule RawFile
+linkerOpts = -lohresmgr
+language = C++
+compilerOpts = -std=c++17

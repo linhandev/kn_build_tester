@@ -1,0 +1,6 @@
+package = platform.ArkUI.ArkUI_Accessibility
+headers = arkui/native_interface_accessibility.h
+headerFilter = arkui/native_interface_accessibility.h
+linkerOpts = -lace_ndk.z
+language = C++
+compilerOpts = -std=c++17

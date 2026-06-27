@@ -1,0 +1,6 @@
+package = platform.DeviceCertificateKit.CertManagerType
+headers = device_certificate/certmanager/cm_native_type.h
+headerFilter = device_certificate/certmanager/cm_native_type.h
+linkerOpts = -lohcert_manager.z
+language = C++
+compilerOpts = -std=c++17

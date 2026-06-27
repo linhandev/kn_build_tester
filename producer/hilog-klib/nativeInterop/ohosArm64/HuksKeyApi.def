@@ -1,0 +1,7 @@
+package = platform.UniversalKeystoreKit.HuksKeyApi
+headers = huks/native_huks_api.h
+headerFilter = huks/native_huks_api.h
+depends = HuksTypeApi
+linkerOpts = -lhuks_ndk.z
+language = C++
+compilerOpts = -std=c++17

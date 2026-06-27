@@ -1,0 +1,6 @@
+package = platform.AbilityKit.AbilityBase
+headers =  AbilityKit/ability_base/ability_base_common.h AbilityKit/ability_base/want.h
+headerFilter = AbilityKit/ability_base/**
+linkerOpts = -lability_base_want
+language = C++
+compilerOpts = -std=c++17

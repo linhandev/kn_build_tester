@@ -1,0 +1,6 @@
+package = platform.BasicServicesKit.OH_BatteryInfo
+headers = BasicServicesKit/ohbattery_info.h
+headerFilter = BasicServicesKit/ohbattery_info.h
+linkerOpts = -lohbattery_info
+language = C++
+compilerOpts = -std=c++17

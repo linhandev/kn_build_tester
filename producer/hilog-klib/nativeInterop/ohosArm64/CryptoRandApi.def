@@ -1,0 +1,7 @@
+package = platform.CryptoArchitectureKit.CryptoRandApi
+headers = CryptoArchitectureKit/crypto_rand.h
+headerFilter = CryptoArchitectureKit/crypto_rand.h
+depends = CryptoCommonApi
+linkerOpts = -lohcrypto
+language = C++
+compilerOpts = -std=c++17

@@ -1,0 +1,6 @@
+package = platform.SensorServiceKit.Sensor
+headers = sensors/oh_sensor_type.h sensors/oh_sensor.h
+headerFilter = sensors/**
+linkerOpts = -lohsensor
+language = C++
+compilerOpts = -std=c++17

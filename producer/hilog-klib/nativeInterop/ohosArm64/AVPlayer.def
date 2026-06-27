@@ -1,0 +1,7 @@
+package = platform.MediaKit.AVPlayer
+headers = multimedia/player_framework/avplayer.h multimedia/player_framework/avplayer_base.h
+headerFilter = multimedia/player_framework/**
+depends = Core NativeWindow OHAudio CodecBase
+linkerOpts = -lavplayer
+language = C++
+compilerOpts = -std=c++17

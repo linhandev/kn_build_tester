@@ -1,0 +1,22 @@
+package = platform.XEngineKit.XEngine
+headers = xengine/xeg_extension_defs.h \
+    xengine/xeg_vulkan_common.h \
+    xengine/xeg_vulkan_extension.h \
+    xengine/xeg_vulkan_rtgi.h \
+    xengine/xeg_vulkan_spatial_upscale.h \
+    xengine/xeg_vulkan_temporal_upscale.h \
+    xengine/xeg_vulkan_hps.h \
+    xengine/xeg_vulkan_rt_reflection.h \
+    xengine/xeg_vulkan_rt_visible_mask.h \
+    xengine/xeg_vulkan_adaptive_vrs.h \
+    xengine/xeg_gles_extension.h \
+    xengine/xeg_gles_neural_upscale.h \
+    xengine/xeg_gles_spatial_upscale.h \
+    xengine/xeg_gles_temporal_upscale.h \
+    xengine/xeg_gles_adaptive_vrs.h
+headerFilter = xengine/**
+linkerOpts = -lxengine
+language = C++
+compilerOpts = -std=c++17
+depends = vulkan gles3
+#harmonyOS SDK Only

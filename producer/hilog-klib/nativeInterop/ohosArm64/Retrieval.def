@@ -1,0 +1,13 @@
+package = platform.DataAugmentationKit.Retrieval
+depends = RDB
+headers = dataaugmentation/retrieval/aip_retrieval.h \
+    dataaugmentation/retrieval/aip_retrieval_condition.h \
+    dataaugmentation/retrieval/aip_retrieval_condition_vector.h \
+    dataaugmentation/retrieval/aip_retrieval_query.h \
+    dataaugmentation/retrieval/aip_retrieval_record.h
+headerFilter = dataaugmentation/retrieval/**
+linkerOpts = -lnative_aip_retrieval_ndk.z
+language = C++
+compilerOpts = -std=c++17
+#harmonyOS SDK Only 
+

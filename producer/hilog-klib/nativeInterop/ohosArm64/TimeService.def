@@ -1,0 +1,6 @@
+package = platform.BasicServicesKit.TimeService
+headers = BasicServicesKit/time_service.h
+headerFilter = BasicServicesKit/time_service.h
+linkerOpts = -ltime_service_ndk
+language = C++
+compilerOpts = -std=c++17

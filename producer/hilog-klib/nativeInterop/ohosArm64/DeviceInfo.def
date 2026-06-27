@@ -1,0 +1,6 @@
+package = platform.BasicServicesKit.DeviceInfo
+headers = deviceinfo.h
+headerFilter = deviceinfo.h
+linkerOpts = -ldeviceinfo_ndk.z
+language = C++
+compilerOpts = -std=c++17

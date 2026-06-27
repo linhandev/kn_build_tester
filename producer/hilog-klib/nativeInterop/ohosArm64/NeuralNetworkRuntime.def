@@ -1,0 +1,6 @@
+package = platform.NeuralNetworkRuntimeKit.NeuralNetworkRuntime
+headers = neural_network_runtime/neural_network_runtime_type.h neural_network_runtime/neural_network_core.h neural_network_runtime/neural_network_runtime.h
+headerFilter = neural_network_runtime/**
+linkerOpts = -lneural_network_core -lneural_network_runtime
+language = C++
+compilerOpts = -std=c++17

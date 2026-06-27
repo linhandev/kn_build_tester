@@ -1,0 +1,6 @@
+package = platform.BackgroundTasksKit.BackgroundProcessManager
+headers = background_process_manager/background_process_manager.h
+headerFilter = background_process_manager/background_process_manager.h
+linkerOpts = -lbackground_process_manager.z
+language = C++
+compilerOpts = -std=c++17

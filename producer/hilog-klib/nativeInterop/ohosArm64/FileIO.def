@@ -1,0 +1,6 @@
+package = platform.CoreFileKit.FileIO
+headers = filemanagement/file_uri/error_code.h filemanagement/fileio/error_code.h filemanagement/fileio/oh_fileio.h filemanagement/fileshare/error_code.h filemanagement/environment/error_code.h
+headerFilter = filemanagement/environment/error_code.h filemanagement/file_uri/error_code.h filemanagement/fileio/** filemanagement/fileshare/error_code.h
+language = C++
+compilerOpts = -std=c++17
+linkerOpts = -lohfileio

@@ -1,0 +1,7 @@
+package = platform.ArkGraphics2D.OH_NativeBuffer
+headers = native_buffer/native_buffer.h
+headerFilter = native_buffer/native_buffer.h
+depends = BufferCommon NativeWindow
+linkerOpts = -lnative_buffer 
+language = C++
+compilerOpts = -std=c++17
