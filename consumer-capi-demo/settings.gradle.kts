@@ -2,7 +2,7 @@ rootProject.name = "KMPMultiplatform"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 // Local Maven repo at the repo root (kn_sample/m2, gitignored). Producer publishes klibs here;
-// consumers resolve com.example:hilog-klib / static-lib-demo from here instead of ~/.m2.
+// consumers resolve com.example:ohos-capi / static-lib-demo from here instead of ~/.m2.
 // Inlined in each block: pluginManagement/dependencyResolutionManagement don't see top-level vals.
 pluginManagement {
     val localProps = java.util.Properties().apply {

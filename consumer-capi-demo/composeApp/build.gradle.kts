@@ -25,7 +25,7 @@ kotlin {
 
     ohosArm64 {
         // HiLog and all other ohos platform bindings now come from the cpf 0.4-built klib
-        // published to maven local (com.example:hilog-klib:1.0-SNAPSHOT, package
+        // published to maven local (com.example:ohos-capi:22-0.1-SNAPSHOT, package
         // platform.PerformanceAnalysisKit.HiLog etc.) — no local cinterop here.
         binaries.sharedLib {
             baseName = "kn"
@@ -61,7 +61,7 @@ kotlin {
         val ohosArm64Main by getting {
             dependencies {
                 // klib built with cpf 0.4 (159 ohos-only defs), consumed by 2.3.20-HUAWEI.
-                implementation("com.example:hilog-klib:1.0-SNAPSHOT")
+                implementation("com.example:ohos-capi:22-0.1-SNAPSHOT")
             }
         }
     }

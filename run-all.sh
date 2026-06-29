@@ -35,14 +35,14 @@ done
 green "✅ java/hdc/DevEco/HMS sysroot/设备/凭据 齐全"
 
 # ============ 1/4  producer: publish klib to repo-local m2 ============
-step "1/4  producer: publish (cpf 0.4 → hilog-klib + static-lib-demo, 仓库内 m2/)"
+step "1/4  producer: publish (cpf 0.4 → ohos-capi + static-lib-demo, 仓库内 m2/)"
 cd "$PROD"
 ./gradlew --stop >/dev/null 2>&1 || true
-rm -rf "$ROOT/m2/com/example/hilog-klib" "$ROOT/m2/com/example/static-lib-demo"
-if ./gradlew :hilog-klib:publish :static-lib-demo:publish --no-daemon 2>&1 | tail -20 | grep -q "BUILD SUCCESSFUL"; then
-  klibs=$(ls "$ROOT/m2/com/example/hilog-klib/1.0-SNAPSHOT/"*.klib 2>/dev/null | wc -l | tr -d ' ')
-  green "✅ hilog-klib 发布: $klibs 个 klib (期望 160)"
-  slklibs=$(ls "$ROOT/m2/com/example/static-lib-demo/1.0-SNAPSHOT/"*.klib 2>/dev/null | wc -l | tr -d ' ')
+rm -rf "$ROOT/m2/com/example/ohos-capi" "$ROOT/m2/com/example/static-lib-demo"
+if ./gradlew :ohos-capi:publish :static-lib-demo:publish --no-daemon 2>&1 | tail -20 | grep -q "BUILD SUCCESSFUL"; then
+  klibs=$(ls "$ROOT/m2/com/example/ohos-capi/22-0.1-SNAPSHOT/"*.klib 2>/dev/null | wc -l | tr -d ' ')
+  green "✅ ohos-capi 发布: $klibs 个 klib (期望 160)"
+  slklibs=$(ls "$ROOT/m2/com/example/static-lib-demo/22-0.1-SNAPSHOT/"*.klib 2>/dev/null | wc -l | tr -d ' ')
   green "✅ static-lib-demo 发布: $slklibs 个 klib (含嵌入 .a)"
 else
   fail "producer publish 失败"

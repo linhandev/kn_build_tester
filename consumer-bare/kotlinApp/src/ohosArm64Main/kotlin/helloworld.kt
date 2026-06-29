@@ -3,7 +3,7 @@
 import platform.PerformanceAnalysisKit.HiLog.OH_LOG_Print
 import platform.PerformanceAnalysisKit.HiLog.LOG_APP
 import platform.PerformanceAnalysisKit.HiLog.LOG_INFO
-// a->b test: AssetApi (depends AssetType) — both from the cpf 0.4-built hilog-klib (maven local).
+// a->b test: AssetApi (depends AssetType) — both from the cpf 0.4-built ohos-capi (maven local).
 import platform.AssetStoreKit.AssetApi.OH_Asset_FreeBlob
 import platform.AssetStoreKit.AssetType.Asset_Blob
 // staticLibraries demo: mylib_add/mylib_answer come from .a embedded in static-lib-demo klib.

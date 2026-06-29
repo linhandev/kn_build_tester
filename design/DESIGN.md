@@ -9,10 +9,20 @@
 
 | 目标 | 说明 |
 |---|---|
-| **生产** | 用 cpf 0.4 遍历 159 个 ohos-only def 跑 cinterop，打成 **一个 Maven 坐标** `com.example:hilog-klib:1.0-SNAPSHOT`，发布到仓库内 `m2/`（gitignore，方便检查） |
+| **生产** | 用 cpf 0.4 遍历 159 个 ohos-only def 跑 cinterop，打成 **一个 Maven 坐标** `com.example:ohos-capi:22-0.1-SNAPSHOT`，发布到仓库内 `m2/`（gitignore，方便检查） |
 | **消费** | 两个 `2.3.20-HUAWEI` 消费者依赖该 klib，验证**跨版本 ABI**（cpf 0.4 `abi_version 2.2.0` 被 HUAWEI `2.3.0` 读取，同 major 兼容）下能编译/链接/运行 |
 | **验证** | `consumer-capi-demo` 的 `autotest.py` 用 hdc UI 自动化跑 9 模块 CAPI smoke test，139 用例端到端验证 |
 | **运行时** | `.so` 不进 HAP，按 soname 走设备 ROM 系统库；NEEDED 只含实际引用的库 |
+
+### 命名与坐标
+
+| 项 | 值 | 说明 |
+|---|---|---|
+| artifactId | `ohos-capi` | 库封装 159 个 ohos-only def / ~40 个 Kit，HiLog 仅其一，故以"ohos CAPI 聚合"命名 |
+| version | `22-0.1-SNAPSHOT` | 快照版本 |
+| groupId | `com.example` | ⚠️ **待决策** — 占位值，真发布需换组织域名（如 `dev.eazytec` / `io.github.<org>`） |
+
+> Gradle 模块名/目录 `producer/ohos-capi/`、cinterop 输出目录前缀 `ohos-capi-cinterop-<Def>`、Maven 路径 `m2/com/example/ohos-capi/` 均由 artifactId 派生。klib 的 Kotlin `package`（`platform.PerformanceAnalysisKit.HiLog` 等 159 个）与 def/cinterop 名保持 cpf 原版不变——这层名字受 HarmonyOS 官方约束，改了消费者解析不了。
 
 ---
 
@@ -21,7 +31,7 @@
 ```
 kn_sample/
 ├── producer/                 # 生产者 · Kotlin 2.2.21-0.4.0-03 (cpf 0.4)
-│   ├── hilog-klib/           #   遍历 159 def 跑 cinterop，发布 hilog-klib
+│   ├── ohos-capi/           #   遍历 159 def 跑 cinterop，发布 ohos-capi
 │   │   ├── build.gradle.kts  #   自动注册 + 传递闭包 -library + HMS -I
 │   │   └── nativeInterop/ohosArm64/*.def   # 159 个 def（去掉 enableUndefinedApiProtection）
 │   ├── static-lib-demo/      #   cinterop + staticLibraries(.a) 示例，消费者自动 link .a
@@ -32,7 +42,7 @@ kn_sample/
 │   ├── kotlinApp/            #   最小 demo：HiLog + Asset，验证编译/链接/运行
 │   └── settings.gradle.kts   #   devcloud 仓库（BasicAuthentication）+ mavenLocal
 ├── consumer-capi-demo/       # 复杂消费者 · Kotlin 2.3.20-HUAWEI
-│   ├── composeApp/           #   KMP 项目，依赖 hilog-klib，产出 libkn.so
+│   ├── composeApp/           #   KMP 项目，依赖 ohos-capi，产出 libkn.so
 │   ├── harmonyApp/           #   ArkTS + NAPI 桥接 HAP
 │   ├── autotest.py           #   UI 自动化（hdc uitest 驱动，9 模块 139 用例）
 │   ├── testFiles/用例.csv     #   测试用例清单
@@ -55,10 +65,10 @@ kn_sample/
 ### 工作流
 
 ```
-producer (cpf 0.4)  ──publish──>  m2/com/example/hilog-klib  (仓库内，gitignore)
+producer (cpf 0.4)  ──publish──>  m2/com/example/ohos-capi  (仓库内，gitignore)
                                                     │
                               consumer-bare (HUAWEI) ┴ consumer-capi-demo (HUAWEI)
-                                    implementation("com.example:hilog-klib:1.0-SNAPSHOT")
+                                    implementation("com.example:ohos-capi:22-0.1-SNAPSHOT")
 ```
 
 ### 前置依赖（本机环境，非本仓库）
@@ -72,7 +82,7 @@ producer (cpf 0.4)  ──publish──>  m2/com/example/hilog-klib  (仓库内�
 
 ## 3. 生产者实现
 
-### 3.1 自动化 `hilog-klib/build.gradle.kts`
+### 3.1 自动化 `ohos-capi/build.gradle.kts`
 
 遍历 `nativeInterop/ohosArm64/*.def`，为每个 def 注册一个 cinterop，全部打进同一个 Maven 坐标。关键点：
 
@@ -86,7 +96,7 @@ kotlin {
           extraOpts("-Xshort-module-name", d.name)              // ① klib 有 short_name，供 depends 解析
           extraOpts("-compiler-option", "-I$hmsInclude")        // ② HMS sysroot 的扩展 Kit 头
           transitiveClosure(d.name).forEach { dep ->            // ③ 传递闭包全部 -library
-            extraOpts("-library", "$cinteropDir/hilog-klib-cinterop-${dep}")
+            extraOpts("-library", "$cinteropDir/ohos-capi-cinterop-${dep}")
           }
         }
       }
@@ -99,14 +109,14 @@ defs.forEach { d -> transitiveClosure(d.name).forEach { dep ->
     tasks.findByName(cinteropTaskName(d.name))?.dependsOn(cinteropTaskName(dep))
 } }
 
-publishing { publications { withType<MavenPublication> { artifactId = "hilog-klib" } } }
+publishing { publications { withType<MavenPublication> { artifactId = "ohos-capi" } } }
 ```
 
 ### 3.2 关键工程处理
 
 | 问题 | 处理 |
 |---|---|
-| cpf 0.4 dist 的 ohos_arm64 内置 platform klib 与我们要发的 package 同名 | **不清空 dist**（保持原版）。cinterops 生成的 klib `unique_name` 不同（`com.example:hilog-klib-cinterop-HiLog` vs dist 的 `org.jetbrains.kotlin.native.platform.HiLog`），`package` 相同不冲突。消费者（无 cpf dist 的 ohos platform lib）依赖我们的 maven klib，import 包名跟 cpf 内置一致 |
+| cpf 0.4 dist 的 ohos_arm64 内置 platform klib 与我们要发的 package 同名 | **不清空 dist**（保持原版）。cinterops 生成的 klib `unique_name` 不同（`com.example:ohos-capi-cinterop-HiLog` vs dist 的 `org.jetbrains.kotlin.native.platform.HiLog`），`package` 相同不冲突。消费者（无 cpf dist 的 ohos platform lib）依赖我们的 maven klib，import 包名跟 cpf 内置一致 |
 | 159 个 def 都有 `enableUndefinedApiProtection=true` | **全部删掉**。该 flag 让 cinterop stub 引用 `ThrowIllegalStateExceptionFromCString`，cpf 0.4 runtime 有此符号但 2.3.20-HUAWEI 没有 → 消费者 `libc2k.so` 加载时 relocation 失败 |
 | 19 个扩展 Kit def（AIP/CANN/DeviceSecurity/HandWrite/XEngine 等）头找不到 | 全局给每个 cinterops 传 `-compiler-option -I<HMS>/usr/include`（cpf 0.4 的 `additionalTargetSysRoot` 有这些头，但 cinterop 不自动加） |
 | cinterop 的 `depends` 只写直接依赖 | 传递依赖由各 klib manifest 链式声明。build 必须用 `-library <dep klib path>` 显式加载传递闭包（`-libraryPath` 只是搜索路径不自动加载）；且让 cinterops 解析传递依赖到**我们的 klib**（`com.example:...`）而非 dist 内置（`org.jetbrains.kotlin.native.platform.*`）——消费者无 dist，depends 必须指向我们的 klib 才能解析 |
@@ -120,13 +130,13 @@ KMP + `maven-publish` 自动创建**两个** MavenPublication：
 - `kotlinMultiplatform` — metadata publication，含 common 的 `.jar` + `.module`（Gradle Module Metadata，记录各 target variant）
 - `ohosArm64` — target publication，含 `.klib` + `.pom`
 
-`withType<MavenPublication> { artifactId = "hilog-klib" }` 把两者 artifactId 都设成 `hilog-klib`，发布时 `hilog-klib-1.0-SNAPSHOT.pom` 先由 metadata 写一次，再被 target **覆盖**写一次 → 警告 `Multiple publications ... will overwrite each other!`。
+`withType<MavenPublication> { artifactId = "ohos-capi" }` 把两者 artifactId 都设成 `ohos-capi`，发布时 `ohos-capi-22-0.1-SNAPSHOT.pom` 先由 metadata 写一次，再被 target **覆盖**写一次 → 警告 `Multiple publications ... will overwrite each other!`。
 
 **为什么 benign**：Gradle 消费者优先读 `.module`（含 ohosArm64 variant 坐标），按 target 选 `.klib`；`.pom` 被覆盖只影响纯 Maven 消费者。本项目都是 Gradle 消费者，所以能跑。`#17` 曾尝试给两个 publication 不同 artifactId 彻底消除警告，但破坏了 `.module` variant 解析 → **已回退**，benign 警告保留。
 
 ### 3.4 static-lib-demo（对比示例）
 
-`static-lib-demo` 用 `staticLibraries(.a)` 嵌入 klib，消费者**自动 link .a**（KGP 对 included `.a` 自动 link，但 `.so` 不自动）。它 `implementation("com.example:hilog-klib")`，消费者拉一个坐标即可同时得到两个 klib。这是与 `.so` 的 `linkerOpts` 方案（需消费者配 `-L`）的对比。
+`static-lib-demo` 用 `staticLibraries(.a)` 嵌入 klib，消费者**自动 link .a**（KGP 对 included `.a` 自动 link，但 `.so` 不自动）。它 `implementation("com.example:ohos-capi")`，消费者拉一个坐标即可同时得到两个 klib。这是与 `.so` 的 `linkerOpts` 方案（需消费者配 `-L`）的对比。
 
 ---
 
@@ -191,7 +201,7 @@ KN 的 `sharedLib` 产出的 `libc2k.so`/`libkn.so` 二进制里**没有 `DT_SON
 ```kotlin
 // settings.gradle.kts: devcloud 仓库 + BasicAuthentication + mavenLocal
 // gradle.properties: kotlinVersion=2.3.20-HUAWEI
-// kotlinApp: implementation("com.example:hilog-klib:1.0-SNAPSHOT")
+// kotlinApp: implementation("com.example:ohos-capi:22-0.1-SNAPSHOT")
 //   + -L<HMS> + -Wl,--as-needed + -Wl,-soname,libc2k.so
 ```
 
@@ -199,7 +209,7 @@ KN 的 `sharedLib` 产出的 `libc2k.so`/`libkn.so` 二进制里**没有 `DT_SON
 
 真实 KMP 项目（composeApp + harmonyApp）：
 
-- 切 2.3.20-HUAWEI 后无内置 platform klib → 删自己的 cinterops，`ohosArm64Main { implementation("com.example:hilog-klib:1.0-SNAPSHOT") }`；项目用到的 15 个 platform 包被 159 def 全覆盖
+- 切 2.3.20-HUAWEI 后无内置 platform klib → 删自己的 cinterops，`ohosArm64Main { implementation("com.example:ohos-capi:22-0.1-SNAPSHOT") }`；项目用到的 15 个 platform 包被 159 def 全覆盖
 - `binaries.sharedLib { baseName = "kn" }` 产 `libkn.so`，配 `-L<HMS>` + `-soname,libkn.so` + `--as-needed`
 - `autotest.py` 用 hdc `uitest dumpLayout` + `uiInput click` 驱动 UI：启动 App → 逐模块点"运行验证" → 读页面清单统计 → 生成 CSV/HTML 报告
 
@@ -230,16 +240,16 @@ KN 的 `sharedLib` 产出的 `libc2k.so`/`libkn.so` 二进制里**没有 `DT_SON
 | 13 | def 的 depends 只写直接依赖（传递由 build 的 transitiveClosure -library 处理，让 depends 指向我们的 klib 而非 dist 内置） | ✅ 完成 |
 | 15 | static-lib-demo：cinterop + staticLibraries(.a) 示例，消费者自动 link .a（对比 .so 的 linkerOpts） | ✅ 完成 |
 | 17 | 解决 publication 覆盖警告 | ❌ **回退** — artifactId 拆分破坏 .module variant 解析，回退到 withType（benign 警告保留） |
-| 14 | 拆分 ohos 主 140 + hms 扩展 19 两个坐标 | ❌ **回退** — 拆分后触发 bare 编译回归，回退到单 hilog-klib（159） |
+| 14 | 拆分 ohos 主 140 + hms 扩展 19 两个坐标 | ❌ **回退** — 拆分后触发 bare 编译回归，回退到单 ohos-capi（159） |
 | 16 | 增加 ohosX64 支持 | ⚠️ 未做 — 依赖 #14 |
 
 ### ⚠️ 当前回归：bare 编译 `platform.PerformanceAnalysisKit.HiLog` unresolved
 
-在 #14 拆分尝试后发现，**即使回退 #14（恢复 159 def 单 hilog-klib）+ 回退 #17，consumer-bare 编译仍报 `Unresolved reference 'OH_LOG_Print'` 等**——即 hilog-klib 的 cinterop klib 没加进 bare 编译 classpath。这是相对 #10 基线（当时 run-all 全绿）的回归。
+在 #14 拆分尝试后发现，**即使回退 #14（恢复 159 def 单 ohos-capi）+ 回退 #17，consumer-bare 编译仍报 `Unresolved reference 'OH_LOG_Print'` 等**——即 ohos-capi 的 cinterop klib 没加进 bare 编译 classpath。这是相对 #10 基线（当时 run-all 全绿）的回归。
 
-- **已排除**：不是 #11（恢复 kotlin.native.home 仍 unresolved）；不是 static-lib-demo 传递冲突（去掉仍 unresolved）；不是 m2 残留（清空重 publish 仍 unresolved）；hilog-klib publish 成功、cache 下到 160 klib、.module variant files 含 cinterop、HiLog klib 的 package/abi/unique_name 都正确
-- **症状**：bare 编译命令的 `-library` 参数里没有 hilog-klib 的 cinterop klib——Gradle/KMP 解析 hilog-klib variant 时没把 cinterop klib 传给 KN 编译
-- **怀疑**：#12 不清空 dist 导致 hilog-klib 的 main klib depends 指向 cpf dist 内置的 posix（abi 2.2.0），HUAWEI（2.3.0）解析时版本/ABI 冲突；或 #11+#12+#17 叠加的 Gradle metadata 缓存问题。**需二分定位**
+- **已排除**：不是 #11（恢复 kotlin.native.home 仍 unresolved）；不是 static-lib-demo 传递冲突（去掉仍 unresolved）；不是 m2 残留（清空重 publish 仍 unresolved）；ohos-capi publish 成功、cache 下到 160 klib、.module variant files 含 cinterop、HiLog klib 的 package/abi/unique_name 都正确
+- **症状**：bare 编译命令的 `-library` 参数里没有 ohos-capi 的 cinterop klib——Gradle/KMP 解析 ohos-capi variant 时没把 cinterop klib 传给 KN 编译
+- **怀疑**：#12 不清空 dist 导致 ohos-capi 的 main klib depends 指向 cpf dist 内置的 posix（abi 2.2.0），HUAWEI（2.3.0）解析时版本/ABI 冲突；或 #11+#12+#17 叠加的 Gradle metadata 缓存问题。**需二分定位**
 - **影响**：`run-all.sh` 当前**不能跑通**（bare link 失败）。producer publish 正常，capi-demo 的 autotest 代码未变（回归前 139/0）
 
 > 注：此回归是 #14 拆分过程中暴露的，但根因可能在 #11/#12（都验证过绿，但可能 cache 残留掩盖）。需要从 #10 基线逐步加改动定位。
@@ -250,9 +260,9 @@ KN 的 `sharedLib` 产出的 `libc2k.so`/`libkn.so` 二进制里**没有 `DT_SON
 
 ### 真实 gap（待解）
 
-- ⚠️ **bare 编译回归**：consumer-bare 编译 `platform.PerformanceAnalysisKit.HiLog` unresolved，hilog-klib 的 cinterop klib 没加进编译 classpath。run-all 当前不能跑通。**需二分定位根因**（#11/#12/#17 叠加?）
+- ⚠️ **bare 编译回归**：consumer-bare 编译 `platform.PerformanceAnalysisKit.HiLog` unresolved，ohos-capi 的 cinterop klib 没加进编译 classpath。run-all 当前不能跑通。**需二分定位根因**（#11/#12/#17 叠加?）
 - **消费者要加 `-L<HMS sysroot>`**：聚合 klib 带了 19 个扩展 Kit def 的 `linkerOpts`，`--as-needed` 下 ld 仍要找到这些 .so 才能判断未引用。consumer-bare/capi-demo 都加了这行（指向仓库内 sysroot）。待 #14 拆分重新做后，不用扩展 Kit 的消费者无需此 -L
-- **#14 拆分待重新做**：ohos 主 140 + hms 扩展 19 两个坐标。首次尝试触发 bare 回归，回退。重做时需确保 hms-klib 的 maven 坐标依赖 hilog-klib 坐标，且不破坏消费者解析
+- **#14 拆分待重新做**：ohos 主 140 + hms 扩展 19 两个坐标。首次尝试触发 bare 回归，回退。重做时需确保 hms-klib 的 maven 坐标依赖 ohos-capi 坐标，且不破坏消费者解析
 - **#17 publication 警告待解**：artifactId 拆分破坏 .module variant 解析，回退 withType（benign 警告保留）。需找别的方式消警告
 - **ohosX64 待支持**（#16）：当前 klib 只发 ohosArm64，capi demo 的 x64 target 禁用。依赖 #14
 - **覆盖范围**：只封装了 159 个 ohos-only def。11 个共享 def（posix/linux/gles3 等）仍在 cpf 0.4 dist 内置，未进 maven klib
@@ -284,23 +294,23 @@ devcloud 需要密码 / HUAWEI KGP/stdlib 来自 devcloud / IR001 签名 bundleN
 
 | 文件 | 作用 |
 |---|---|
-| `producer/hilog-klib/build.gradle.kts` | 生产者：自动遍历 def + 传递闭包 -library + HMS -I + 发布 |
+| `producer/ohos-capi/build.gradle.kts` | 生产者：自动遍历 def + 传递闭包 -library + HMS -I + 发布 |
 | `producer/static-lib-demo/build.gradle.kts` | .a 嵌入 klib 示例，消费者自动 link |
 | `producer/ohos-only-defs.txt` | 159 个 ohos-only def 清单（ohos 有、其他 target 无） |
 | `producer/PLAN.md` | 原始 6 步计划 |
-| `consumer-capi-demo/composeApp/build.gradle.kts` | 消费者：依赖 hilog-klib + `-L<HMS>` + soname + --as-needed |
+| `consumer-capi-demo/composeApp/build.gradle.kts` | 消费者：依赖 ohos-capi + `-L<HMS>` + soname + --as-needed |
 | `consumer-capi-demo/autotest.py` | UI 自动化测试（hdc uitest 驱动，9 模块 139 用例） |
 | `consumer-capi-demo/test_reports/` | 测试报告 CSV + HTML |
 | `run-all.sh` | 端到端：producer publish → bare smoke → capi-demo autotest |
 | `design/SUMMARY.html` | 实现总结与问题（本 md 的 HTML 姊妹篇） |
-| `m2/com/example/hilog-klib/1.0-SNAPSHOT/` | 发布的 160 个 klib（仓库内 m2/，gitignore） |
+| `m2/com/example/ohos-capi/22-0.1-SNAPSHOT/` | 发布的 160 个 klib（仓库内 m2/，gitignore） |
 
 ---
 
 ## 9. 端到端验证流程（run-all.sh）
 
 1. **前置检查**：java / hdc / DevEco / HMS sysroot / 设备 / devcloud 凭据
-2. **producer** `:hilog-klib:publish :static-lib-demo:publish` → 期望 160 klib，发到仓库内 `m2/`
+2. **producer** `:ohos-capi:publish :static-lib-demo:publish` → 期望 160 klib，发到仓库内 `m2/`
 3. **consumer-bare** `:kotlinApp:linkDebugSharedOhosArm64` + `startHarmonyAppDebug` → 验证 KN hilog + ArkTS greeting
 4. **consumer-capi-demo** `:composeApp:publishDebugBinariesToHarmonyApp` + ohpm install + hvigor assembleHap + install HAP
 5. **autotest.py** → 9 模块 139 用例，解析 `测试结果统计` 块（成功/失败/总计）

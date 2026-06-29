@@ -3,14 +3,14 @@ plugins {
 }
 
 group = "com.example"
-version = "1.0-SNAPSHOT"
+version = "22-0.1-SNAPSHOT"
 
 fun String.capitalize() = replaceFirstChar { it.uppercase() }
 
 kotlin {
     ohosArm64 {
         // HiLog bindings now come from the cpf 0.4-built klib published to maven local
-        // (com.example:hilog-klib:1.0-SNAPSHOT, package platform.PerformanceAnalysisKit.HiLog),
+        // (com.example:ohos-capi:22-0.1-SNAPSHOT, package platform.PerformanceAnalysisKit.HiLog),
         // built in the kn_samples-ohos-def repo. No local cinterop here.
         binaries {
             sharedLib {
@@ -27,7 +27,7 @@ kotlin {
                 // whose .so the consumer sysroot may lack; --as-needed drops the unreferenced ones.
                 freeCompilerArgs += "-linker-options=-Wl,--as-needed"
                 // HMS sysroot (.so stubs for HarmonyOS-SDK-Only Kits) checked into the repo.
-                // The hilog-klib aggregate carries linkerOpts for all 159 defs incl. HMS Kits;
+                // The ohos-capi aggregate carries linkerOpts for all 159 defs incl. HMS Kits;
                 // --as-needed drops unused ones from NEEDED but ld must locate them to judge
                 // unreferenced, so add -L here. (After #14 split, non-HMS consumers won't need this.)
                 val hmsLib = "${rootProject.projectDir.parentFile}/sysroot/sysroot-hms-aarch64-6.0.2.640-02/usr/lib/aarch64-linux-ohos"
@@ -39,10 +39,10 @@ kotlin {
         val ohosArm64Main by getting {
             dependencies {
                 // klib built with cpf 0.4 (abi_version 2.2.0); read by 2.3.20-HUAWEI (same major 2.x).
-                implementation("com.example:hilog-klib:1.0-SNAPSHOT")
+                implementation("com.example:ohos-capi:22-0.1-SNAPSHOT")
                 // static-lib-demo: cinterop with staticLibraries (.a embedded in klib).
                 // Consumer links the .a automatically (KGP handles included .a), no -L/-l needed.
-                implementation("com.example:static-lib-demo:1.0-SNAPSHOT")
+                implementation("com.example:static-lib-demo:22-0.1-SNAPSHOT")
             }
         }
     }

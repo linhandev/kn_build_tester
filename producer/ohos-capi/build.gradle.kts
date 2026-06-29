@@ -3,10 +3,11 @@ plugins {
     `maven-publish`
 }
 
+// NOTE: groupId `com.example` is a placeholder — pending decision (see design/DESIGN.md §6).
 group = "com.example"
-version = "1.0-SNAPSHOT"
+version = "22-0.1-SNAPSHOT"
 
-base.archivesName.set("hilog-klib")
+base.archivesName.set("ohos-capi")
 
 // Auto-register one cinterop per .def in nativeInterop/ohosArm64/.
 // Each def's `depends = A B C` line is parsed: for each depended name, pass cinterop
@@ -71,7 +72,7 @@ kotlin {
                             // -library only loads direct deps; a depended klib's own transitive
                             // depends aren't auto-resolved from -libraryPath, so pass them all).
                             transitiveClosure(d.name).forEach { dep ->
-                                val depDir = cinteropOutDir.map { it.file("hilog-klib-cinterop-${dep}").asFile.absolutePath }.get()
+                                val depDir = cinteropOutDir.map { it.file("ohos-capi-cinterop-${dep}").asFile.absolutePath }.get()
                                 extraOpts("-library", depDir)
                             }
                         }
@@ -94,15 +95,15 @@ defs.forEach { d ->
 
 publishing {
     publications {
-        // KMP metadata + target publications share artifactId hilog-klib (consumer depends on
-        // com.example:hilog-klib). The .pom overwrite warning is benign: .module carries per-target
+        // KMP metadata + target publications share artifactId ohos-capi (consumer depends on
+        // com.example:ohos-capi). The .pom overwrite warning is benign: .module carries per-target
         // variants consumers resolve on. Splitting artifactIds breaks .module variant resolution.
         withType<MavenPublication> {
-            artifactId = "hilog-klib"
+            artifactId = "ohos-capi"
         }
     }
     // Publish to the repo-local Maven repo (kn_sample/m2, gitignored) instead of ~/.m2, so the
-    // published klibs are inspectable alongside the source. Use `./gradlew :hilog-klib:publish`.
+    // published klibs are inspectable alongside the source. Use `./gradlew :ohos-capi:publish`.
     repositories {
         maven { url = uri(rootProject.projectDir.parentFile.resolve("m2")) }
     }

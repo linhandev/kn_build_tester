@@ -25,5 +25,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "c2k"
 
-include("hilog-klib")
+include("ohos-capi")
 include("static-lib-demo")

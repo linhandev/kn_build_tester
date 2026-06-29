@@ -1,7 +1,7 @@
 # Plan: build & publish HiLog cinterop klib (cpf 0.4) for the HUAWEI consumer
 
 ## Goal
-Produce a klib `com.example:hilog-klib:1.0-SNAPSHOT` (package `platform.PerformanceAnalysisKit.HiLog`,
+Produce a klib `com.example:ohos-capi:22-0.1-SNAPSHOT` (package `platform.PerformanceAnalysisKit.HiLog`,
 symbols identical to cpf 0.4's platformLib HiLog) built with **cpf 0.4** (`2.2.21-0.4.0-03`), published
 to **maven local**. It is consumed by the **2.3.20-HUAWEI** project in the `kn_samples-bare` repo.
 
@@ -27,23 +27,23 @@ Done BEFORE build so cpf 0.4 builds the HiLog klib from the project's own def, n
   (cpf 0.4's KN embeddable jar has no Maven coordinate; KGP loads it via kotlin.native.home)
 
 ### 3. `settings.gradle.kts`
-- `include("hilog-klib")` (replace `include("kotlinApp")`)
+- `include("ohos-capi")` (replace `include("kotlinApp")`)
 - Keep the Huawei devcloud repo block + add `mavenLocal()` for KGP resolution fallback
   (cpf 0.4 KGP is in gradle cache; KN embeddable via kotlin.native.home)
 
 ### 4. Delete `kotlinApp/` (including `nativeInterop/ohosArm64/HiLog.def`)
 Per user: "当前仓库里的 hilog def 干掉".
 
-### 5. New module `hilog-klib/`
-- `hilog-klib/build.gradle.kts`:
+### 5. New module `ohos-capi/`
+- `ohos-capi/build.gradle.kts`:
   - `plugins { kotlin("multiplatform"); `maven-publish` }`
-  - `group = "com.example"`, `version = "1.0-SNAPSHOT"`, base archivesName = `hilog-klib`
+  - `group = "com.example"`, `version = "22-0.1-SNAPSHOT"`, base archivesName = `ohos-capi`
   - `kotlin { ohosArm64 { compilations { val main by getting { cinterops { create("HiLog") } } } } }`
     (default defFile lookup: `nativeInterop/ohosArm64/HiLog.def`)
   - NO `binaries { sharedLib }` — we publish a klib, not a .so
   - `publishing { publications { create<MavenPublication>("ohosArm64") { from(components["ohosArm64Api"]) // or the klib component } } }`
     (use the KMP 2.2.21 klib publication component name, verify at impl time)
-- `hilog-klib/nativeInterop/ohosArm64/HiLog.def` = cpf 0.4 original verbatim:
+- `ohos-capi/nativeInterop/ohosArm64/HiLog.def` = cpf 0.4 original verbatim:
   ```
   package = platform.PerformanceAnalysisKit.HiLog
   headers = hilog/log.h
@@ -56,8 +56,8 @@ Per user: "当前仓库里的 hilog def 干掉".
   (cpf 0.4's konan.properties resolves sysroot/llvm automatically; no -I/-L needed)
 
 ### 6. Build & publish
-`./gradlew :hilog-klib:publishToMavenLocal`
-Verify `~/.m2/repository/com/example/hilog-klib/1.0-SNAPSHOT/` has the `.klib` (+ pom).
+`./gradlew :ohos-capi:publishToMavenLocal`
+Verify `~/.m2/repository/com/example/ohos-capi/22-0.1-SNAPSHOT/` has the `.klib` (+ pom).
 
 ### 7. Verify symbol parity with cpf 0.4 platformLib HiLog
 Compare the published klib's linkdata vs the moved-aside `org.jetbrains.kotlin.native.platform.HiLog`
@@ -65,7 +65,7 @@ to confirm `OH_LOG_Print` etc. are present.
 
 ## Consumer (in kn_samples-bare, after producer publishes) — separate step
 - `kotlinApp/build.gradle.kts`: drop `cinterops { hiLog }`, drop `nativeInterop/`, add
-  `dependencies { ohosArm64MainImplementation("com.example:hilog-klib:1.0-SNAPSHOT") }`
+  `dependencies { ohosArm64MainImplementation("com.example:ohos-capi:22-0.1-SNAPSHOT") }`
 - `settings.gradle.kts` already has `mavenLocal()` and stays on `2.3.20-HUAWEI`.
 - Run `startHarmonyAppDebug` to validate the HUAWEI project links the cpf-0.4-built klib.
 - ABI note: klib `abi_version=2.2.0` read by `2.3.20` compiler — same major (2.x), supported;

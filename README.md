@@ -7,17 +7,17 @@
 
 | 目录 | 角色 | Kotlin | 说明 |
 |---|---|---|---|
-| `producer/` | 生产者 | `2.2.21-0.4.0-03` (cpf 0.4) | `hilog-klib` 模块：遍历 159 个 ohos-only def 跑 cinterop，发布 `com.example:hilog-klib:1.0-SNAPSHOT` 到仓库内 `m2/`（gitignore） |
+| `producer/` | 生产者 | `2.2.21-0.4.0-03` (cpf 0.4) | `ohos-capi` 模块：遍历 159 个 ohos-only def 跑 cinterop，发布 `com.example:ohos-capi:22-0.1-SNAPSHOT` 到仓库内 `m2/`（gitignore） |
 | `consumer-bare/` | 简单消费者 | `2.3.20-HUAWEI` | 最小 demo：依赖 maven klib，调用 HiLog + Asset，验证编译/链接/运行 |
 | `consumer-capi-demo/` | 复杂消费者 | `2.3.20-HUAWEI` | capi-demo 项目：9 模块 CAPI smoke test + `autotest.py` UI 自动化测试 |
 
 ## 工作流
 
 ```
-producer (cpf 0.4)  ──publish──>  m2/com/example/hilog-klib  (仓库内，gitignore)
+producer (cpf 0.4)  ──publish──>  m2/com/example/ohos-capi  (仓库内，gitignore)
                                                     │
                               consumer-bare (HUAWEI) ┴ consumer-capi-demo (HUAWEI)
-                                    implementation("com.example:hilog-klib:1.0-SNAPSHOT")
+                                    implementation("com.example:ohos-capi:22-0.1-SNAPSHOT")
 ```
 
 ## 前置依赖（本机环境，非本仓库）

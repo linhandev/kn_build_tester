@@ -1,2 +1,2 @@
 group = "com.example"
-version = "1.0-SNAPSHOT"
+version = "22-0.1-SNAPSHOT"

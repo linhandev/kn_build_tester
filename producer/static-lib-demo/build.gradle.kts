@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.example"
-version = "1.0-SNAPSHOT"
+version = "22-0.1-SNAPSHOT"
 
 base.archivesName.set("static-lib-demo")
 
@@ -26,8 +26,8 @@ kotlin {
     sourceSets {
         val ohosArm64Main by getting {
             dependencies {
-                // depends on hilog-klib so the demo consumer can pull both via one coordinate
-                implementation("com.example:hilog-klib:1.0-SNAPSHOT")
+                // depends on ohos-capi so the demo consumer can pull both via one coordinate
+                implementation("com.example:ohos-capi:22-0.1-SNAPSHOT")
             }
         }
     }
