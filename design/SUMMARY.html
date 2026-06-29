@@ -75,38 +75,67 @@
 
 <h1>ohos-only klib 封装 · 实现总结</h1>
 <p class="sub">
-  用 cpf 0.4（Kotlin 2.2.21-0.4.0-03）把 HarmonyOS 独有的 159 个 cinterop def 封装成一个 Maven klib，
-  给基于 2.3.20-HUAWEI 的消费者项目用，并通过 capi-demo 的 UI 自动化测试端到端验证。
+  用 cpf 0.4（Kotlin 2.2.21-0.4.0-03）把 HarmonyOS 独有的 159 个 cinterop def 封装成 Maven klib，
+  给基于 2.3.20-HUAWEI 的消费者项目用。<b>当前有回归未解决，见下方「当前状态」。</b>
 </p>
 
 <div class="grid">
-  <div class="stat"><div class="n ok">159</div><div class="l">ohos-only def 全部封装成功</div></div>
-  <div class="stat"><div class="n">160</div><div class="l">klib 发布到 maven local（159 cinterop + 1 main）</div></div>
-  <div class="stat"><div class="n ok">9/9</div><div class="l">capi demo 测试模块跑通</div></div>
-  <div class="stat"><div class="n ok">139</div><div class="l">自动化用例执行（132 成功 + 7 预期失败）</div></div>
+  <div class="stat"><div class="n ok">159</div><div class="l">ohos-only def 封装</div></div>
+  <div class="stat"><div class="n">160</div><div class="l">hilog-klib + 2 static-lib-demo klib 发布</div></div>
+  <div class="stat"><div class="n ok">139/0</div><div class="l">capi-demo autotest（曾跑通，当前回归）</div></div>
+  <div class="stat"><div class="n bad">⚠️</div><div class="l">bare 编译回归 unresolved</div></div>
+</div>
+
+<h2>当前状态（2026-06-29）</h2>
+<div class="card">
+<p>仓库已整合到 <code>/Users/ohoskt/git/kn_sample</code>（producer / consumer-bare / consumer-capi-demo / sysroot / run-all.sh，git-lfs 管 sysroot .so/.a）。下列改动已完成并 commit：</p>
+<table>
+  <tr><th>#</th><th>改动</th><th>状态</th></tr>
+  <tr><td>7</td><td>SUMMARY 修正：删 devcloud 凭据/IR001/bundleName/签名/klib 自带 .so 目标等非问题条目；合并 NEEDED 目标+目的</td><td><span class="pill ok">完成</span></td></tr>
+  <tr><td>8</td><td>解释 SONAME 问题根因 + publication 覆盖警告根因</td><td><span class="pill ok">完成</span></td></tr>
+  <tr><td>9</td><td>autotest Failure 模块返回预期错误码判成功（139 用例 0 失败）</td><td><span class="pill ok">完成</span></td></tr>
+  <tr><td>10</td><td>ohos+hms sysroot 重新下载，check 进仓库 sysroot/（git-lfs），生产者用仓库内路径，消费者只用 DevEco</td><td><span class="pill ok">完成</span></td></tr>
+  <tr><td>11</td><td>去掉 producer kotlin.native.home，cpf 0.4 embeddable 从 Maven（eazytec）下载</td><td><span class="pill ok">完成</span></td></tr>
+  <tr><td>12</td><td>不清空 cpf 0.4 dist 的 ohos_arm64（保持原版），package 不变，靠 unique_name 区分</td><td><span class="pill ok">完成</span></td></tr>
+  <tr><td>13</td><td>def 的 depends 只写直接依赖（传递由 build 的 transitiveClosure -library 处理，让 depends 指向我们的 klib 而非 dist 内置）</td><td><span class="pill ok">完成</span></td></tr>
+  <tr><td>15</td><td>static-lib-demo：cinterop + staticLibraries(.a) 示例，消费者自动 link .a（对比 .so 的 linkerOpts）</td><td><span class="pill ok">完成</span></td></tr>
+  <tr><td>17</td><td>解决 publication 覆盖警告</td><td><span class="pill bad">回退</span> #17 的 artifactId 拆分破坏了 .module variant 解析，回退到 withType（benign 警告保留）</td></tr>
+  <tr><td>14</td><td>拆分 ohos 主 140 + hms 扩展 19 两个坐标</td><td><span class="pill bad">回退</span> 拆分后触发 bare 编译回归，回退到单 hilog-klib（159）</td></tr>
+  <tr><td>16</td><td>增加 ohosX64 支持</td><td><span class="pill warn">未做</span> 依赖 #14</td></tr>
+</table>
+
+<h3 class="bad">⚠️ 当前回归：bare 编译 platform.PerformanceAnalysisKit.HiLog unresolved</h3>
+<p>在 #14 拆分尝试后发现，<b>即使回退 #14（恢复 159 def 单 hilog-klib）+ 回退 #17，consumer-bare 编译仍报 <code>Unresolved reference 'OH_LOG_Print'</code> 等</b>——即 hilog-klib 的 cinterop klib 没加进 bare 编译 classpath。这是相对 #10 基线（当时 run-all 全绿）的回归。</p>
+<ul>
+  <li><b>已排除</b>：不是 #11（恢复 kotlin.native.home 仍 unresolved）；不是 static-lib-demo 传递冲突（去掉仍 unresolved）；不是 m2 残留（清空重 publish 仍 unresolved）；hilog-klib publish 成功、cache 下到 160 klib、.module variant files 含 cinterop、HiLog klib 的 package/abi/unique_name 都正确</li>
+  <li><b>症状</b>：bare 编译命令的 <code>-library</code> 参数里没有 hilog-klib 的 cinterop klib——Gradle/KMP 解析 hilog-klib variant 时没把 cinterop klib 传给 KN 编译</li>
+  <li><b>怀疑</b>：#12 不清空 dist 导致 hilog-klib 的 main klib depends 指向 cpf dist 内置的 posix（abi 2.2.0），HUAWEI（2.3.0）解析时版本/ABI 冲突；或 #11+#12+#17 叠加的 Gradle metadata 缓存问题。需二分定位</li>
+  <li><b>影响</b>：run-all.sh 当前<b>不能跑通</b>（bare link 失败）。producer publish 正常，capi-demo 的 autotest 代码未变（回归前 139/0）</li>
+</ul>
+<p class="small">注：此回归是 #14 拆分过程中暴露的，但根因可能在 #11/#12（都验证过绿，但可能 cache 残留掩盖）。需要从 #10 基线逐步加改动定位。</p>
 </div>
 
 <h2>整体架构</h2>
 <div class="card">
 <p>
-  <span class="tag">生产者</span> <span class="path mono">kn_samples-ohos-def</span>
+  <span class="tag">生产者</span> <span class="path mono">kn_sample/producer</span>
   <span class="arrow">→</span>
   <span class="mono">com.example:hilog-klib:1.0-SNAPSHOT</span>（maven local）
   <span class="arrow">→</span>
-  <span class="tag">消费者</span> <span class="path mono">kn_samples-bare</span> /
-  <span class="path mono">consumer-capi-demo</span>（2.3.20-HUAWEI）
+  <span class="tag">消费者</span> <span class="path mono">kn_sample/consumer-bare</span> /
+  <span class="path mono">kn_sample/consumer-capi-demo</span>（2.3.20-HUAWEI）
 </p>
 <table>
   <tr><th>角色</th><th>仓库 / 路径</th><th>Kotlin</th><th>职责</th></tr>
   <tr>
     <td>生产者</td>
-    <td class="path">/Users/ohoskt/git/worktree/kn_samples-ohos-def<br><span class="small">模块 hilog-klib</span></td>
+    <td class="path">kn_sample/producer<br><span class="small">模块 hilog-klib + static-lib-demo</span></td>
     <td><code>2.2.21-0.4.0-03</code><br><span class="small">(cpf 0.4)</span></td>
     <td>遍历 159 个 def 跑 cinterop，打成一个 Maven 坐标发布到 <code>~/.m2</code></td>
   </tr>
   <tr>
     <td>消费者 A</td>
-    <td class="path">/Users/ohoskt/git/worktree/kn_samples-bare</td>
+    <td class="path">kn_sample/consumer-bare</td>
     <td><code>2.3.20-HUAWEI</code></td>
     <td>简单 HiLog demo，最早验证 maven klib 可编译/链接/运行</td>
   </tr>
@@ -326,30 +355,45 @@ publishing { publications { withType&lt;MavenPublication&gt; { artifactId = "hil
 
 <h2>遗留问题与注意事项</h2>
 <div class="card">
-<h3 class="ok">已解决（验证通过）</h3>
+<h3 class="ok">已解决（#10 基线验证过；当前 bare 回归未通过，见「当前状态」）</h3>
 <ul>
-  <li><b>跨版本 ABI</b>：cpf 0.4（abi_version 2.2.0）构建的 klib 被 2.3.20-HUAWEI（abi_version 2.3.0）读取 —— 同 major 兼容，编译/链接/运行均通过</li>
-  <li><b>符号导出</b>：消费者 <code>libkn.so</code> 的 NEEDED 含 <code>libhilog_ndk.z.so</code>/<code>libasset_ndk.z.so</code>/<code>libhuks_ndk.z.so</code> 等，设备进程 maps 全部加载</li>
-  <li><b>159 def 全 cinterop 成功</b>，0 失败</li>
-  <li><b>NEEDED 精准化</b>：<code>--as-needed</code> 让 libkn.so 只 NEEDED 实际 UND 的库（bare 的 helloworld 只 NEEDED 4 个），低版本 ROM 只缺真用到的才报错</li>
-  <li><b>soname</b>：<code>-Wl,-soname,libkn.so</code> 让 NEEDED 记裸名，设备 dlopen 从 App libs 目录成功</li>
+  <li><b>跨版本 ABI</b>：cpf 0.4（abi_version 2.2.0）构建的 klib 被 2.3.20-HUAWEI（abi_version 2.3.0）读取 —— 同 major 兼容（#10 时编译/链接/运行均通过）</li>
+  <li><b>符号导出</b>：消费者 <code>libkn.so</code> 的 NEEDED 含 <code>libhilog_ndk.z.so</code>/<code>libasset_ndk.z.so</code>/<code>libhuks_ndk.z.so</code> 等，设备进程 maps 全部加载（#10 时）</li>
+  <li><b>159 def 全 cinterop 成功</b>，0 失败（当前仍成功）</li>
+  <li><b>NEEDED 精准化</b>：<code>--as-needed</code> 让 libkn.so 只 NEEDED 实际 UND 的库（#10 时 bare helloworld 只 NEEDED 4 个）</li>
+  <li><b>soname</b>：<code>-Wl,-soname,libkn.so</code> 让 NEEDED 记裸名，设备 dlopen 从 App libs 目录成功（#10 时）</li>
   <li><b>运行时走系统</b>：NEEDED 是裸 soname，设备 ROM 的 ld 按名从系统库解析，.so 不进 HAP</li>
   <li><b>.so 链接策略落定 (c)</b>：klib 只声明 linkerOpts，消费者用自己 ohos sysroot + 加 <code>-L&lt;HMS&gt;</code> 供扩展 Kit stub，<code>--as-needed</code> 精准 NEEDED。探索过自包含（嵌 .so）但 KGP 不支持，详见上文 .so 链接策略节</li>
+  <li><b>sysroot 进仓库</b>（#10）：ohos+hms sysroot check 进 <code>kn_sample/sysroot/</code>（git-lfs），生产者用仓库内路径，消费者只用 DevEco</li>
+  <li><b>embeddable 从 Maven 下</b>（#11）：去掉 kotlin.native.home，cpf 0.4 embeddable 从 eazytec 下载</li>
+  <li><b>dist 不清空</b>（#12）：cpf 0.4 dist 保持原版，靠 unique_name 区分</li>
+  <li><b>static-lib-demo</b>（#15）：.a 嵌入 klib 示例，消费者自动 link</li>
+  <li><b>autotest Failure 判成功</b>（#9）：139 用例 0 失败（回归前）</li>
 </ul>
 
-<h3 class="warn">需注意 / 待优化</h3>
+<h3 class="warn">真实 gap（待解）</h3>
 <ul>
-  <li><b>消费者要装 HMS sysroot 并加 <code>-L</code></b>（(c) 方案核心 gap）：聚合 klib 带了 19 个扩展 Kit def 的 <code>linkerOpts</code>，<code>--as-needed</code> 下 ld 仍要<b>找到</b>这些 .so 才能判断未引用，而 DevEco 主 sysroot 没有它们。所以<b>任何</b>依赖聚合 hilog-klib 的消费者都要在 sharedLib 加 <code>-linker-options=-L&lt;HMS sysroot&gt;/usr/lib/aarch64-linux-ohos</code>，且本机要有这个 HMS sysroot。即使消费者代码不用扩展 Kit 也得加。consumer-bare 和 consumer-capi-demo 都加了这行。<i>待 #14 拆分后，不用扩展 Kit 的消费者无需此 -L</i></li>
-  <li><b>路径硬编码</b>：生产者 build 的 <code>-I&lt;HMS include&gt;</code>，消费者 build 的 <code>-L&lt;HMS&gt;</code>，都是 <code>/Users/ohoskt/...</code> 绝对路径，换机器/CI 要改。<i>待 #10 把 sysroot 提交进仓库后，生产者用仓库内路径；消费者只用 DevEco 路径</i></li>
-  <li><b>覆盖范围</b>：只封装了 159 个 ohos-only def。11 个共享 def（posix/linux/gles3 等）仍在 cpf 0.4 dist 内置，<b>未进 maven klib</b>。若消费者也缺这些，需另行封装</li>
-  <li><b>ohosX64 待支持</b>：当前 klib 只发 ohosArm64，capi demo 的 x64 target 暂时禁用。<i>待 #16 增加 ohosX64 支持</i></li>
-  <li><b>SONAME 待确认</b>：KN sharedLib 默认不设 DT_SONAME，被 CMake 的 .so 链接时绝对路径烤进 NEEDED。当前用 <code>-Wl,-soname</code> 修复有效。是否 HUAWEI 版本特殊（其他 KN 版本在此场景是否也这样）未对比确认。</li>
+  <li><b class="bad">⚠️ bare 编译回归</b>：consumer-bare 编译 <code>platform.PerformanceAnalysisKit.HiLog</code> unresolved，hilog-klib 的 cinterop klib 没加进编译 classpath。run-all 当前不能跑通。详见「当前状态」节。需二分定位根因（#11/#12/#17 叠加?）</li>
+  <li><b>消费者要加 <code>-L&lt;HMS sysroot&gt;</code></b>：聚合 klib 带了 19 个扩展 Kit def 的 <code>linkerOpts</code>，<code>--as-needed</code> 下 ld 仍要找到这些 .so 才能判断未引用。consumer-bare/capi-demo 都加了这行（指向仓库内 sysroot）。<i>待 #14 拆分重新做后，不用扩展 Kit 的消费者无需此 -L</i></li>
+  <li><b>#14 拆分待重新做</b>：ohos 主 140 + hms 扩展 19 两个坐标。首次尝试触发 bare 回归，回退。重做时需确保 hms-klib 的 maven 坐标依赖 hilog-klib 坐标，且不破坏消费者解析</li>
+  <li><b>#17 publication 警告待解</b>：artifactId 拆分破坏 .module variant 解析，回退 withType（benign 警告保留）。需找别的方式消警告</li>
+  <li><b>ohosX64 待支持</b>（#16）：当前 klib 只发 ohosArm64，capi demo 的 x64 target 禁用。依赖 #14</li>
+  <li><b>覆盖范围</b>：只封装了 159 个 ohos-only def。11 个共享 def（posix/linux/gles3 等）仍在 cpf 0.4 dist 内置，未进 maven klib</li>
+  <li><b>SONAME 待确认</b>：KN sharedLib 默认不设 DT_SONAME，<code>-Wl,-soname</code> 修复有效。是否 HUAWEI 版本特殊未对比</li>
+</ul>
+
+<h3 class="bad">非问题（已从 gap 列表删除）</h3>
+<ul>
+  <li><s>devcloud 需要密码</s> —— 私有仓库，凭据放 local.properties，正常</li>
+  <li><s>HUAWEI KGP/stdlib 来自 devcloud</s> —— 正常</li>
+  <li><s>IR001 项目无签名配置 / 改了 bundleName</s> —— 不是真问题</li>
+  <li><s>klib 自带 .so 供 ld（消费者零配置）</s> —— (c) 方案不做自包含，目标已删</li>
+  <li><s>cpf 0.4 embeddable 无 Maven 坐标</s> —— 能从 eazytec 下（#11 验证）</li>
 </ul>
 
 <h3 class="bad">未做的事</h3>
 <ul>
-  <li><b>commonTest 的 JVM 执行</b>：capi demo 的 commonTest 跑 Android 单元测试需 ANDROID_HOME，未配置；但 ohosArm64 侧已通过 autotest.py 设备测试充分验证</li>
-  <li><b>扩展 Kit 运行时 .so</b>：当前 NEEDED 不含扩展 Kit（as-needed 去掉未引用）。若未来某模块真要用 securityantivirus/aip 等，设备需有对应 HMS 服务运行时（sysroot 的 .so stub 只供 link，不供运行）</li>
+  <li><b>commonTest 的 JVM 执行</b>：capi demo 的 commonTest 跑 Android 单元测试需 ANDROID_HOME，未配置；ohosArm64 侧已通过 autotest.py 设备测试验证（回归前）</li>
   <li><b>CI 化</b>：整套仍是本地手动跑，未写成 CI 脚本</li>
 </ul>
 </div>
@@ -358,9 +402,9 @@ publishing { publications { withType&lt;MavenPublication&gt; { artifactId = "hil
 <div class="card">
 <table>
   <tr><th>文件</th><th>作用</th></tr>
-  <tr><td class="path"><code>kn_samples-ohos-def/hilog-klib/build.gradle.kts</code></td><td>生产者：自动遍历 def + 传递闭包 -library + HMS -I + 发布</td></tr>
-  <tr><td class="path"><code>kn_samples-ohos-def/ohos-only-defs.txt</code></td><td>159 个 ohos-only def 清单（ohos 有、其他 target 无）</td></tr>
-  <tr><td class="path"><code>kn_samples-ohos-def/PLAN.md</code></td><td>原始 6 步计划</td></tr>
+  <tr><td class="path"><code>kn_sample/producer/hilog-klib/build.gradle.kts</code></td><td>生产者：自动遍历 def + 传递闭包 -library + HMS -I + 发布</td></tr>
+  <tr><td class="path"><code>kn_sample/producer/ohos-only-defs.txt</code></td><td>159 个 ohos-only def 清单（ohos 有、其他 target 无）</td></tr>
+  <tr><td class="path"><code>kn_sample/producer/PLAN.md</code></td><td>原始 6 步计划</td></tr>
   <tr><td class="path"><code>consumer-capi-demo/autotest.py</code></td><td>UI 自动化测试（hdc uitest 驱动，9 模块 139 用例）</td></tr>
   <tr><td class="path"><code>consumer-capi-demo/test_reports/</code></td><td>测试报告 CSV + HTML</td></tr>
   <tr><td class="path"><code>~/.m2/repository/com/example/hilog-klib/1.0-SNAPSHOT/</code></td><td>发布的 160 个 klib</td></tr>
