@@ -101,4 +101,9 @@ publishing {
             artifactId = "hilog-klib"
         }
     }
+    // Publish to the repo-local Maven repo (kn_sample/m2, gitignored) instead of ~/.m2, so the
+    // published klibs are inspectable alongside the source. Use `./gradlew :hilog-klib:publish`.
+    repositories {
+        maven { url = uri(rootProject.projectDir.parentFile.resolve("m2")) }
+    }
 }

@@ -39,4 +39,9 @@ publishing {
             artifactId = "static-lib-demo"
         }
     }
+    // Publish to the repo-local Maven repo (kn_sample/m2, gitignored) instead of ~/.m2.
+    // Use `./gradlew :static-lib-demo:publish`.
+    repositories {
+        maven { url = uri(rootProject.projectDir.parentFile.resolve("m2")) }
+    }
 }

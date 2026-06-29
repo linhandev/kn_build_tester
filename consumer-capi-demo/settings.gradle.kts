@@ -1,6 +1,9 @@
 rootProject.name = "KMPMultiplatform"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
+// Local Maven repo at the repo root (kn_sample/m2, gitignored). Producer publishes klibs here;
+// consumers resolve com.example:hilog-klib / static-lib-demo from here instead of ~/.m2.
+// Inlined in each block: pluginManagement/dependencyResolutionManagement don't see top-level vals.
 pluginManagement {
     val localProps = java.util.Properties().apply {
         runCatching { java.io.File("local.properties").inputStream() }.getOrNull()?.let { load(it) }
@@ -8,7 +11,7 @@ pluginManagement {
     val huaweiUser = System.getenv("HUAWEI_MAVEN_USER") ?: localProps.getProperty("huaweiMavenUser")
     val huaweiPass = System.getenv("HUAWEI_MAVEN_PASS") ?: localProps.getProperty("huaweiMavenPass")
     repositories {
-        mavenLocal()
+        maven { url = uri(rootDir.parentFile.resolve("m2")) }
         maven {
             url = uri("https://devrepo.devcloud.cn-north-4.huaweicloud.com/artgalaxy/cn-north-4_a8338babc8534bb8aabb062c35845155_maven_7_1/")
             if (huaweiUser != null && huaweiPass != null) {
@@ -36,7 +39,7 @@ dependencyResolutionManagement {
     val huaweiUser = System.getenv("HUAWEI_MAVEN_USER") ?: localProps.getProperty("huaweiMavenUser")
     val huaweiPass = System.getenv("HUAWEI_MAVEN_PASS") ?: localProps.getProperty("huaweiMavenPass")
     repositories {
-        mavenLocal()
+        maven { url = uri(rootDir.parentFile.resolve("m2")) }
         maven {
             url = uri("https://devrepo.devcloud.cn-north-4.huaweicloud.com/artgalaxy/cn-north-4_a8338babc8534bb8aabb062c35845155_maven_7_1/")
             if (huaweiUser != null && huaweiPass != null) {

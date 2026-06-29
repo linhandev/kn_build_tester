@@ -120,7 +120,7 @@
 <p>
   <span class="tag">生产者</span> <span class="path mono">kn_sample/producer</span>
   <span class="arrow">→</span>
-  <span class="mono">com.example:hilog-klib:1.0-SNAPSHOT</span>（maven local）
+  <span class="mono">com.example:hilog-klib:1.0-SNAPSHOT</span>（仓库内 m2/，gitignore）
   <span class="arrow">→</span>
   <span class="tag">消费者</span> <span class="path mono">kn_sample/consumer-bare</span> /
   <span class="path mono">kn_sample/consumer-capi-demo</span>（2.3.20-HUAWEI）
@@ -131,7 +131,7 @@
     <td>生产者</td>
     <td class="path">kn_sample/producer<br><span class="small">模块 hilog-klib + static-lib-demo</span></td>
     <td><code>2.2.21-0.4.0-03</code><br><span class="small">(cpf 0.4)</span></td>
-    <td>遍历 159 个 def 跑 cinterop，打成一个 Maven 坐标发布到 <code>~/.m2</code></td>
+    <td>遍历 159 个 def 跑 cinterop，打成一个 Maven 坐标发布到仓库内 <code>m2/</code>（gitignore）</td>
   </tr>
   <tr>
     <td>消费者 A</td>
@@ -407,7 +407,7 @@ publishing { publications { withType&lt;MavenPublication&gt; { artifactId = "hil
   <tr><td class="path"><code>kn_sample/producer/PLAN.md</code></td><td>原始 6 步计划</td></tr>
   <tr><td class="path"><code>consumer-capi-demo/autotest.py</code></td><td>UI 自动化测试（hdc uitest 驱动，9 模块 139 用例）</td></tr>
   <tr><td class="path"><code>consumer-capi-demo/test_reports/</code></td><td>测试报告 CSV + HTML</td></tr>
-  <tr><td class="path"><code>~/.m2/repository/com/example/hilog-klib/1.0-SNAPSHOT/</code></td><td>发布的 160 个 klib</td></tr>
+  <tr><td class="path"><code>m2/com/example/hilog-klib/1.0-SNAPSHOT/</code></td><td>发布的 160 个 klib（仓库内 m2/，gitignore）</td></tr>
 </table>
 </div>
 

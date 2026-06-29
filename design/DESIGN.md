@@ -9,7 +9,7 @@
 
 | 目标 | 说明 |
 |---|---|
-| **生产** | 用 cpf 0.4 遍历 159 个 ohos-only def 跑 cinterop，打成 **一个 Maven 坐标** `com.example:hilog-klib:1.0-SNAPSHOT`，发布到 maven local |
+| **生产** | 用 cpf 0.4 遍历 159 个 ohos-only def 跑 cinterop，打成 **一个 Maven 坐标** `com.example:hilog-klib:1.0-SNAPSHOT`，发布到仓库内 `m2/`（gitignore，方便检查） |
 | **消费** | 两个 `2.3.20-HUAWEI` 消费者依赖该 klib，验证**跨版本 ABI**（cpf 0.4 `abi_version 2.2.0` 被 HUAWEI `2.3.0` 读取，同 major 兼容）下能编译/链接/运行 |
 | **验证** | `consumer-capi-demo` 的 `autotest.py` 用 hdc UI 自动化跑 9 模块 CAPI smoke test，139 用例端到端验证 |
 | **运行时** | `.so` 不进 HAP，按 soname 走设备 ROM 系统库；NEEDED 只含实际引用的库 |
@@ -48,14 +48,14 @@ kn_sample/
 
 | 角色 | 路径 | Kotlin | 职责 |
 |---|---|---|---|
-| 生产者 | `producer/` | `2.2.21-0.4.0-03` (cpf 0.4) | 遍历 159 def 跑 cinterop，打成一个 Maven 坐标发布到 `~/.m2` |
+| 生产者 | `producer/` | `2.2.21-0.4.0-03` (cpf 0.4) | 遍历 159 def 跑 cinterop，打成一个 Maven 坐标发布到仓库内 `m2/` |
 | 消费者 A | `consumer-bare/` | `2.3.20-HUAWEI` | 简单 HiLog demo，最早验证 maven klib 可编译/链接/运行 |
 | 消费者 B | `consumer-capi-demo/` | `2.3.20-HUAWEI` | 真实 KMP 项目，9 模块 CAPI smoke test + autotest.py UI 自动化 |
 
 ### 工作流
 
 ```
-producer (cpf 0.4)  ──publishToMavenLocal──>  ~/.m2/com/example/hilog-klib
+producer (cpf 0.4)  ──publish──>  m2/com/example/hilog-klib  (仓库内，gitignore)
                                                     │
                               consumer-bare (HUAWEI) ┴ consumer-capi-demo (HUAWEI)
                                     implementation("com.example:hilog-klib:1.0-SNAPSHOT")
@@ -293,14 +293,14 @@ devcloud 需要密码 / HUAWEI KGP/stdlib 来自 devcloud / IR001 签名 bundleN
 | `consumer-capi-demo/test_reports/` | 测试报告 CSV + HTML |
 | `run-all.sh` | 端到端：producer publish → bare smoke → capi-demo autotest |
 | `design/SUMMARY.html` | 实现总结与问题（本 md 的 HTML 姊妹篇） |
-| `~/.m2/repository/com/example/hilog-klib/1.0-SNAPSHOT/` | 发布的 160 个 klib |
+| `m2/com/example/hilog-klib/1.0-SNAPSHOT/` | 发布的 160 个 klib（仓库内 m2/，gitignore） |
 
 ---
 
 ## 9. 端到端验证流程（run-all.sh）
 
 1. **前置检查**：java / hdc / DevEco / HMS sysroot / 设备 / devcloud 凭据
-2. **producer** `:hilog-klib:publishToMavenLocal :static-lib-demo:publishToMavenLocal` → 期望 160 klib
+2. **producer** `:hilog-klib:publish :static-lib-demo:publish` → 期望 160 klib，发到仓库内 `m2/`
 3. **consumer-bare** `:kotlinApp:linkDebugSharedOhosArm64` + `startHarmonyAppDebug` → 验证 KN hilog + ArkTS greeting
 4. **consumer-capi-demo** `:composeApp:publishDebugBinariesToHarmonyApp` + ohpm install + hvigor assembleHap + install HAP
 5. **autotest.py** → 9 模块 139 用例，解析 `测试结果统计` 块（成功/失败/总计）
