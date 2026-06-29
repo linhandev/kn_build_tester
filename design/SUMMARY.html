@@ -76,14 +76,14 @@
 <h1>ohos-only klib 封装 · 实现总结</h1>
 <p class="sub">
   用 cpf 0.4（Kotlin 2.2.21-0.4.0-03）把 HarmonyOS 独有的 159 个 cinterop def 封装成 Maven klib，
-  给基于 2.3.20-HUAWEI 的消费者项目用。<b>当前有回归未解决，见下方「当前状态」。</b>
+  给基于 2.3.20-HUAWEI 的消费者项目用。<b>bare 回归已修复（#18），run-all 全流程通过。</b>
 </p>
 
 <div class="grid">
-  <div class="stat"><div class="n ok">159</div><div class="l">ohos-only def 封装</div></div>
-  <div class="stat"><div class="n">160</div><div class="l">ohos-capi + 2 static-lib-demo klib 发布</div></div>
-  <div class="stat"><div class="n ok">139/0</div><div class="l">capi-demo autotest（曾跑通，当前回归）</div></div>
-  <div class="stat"><div class="n bad">⚠️</div><div class="l">bare 编译回归 unresolved</div></div>
+  <div class="stat"><div class="n ok">163</div><div class="l">def 封装（159 ohos-only + 4 dist-only: posix/linux/gles3/glesCommon）</div></div>
+  <div class="stat"><div class="n ok">164</div><div class="l">ohos-capi + 2 static-lib-demo klib 发布</div></div>
+  <div class="stat"><div class="n ok">139/0</div><div class="l">capi-demo autotest 全流程通过</div></div>
+  <div class="stat"><div class="n ok">✅</div><div class="l">bare 回归已解决（#18）</div></div>
 </div>
 
 <h2>当前状态（2026-06-29）</h2>
@@ -97,22 +97,23 @@
   <tr><td>10</td><td>ohos+hms sysroot 重新下载，check 进仓库 sysroot/（git-lfs），生产者用仓库内路径，消费者只用 DevEco</td><td><span class="pill ok">完成</span></td></tr>
   <tr><td>11</td><td>去掉 producer kotlin.native.home，cpf 0.4 embeddable 从 Maven（eazytec）下载</td><td><span class="pill ok">完成</span></td></tr>
   <tr><td>12</td><td>不清空 cpf 0.4 dist 的 ohos_arm64（保持原版），package 不变，靠 unique_name 区分</td><td><span class="pill ok">完成</span></td></tr>
-  <tr><td>13</td><td>def 的 depends 只写直接依赖（传递由 build 的 transitiveClosure -library 处理，让 depends 指向我们的 klib 而非 dist 内置）</td><td><span class="pill ok">完成</span></td></tr>
+  <tr><td>13</td><td>def 的 depends 只写直接依赖（传递由 build 的 transitiveClosure -library 处理）</td><td><span class="pill warn">不完整</span> 只改了文档（cb95c46 仅改 SUMMARY），build 未真正让 depends 指向我们的 klib，根因见 #18</td></tr>
   <tr><td>15</td><td>static-lib-demo：cinterop + staticLibraries(.a) 示例，消费者自动 link .a（对比 .so 的 linkerOpts）</td><td><span class="pill ok">完成</span></td></tr>
   <tr><td>17</td><td>解决 publication 覆盖警告</td><td><span class="pill bad">回退</span> #17 的 artifactId 拆分破坏了 .module variant 解析，回退到 withType（benign 警告保留）</td></tr>
   <tr><td>14</td><td>拆分 ohos 主 140 + hms 扩展 19 两个坐标</td><td><span class="pill bad">回退</span> 拆分后触发 bare 编译回归，回退到单 ohos-capi（159）</td></tr>
   <tr><td>16</td><td>增加 ohosX64 支持</td><td><span class="pill warn">未做</span> 依赖 #14</td></tr>
+  <tr><td>18</td><td><b>修复 bare 回归</b>：cinterop 加 <code>-no-default-libs</code> + 把 dist-only def(posix/linux/gles3/glesCommon) 纳入 producer，让 klib depends 自闭环到 com.example</td><td><span class="pill ok">完成</span> run-all 全流程通过</td></tr>
 </table>
 
-<h3 class="bad">⚠️ 当前回归：bare 编译 platform.PerformanceAnalysisKit.HiLog unresolved</h3>
-<p>在 #14 拆分尝试后发现，<b>即使回退 #14（恢复 159 def 单 ohos-capi）+ 回退 #17，consumer-bare 编译仍报 <code>Unresolved reference 'OH_LOG_Print'</code> 等</b>——即 ohos-capi 的 cinterop klib 没加进 bare 编译 classpath。这是相对 #10 基线（当时 run-all 全绿）的回归。</p>
+<h3 class="ok">✅ bare 回归已解决（2026-06-29，#18）</h3>
+<p><b>根因</b>（通过 <code>~/git/reference/kotlin</code> cinterop 源码定位）：生产者 cinterop klib 的 manifest <code>depends</code> 写成 cpf 0.4 dist 的 platform lib 全名（<code>org.jetbrains.kotlin.native.platform.NeuralNetworkRuntime</code>），而非我们自己的 <code>com.example:ohos-capi-cinterop-NeuralNetworkRuntime</code>。消费者 HUAWEI dist(2.3.20) 把 <code>NeuralNetworkRuntime</code> 改名 <code>NeuralNetworkRuntimeKit</code>、删了 <code>glesCommon</code> → KLIB resolver 找不到 → ohos-capi 整条 depends 链加载中断 → 所有 <code>platform.*</code> unresolved。</p>
+<p>cinterop 默认从 dist 搜索路径加载，def 的 <code>depends = NeuralNetworkRuntime</code>（短名）按 short_name 解析到 dist 同名 klib 写进 manifest。<code>-library</code> 传我们的 klib 只供 stub 引用符号，<b>不改 manifest depends 记录的 unique_name</b>。之前 #13 的 cb95c46 commit 只改了 SUMMARY 文档没改 build，所以"完成"是假的。</p>
 <ul>
-  <li><b>已排除</b>：不是 #11（恢复 kotlin.native.home 仍 unresolved）；不是 static-lib-demo 传递冲突（去掉仍 unresolved）；不是 m2 残留（清空重 publish 仍 unresolved）；ohos-capi publish 成功、cache 下到 160 klib、.module variant files 含 cinterop、HiLog klib 的 package/abi/unique_name 都正确</li>
-  <li><b>症状</b>：bare 编译命令的 <code>-library</code> 参数里没有 ohos-capi 的 cinterop klib——Gradle/KMP 解析 ohos-capi variant 时没把 cinterop klib 传给 KN 编译</li>
-  <li><b>怀疑</b>：#12 不清空 dist 导致 ohos-capi 的 main klib depends 指向 cpf dist 内置的 posix（abi 2.2.0），HUAWEI（2.3.0）解析时版本/ABI 冲突；或 #11+#12+#17 叠加的 Gradle metadata 缓存问题。需二分定位</li>
-  <li><b>影响</b>：run-all.sh 当前<b>不能跑通</b>（bare link 失败）。producer publish 正常，capi-demo 的 autotest 代码未变（回归前 139/0）</li>
+  <li><b>解法 1</b>：cinterops 加 <code>extraOpts("-no-default-libs")</code> —— 模仿 cpf <code>GeneratePlatformLibraries.kt</code>，禁用 dist 自动加载，depends 只解析到我们 <code>-library</code> 传的 com.example klib。验证：所有 klib 的 depends 不再引用任何 <code>org.jetbrains.kotlin.native.platform.*</code></li>
+  <li><b>解法 2</b>：把 dist-only def（posix/linux/gles3/glesCommon）从 cpf 0.4 dist <code>konan/platformDef/ohos_arm64/</code> 拷进 producer —— 现在 producer 共 163 def，posix 等也成为 <code>com.example:ohos-capi-cinterop-posix</code> klib，<b>depends 完全自闭环，不假定 consumer dist 有任何 platformLib</b></li>
+  <li><b>端到端验证</b>：run-all 全流程通过 —— producer 发 164 klib；bare compile+link 过，设备 hilog 抓到 <code>posix getenv(PATH)=/data/app/bin:...</code>（Linux 基础库从 com.example klib 解析、compile/link/运行全通）；capi-demo autotest 139 用例 0 失败。libc2k.so NEEDED 只 4 个（libc/hilog/asset/c++_shared），<code>--as-needed</code> 丢弃 posix.def 的 <code>-lresolv/-lutil/-lcrypt/-lrt</code> 等未引用库</li>
 </ul>
-<p class="small">注：此回归是 #14 拆分过程中暴露的，但根因可能在 #11/#12（都验证过绿，但可能 cache 残留掩盖）。需要从 #10 基线逐步加改动定位。</p>
+<p class="small">注：posix.def 的 linkerOpts 是 Linux 系统库（-lresolv -lm -lpthread -lutil -lcrypt -lrt），ohos sysroot 都没有，但 <code>--as-needed</code> 丢弃未引用的所以 link 过、运行只走 libc.so。若未来某模块真用到 resolv/util/crypt 符号，需改 posix.def 适配 ohos（musl libc 已合并 pthread/math）。</p>
 </div>
 
 <h2>整体架构</h2>
@@ -355,8 +356,9 @@ publishing { publications { withType&lt;MavenPublication&gt; { artifactId = "oho
 
 <h2>遗留问题与注意事项</h2>
 <div class="card">
-<h3 class="ok">已解决（#10 基线验证过；当前 bare 回归未通过，见「当前状态」）</h3>
+<h3 class="ok">已解决（run-all 全流程验证通过，2026-06-29）</h3>
 <ul>
+  <li><b>bare 回归</b>（#18）：cinterop <code>-no-default-libs</code> + dist-only def 纳入 producer，depends 自闭环到 com.example</li>
   <li><b>跨版本 ABI</b>：cpf 0.4（abi_version 2.2.0）构建的 klib 被 2.3.20-HUAWEI（abi_version 2.3.0）读取 —— 同 major 兼容（#10 时编译/链接/运行均通过）</li>
   <li><b>符号导出</b>：消费者 <code>libkn.so</code> 的 NEEDED 含 <code>libhilog_ndk.z.so</code>/<code>libasset_ndk.z.so</code>/<code>libhuks_ndk.z.so</code> 等，设备进程 maps 全部加载（#10 时）</li>
   <li><b>159 def 全 cinterop 成功</b>，0 失败（当前仍成功）</li>
@@ -373,8 +375,7 @@ publishing { publications { withType&lt;MavenPublication&gt; { artifactId = "oho
 
 <h3 class="warn">真实 gap（待解）</h3>
 <ul>
-  <li><b class="bad">⚠️ bare 编译回归</b>：consumer-bare 编译 <code>platform.PerformanceAnalysisKit.HiLog</code> unresolved，ohos-capi 的 cinterop klib 没加进编译 classpath。run-all 当前不能跑通。详见「当前状态」节。需二分定位根因（#11/#12/#17 叠加?）</li>
-  <li><b>消费者要加 <code>-L&lt;HMS sysroot&gt;</code></b>：聚合 klib 带了 19 个扩展 Kit def 的 <code>linkerOpts</code>，<code>--as-needed</code> 下 ld 仍要找到这些 .so 才能判断未引用。consumer-bare/capi-demo 都加了这行（指向仓库内 sysroot）。<i>待 #14 拆分重新做后，不用扩展 Kit 的消费者无需此 -L</i></li>
+  <li><b>消费者要加 <code>-L&lt;HMS sysroot&gt;</code></b>：聚合 klib 带了 19 个扩展 Kit def 的 <code>linkerOpts</code>，<code>--as-needed</code> 下 ld 仍要找到这些 .so 才能判断未引用。consumer-bare/capi-demo 都加了这行（指向仓库内 sysroot）。待 #14 拆分重新做后（根因已在 #18 修复，重做不再回归），不用扩展 Kit 的消费者无需此 -L</li>
   <li><b>#14 拆分待重新做</b>：ohos 主 140 + hms 扩展 19 两个坐标。首次尝试触发 bare 回归，回退。重做时需确保 hms-klib 的 maven 坐标依赖 ohos-capi 坐标，且不破坏消费者解析</li>
   <li><b>#17 publication 警告待解</b>：artifactId 拆分破坏 .module variant 解析，回退 withType（benign 警告保留）。需找别的方式消警告</li>
   <li><b>ohosX64 待支持</b>（#16）：当前 klib 只发 ohosArm64，capi demo 的 x64 target 禁用。依赖 #14</li>
@@ -407,7 +408,7 @@ publishing { publications { withType&lt;MavenPublication&gt; { artifactId = "oho
   <tr><td class="path"><code>kn_sample/producer/PLAN.md</code></td><td>原始 6 步计划</td></tr>
   <tr><td class="path"><code>consumer-capi-demo/autotest.py</code></td><td>UI 自动化测试（hdc uitest 驱动，9 模块 139 用例）</td></tr>
   <tr><td class="path"><code>consumer-capi-demo/test_reports/</code></td><td>测试报告 CSV + HTML</td></tr>
-  <tr><td class="path"><code>m2/com/example/ohos-capi/22-0.1-SNAPSHOT/</code></td><td>发布的 160 个 klib（仓库内 m2/，gitignore）</td></tr>
+  <tr><td class="path"><code>m2/com/example/ohos-capi/22-0.1-SNAPSHOT/</code></td><td>发布的 164 个 klib（仓库内 m2/，gitignore）</td></tr>
 </table>
 </div>
 

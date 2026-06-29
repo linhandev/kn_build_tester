@@ -1,13 +1,13 @@
 # kn_sample
 
-用 cpf 0.4（Kotlin 2.2.21-0.4.0-03）把 HarmonyOS 独有的 159 个 cinterop def 封装成一个 Maven klib，
-给基于 2.3.20-HUAWEI 的消费者项目用，并通过 capi-demo 的 UI 自动化测试端到端验证。
+用 cpf 0.4（Kotlin 2.2.21-0.4.0-03）把 HarmonyOS 独有的 159 个 ohos-only cinterop def + 4 个 dist-only def（posix/linux/gles3/glesCommon）封装成一个 Maven klib，
+给基于 2.3.20-HUAWEI 的消费者项目用，并通过 capi-demo 的 UI 自动化测试端到端验证。klib depends 完全自闭环到 com.example 坐标，不依赖消费者 dist 的任何 platformLib。
 
 ## 仓库结构
 
 | 目录 | 角色 | Kotlin | 说明 |
 |---|---|---|---|
-| `producer/` | 生产者 | `2.2.21-0.4.0-03` (cpf 0.4) | `ohos-capi` 模块：遍历 159 个 ohos-only def 跑 cinterop，发布 `com.example:ohos-capi:22-0.1-SNAPSHOT` 到仓库内 `m2/`（gitignore） |
+| `producer/` | 生产者 | `2.2.21-0.4.0-03` (cpf 0.4) | `ohos-capi` 模块：遍历 163 个 def（159 ohos-only + 4 dist-only）跑 cinterop，发布 `com.example:ohos-capi:22-0.1-SNAPSHOT` 到仓库内 `m2/`（gitignore） |
 | `consumer-bare/` | 简单消费者 | `2.3.20-HUAWEI` | 最小 demo：依赖 maven klib，调用 HiLog + Asset，验证编译/链接/运行 |
 | `consumer-capi-demo/` | 复杂消费者 | `2.3.20-HUAWEI` | capi-demo 项目：9 模块 CAPI smoke test + `autotest.py` UI 自动化测试 |
 
