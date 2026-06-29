@@ -94,9 +94,11 @@ defs.forEach { d ->
 
 publishing {
     publications {
-        // Give target vs metadata publications different artifactIds to avoid .pom overwrite.
-        // Consumer depends on com.example:hilog-klib (the target publication, carries .klib).
-        named<MavenPublication>("ohosArm64") { artifactId = "hilog-klib" }
-        named<MavenPublication>("kotlinMultiplatform") { artifactId = "hilog-klib-metadata" }
+        // KMP metadata + target publications share artifactId hilog-klib (consumer depends on
+        // com.example:hilog-klib). The .pom overwrite warning is benign: .module carries per-target
+        // variants consumers resolve on. Splitting artifactIds breaks .module variant resolution.
+        withType<MavenPublication> {
+            artifactId = "hilog-klib"
+        }
     }
 }

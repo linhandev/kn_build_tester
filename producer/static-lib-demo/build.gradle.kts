@@ -35,7 +35,8 @@ kotlin {
 
 publishing {
     publications {
-        named<MavenPublication>("ohosArm64") { artifactId = "static-lib-demo" }
-        named<MavenPublication>("kotlinMultiplatform") { artifactId = "static-lib-demo-metadata" }
+        withType<MavenPublication> {
+            artifactId = "static-lib-demo"
+        }
     }
 }
