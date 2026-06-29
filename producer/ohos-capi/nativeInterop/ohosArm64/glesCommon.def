@@ -1,0 +1,5 @@
+depends = posix
+package = platform.glescommon
+headers = KHR/khrplatform.h
+headerFilter = KHR/**
+

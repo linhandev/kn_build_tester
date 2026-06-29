@@ -205,6 +205,60 @@ KN 的 `sharedLib` 产出的 `libc2k.so`/`libkn.so` 二进制里**没有 `DT_SON
 //   + -L<HMS> + -Wl,--as-needed + -Wl,-soname,libc2k.so
 ```
 
+#### bare demo 消费链路
+
+```mermaid
+flowchart TB
+    subgraph PROD["生产者 producer/ohos-capi · Kotlin 2.2.21-0.4.0-03 (cpf 0.4)"]
+        P1["遍历 159 个 .def 跑 cinterop<br/>每个 def 产一个 klib<br/>extraOpts: -Xshort-module-name=&lt;Def&gt;<br/>+ -I&lt;HMS sysroot&gt;<br/>+ -library &lt;传递闭包 dep klib&gt;"]
+        P2["打成单个 Maven 坐标<br/>com.example:ohos-capi:22-0.1-SNAPSHOT"]
+        P1 --> P2
+    end
+
+    subgraph KLIB["发布的 klib（160 个文件 → m2/com/example/ohos-capi/22-0.1-SNAPSHOT/）"]
+        K1["main klib<br/>unique_name = com.example:ohos-capi<br/>abi_version = 2.2.0"]
+        K2["159 个 cinterop klib<br/>unique_name = com.example:ohos-capi-cinterop-&lt;Def&gt;<br/>例: com.example:ohos-capi-cinterop-HiLog<br/>package = platform.PerformanceAnalysisKit.HiLog 等（cpf 原版，不可改）<br/>short_name = &lt;Def&gt;（供 depends 链解析）<br/>manifest: linkerOpts = -l&lt;_ndk.z&gt;（如 -lhilog_ndk.z）"]
+        K1 -. depends .-> K2
+    end
+
+    P2 --> KLIB
+
+    subgraph BARE["消费者 consumer-bare/kotlinApp · Kotlin 2.3.20-HUAWEI"]
+        B1["settings.gradle.kts<br/>仓库内 m2/ + devcloud(BasicAuth)<br/>无 cpf dist → 无内置 ohos platform klib"]
+        B2["build.gradle.kts<br/>implementation('com.example:ohos-capi:22-0.1-SNAPSHOT')<br/>+ implementation('com.example:static-lib-demo:22-0.1-SNAPSHOT')"]
+        B3["Gradle 读 .module 选 ohosArm64 variant<br/>拉 main klib + 用到的 cinterop klib<br/>跨版本 ABI: 2.2.0 被 2.3.0 读（同 major 兼容）"]
+        B1 --> B2 --> B3
+    end
+
+    KLIB -->|Gradle 解析| B3
+
+    subgraph COMPILE["编译期"]
+        C1["helloworld.kt<br/>import platform.PerformanceAnalysisKit.HiLog.OH_LOG_Print<br/>import platform.AssetStoreKit.AssetApi.OH_Asset_FreeBlob<br/>→ AssetApi depends AssetType（a→b 验证传递依赖解析）"]
+        C2["@CName('kn_helloworld')<br/>导出供 ArkTS/NAPI 调用"]
+        C1 --> C2
+    end
+
+    B3 --> C1
+
+    subgraph LINK["链接期 linkDebugSharedOhosArm64 → libc2k.so"]
+        L1["linkerOpts 来自 klib manifest<br/>-lhilog_ndk.z / -lasset_ndk.z / ... 159 个"]
+        L2["-L&lt;DevEco ohos sysroot&gt;（基础 Kit .so stub，自动）<br/>+ -L&lt;仓库内 HMS sysroot&gt;（扩展 Kit stub，手动补）<br/>+ -Wl,--as-needed → NEEDED 只留实际 UND 的库<br/>+ -Wl,-soname,libc2k.so → DT_SONAME=libc2k.so"]
+        L1 --> L2
+    end
+
+    C2 --> L1
+
+    subgraph RUN["运行期（设备 ROM）"]
+        R1["libentry.so (CMake/NAPI)<br/>DT_NEEDED = libc2k.so（裸名，因 soname）"]
+        R2["设备 ld 按裸名从 App libs/ dlopen libc2k.so<br/>libc2k.so NEEDED = libhilog_ndk.z.so / libasset_ndk.z.so / ...<br/>→ 设备 ROM 系统库按 soname 解析<br/>.so 不进 HAP"]
+        R1 --> R2
+    end
+
+    L2 --> R1
+```
+
+> 关键标识：Maven 坐标 `com.example:ohos-capi:22-0.1-SNAPSHOT`；main klib `unique_name=com.example:ohos-capi`、`abi_version=2.2.0`；cinterop klib `unique_name=com.example:ohos-capi-cinterop-<Def>`、`short_name=<Def>`、`package=platform.<Kit>.<Def>`（cpf 原版）；klib manifest 声明 `linkerOpts=-l<_ndk.z>` 但不嵌 .so；消费者补 `-L<HMS>` + `--as-needed` + `-soname,libc2k.so`。
+
 ### consumer-capi-demo
 
 真实 KMP 项目（composeApp + harmonyApp）：

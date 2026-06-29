@@ -15,9 +15,6 @@ kotlin {
         binaries {
             sharedLib {
                 baseName = "c2k"
-                freeCompilerArgs += "-Xadd-light-debug=enable"
-                // Keep runtime/static libs' DWARF in the linked .so (pairs with kotlin.native.isNativeRuntimeDebugInfoEnabled in Kotlin repo local.properties).
-                freeCompilerArgs += "-Xbinary=stripDebugInfoFromNativeLibs=false"
                 // Set SONAME so libentry.so's NEEDED records bare "libc2k.so" (not the host
                 // absolute IMPORTED_LOCATION path), letting the device dlopen it from the app's
                 // libs dir. Without this, runHelloWorld fails with {} (libentry.so can't load).

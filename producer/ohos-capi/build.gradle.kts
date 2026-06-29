@@ -63,6 +63,11 @@ kotlin {
                         create(d.name) {
                             defFile("$defDir/${d.name}.def")
                             extraOpts("-Xshort-module-name", d.name)
+                            // EXPERIMENT (bare-regression rootcause): disable dist auto-load so
+                            // depends resolves to our -library klibs (com.example:...) not dist
+                            // (org.jetbrains.kotlin.native.platform.*). Mirrors cpf's
+                            // GeneratePlatformLibraries -no-default-libs.
+                            extraOpts("-no-default-libs")
                             // HMS sysroot (additionalTargetSysRoot in cpf 0.4 konan.properties)
                             // holds the HarmonyOS-SDK-Only Kit headers (AppGalleryKit/CANNKit/
                             // DeviceSecurityKit/dataaugmentation/xengine etc.) that the main ohos
