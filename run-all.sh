@@ -37,12 +37,14 @@ green "✅ java/hdc/DevEco/HMS sysroot/设备/凭据 齐全"
 # ============ 1/4  producer: publish klib to repo-local m2 ============
 step "1/4  producer: publish (cpf 0.4 → ohos-capi + static-lib-demo, 仓库内 m2/)"
 cd "$PROD"
+export GRADLE_USER_HOME="${GRADLE_USER_HOME:-$ROOT/kn_sample-gradle-home}"
+export kotlin.native.home="${kotlin.native.home:-$HOME/.konan/kotlin-native-prebuilt-macos-aarch64-2.2.21-0.4.0-03}"
 ./gradlew --stop >/dev/null 2>&1 || true
-rm -rf "$ROOT/m2/com/example/ohos-capi" "$ROOT/m2/com/example/static-lib-demo"
+rm -rf "$ROOT/m2/org/cpf/kotlin/ohos-capi" "$ROOT/m2/org/cpf/kotlin/static-lib-demo"
 if ./gradlew :ohos-capi:publish :static-lib-demo:publish --no-daemon 2>&1 | tail -20 | grep -q "BUILD SUCCESSFUL"; then
-  klibs=$(ls "$ROOT/m2/com/example/ohos-capi/22-0.1-SNAPSHOT/"*.klib 2>/dev/null | wc -l | tr -d ' ')
+  klibs=$(ls "$ROOT/m2/org/cpf/kotlin/ohos-capi/22-0.1/"*.klib 2>/dev/null | wc -l | tr -d ' ')
   green "✅ ohos-capi 发布: $klibs 个 klib (期望 160)"
-  slklibs=$(ls "$ROOT/m2/com/example/static-lib-demo/22-0.1-SNAPSHOT/"*.klib 2>/dev/null | wc -l | tr -d ' ')
+  slklibs=$(ls "$ROOT/m2/org/cpf/kotlin/static-lib-demo/22-0.1/"*.klib 2>/dev/null | wc -l | tr -d ' ')
   green "✅ static-lib-demo 发布: $slklibs 个 klib (含嵌入 .a)"
 else
   fail "producer publish 失败"

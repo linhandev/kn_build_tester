@@ -1,23 +1,29 @@
 # kn_sample
 
 用 cpf 0.4（Kotlin 2.2.21-0.4.0-03）把 HarmonyOS 独有的 159 个 ohos-only cinterop def + 4 个 dist-only def（posix/linux/gles3/glesCommon）封装成一个 Maven klib，
-给基于 2.3.20-HUAWEI 的消费者项目用，并通过 capi-demo 的 UI 自动化测试端到端验证。klib depends 完全自闭环到 com.example 坐标，不依赖消费者 dist 的任何 platformLib。
+给基于 2.3.20-HUAWEI 的消费者项目用，并通过 capi-demo 的 UI 自动化测试端到端验证。klib depends 完全自闭环到 org.cpf.kotlin 坐标，不依赖消费者 dist 的任何 platformLib。
 
 ## 仓库结构
 
 | 目录 | 角色 | Kotlin | 说明 |
 |---|---|---|---|
-| `producer/` | 生产者 | `2.2.21-0.4.0-03` (cpf 0.4) | `ohos-capi` 模块：遍历 163 个 def（159 ohos-only + 4 dist-only）跑 cinterop，发布 `com.example:ohos-capi:22-0.1-SNAPSHOT` 到仓库内 `m2/`（gitignore） |
+| `producer/` | 生产者 | `2.2.21-0.4.0-03` (cpf 0.4) | `ohos-capi` 模块：遍历 163 个 def（159 ohos-only + 4 dist-only）跑 cinterop，发布 `org.cpf.kotlin:ohos-capi:22-0.1` 到仓库内 `m2/`（gitignore） |
 | `consumer-bare/` | 简单消费者 | `2.3.20-HUAWEI` | 最小 demo：依赖 maven klib，调用 HiLog + Asset，验证编译/链接/运行 |
 | `consumer-capi-demo/` | 复杂消费者 | `2.3.20-HUAWEI` | capi-demo 项目：9 模块 CAPI smoke test + `autotest.py` UI 自动化测试 |
+
+## patch depends 穿刺场景（biz-klib）
+
+`producer/biz-klib` 是一个**业务 klib**：cpf 0.4 编译，`import platform.PerformanceAnalysisKit.HiLog`，**不加 `-no-default-libs`**，所以 manifest `depends` 写 `org.jetbrains.kotlin.native.platform.HiLog`（CPF 原坐标）。HUAWEI 消费者 dist 没有这个库（CPF 170 个 platform klib，HUAWEI 仅 62 个），直接依赖会解析失败。
+
+`consumer-bare/kotlinApp` 的 `patchBizKlib` task 做**盘上 patch**：解压 biz-klib → 把 manifest `depends` 里的 `org.jetbrains.kotlin.native.platform.HiLog` 重定向到 `org.cpf.kotlin:ohos-capi-cinterop-HiLog`（ohos-capi 聚合自带）→ 重打包，再喂给编译。验证 `./gradlew :kotlinApp:linkDebugSharedOhosArm64` 通过。设计详见 `~/dl/task/独立capi封装/场景1-patch实现对比.html`。
 
 ## 工作流
 
 ```
-producer (cpf 0.4)  ──publish──>  m2/com/example/ohos-capi  (仓库内，gitignore)
+producer (cpf 0.4)  ──publish──>  m2/org/cpf/kotlin/ohos-capi  (仓库内，gitignore)
                                                     │
                               consumer-bare (HUAWEI) ┴ consumer-capi-demo (HUAWEI)
-                                    implementation("com.example:ohos-capi:22-0.1-SNAPSHOT")
+                                    implementation("org.cpf.kotlin:ohos-capi:22-0.1")
 ```
 
 ## 前置依赖（本机环境，非本仓库）

@@ -5,30 +5,26 @@ plugins {
     `maven-publish`
 }
 
+// 业务 klib:用 cpf 0.4 编译,代码里 import platform.PerformanceAnalysisKit.HiLog.*。
+// 关键:不加 -no-default-libs,让 import 解析到 cpf 0.4 dist 的内置 platformLib
+// (org.jetbrains.kotlin.native.platform.HiLog),于是本 klib 的 manifest depends 写
+// org.jetbrains.kotlin.native.platform.HiLog —— 这正是消费者侧 patch 的目标:
+// HUAWEI dist 没有这个库,patch 把 depends 重定向到 com.example:ohos-capi-cinterop-HiLog。
+// 详见 task/独立capi封装/场景1-patch实现对比.html。
+
 group = "org.cpf.kotlin"
 
-base.archivesName.set("static-lib-demo")
+base.archivesName.set("biz-klib")
 
 kotlin {
     ohosArm64 {
-        compilations {
-            val main by getting {
-                cinterops {
-                    val mylib by creating {
-                        defFile("$projectDir/nativeInterop/ohosArm64/mylib.def")
-                        // .h and .a live in csrc/
-                        extraOpts("-compiler-option", "-I$projectDir/csrc")
-                        extraOpts("-libraryPath", "$projectDir/csrc")
-                    }
-                }
-            }
-        }
+        // 只发 klib,不出 .so。
     }
     sourceSets {
         val ohosArm64Main by getting {
             dependencies {
-                // depends on ohos-capi so the demo consumer can pull both via one coordinate
-                implementation("org.cpf.kotlin:ohos-capi:${property("klibVersion")}")
+                // 不依赖 com.example:ohos-capi —— 业务 klib 故意让 HiLog 走 dist 的
+                // org.jetbrains 坐标,而非 com.example 自闭环坐标,这样 depends 才写 org.jetbrains。
             }
         }
     }
@@ -37,11 +33,9 @@ kotlin {
 publishing {
     publications {
         withType<MavenPublication> {
-            artifactId = "static-lib-demo"
+            artifactId = "biz-klib"
         }
     }
-    // Publish to the repo-local Maven repo (kn_sample/m2, gitignored) instead of ~/.m2.
-    // Use `./gradlew :static-lib-demo:publish`. 同时发布到 colab 远程仓库(凭据在 local.properties)。
     repositories {
         maven { url = uri(rootProject.projectDir.parentFile.resolve("m2")) }
         val localProps = Properties().apply {

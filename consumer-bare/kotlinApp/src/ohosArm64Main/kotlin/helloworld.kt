@@ -1,32 +1,19 @@
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlinx.cinterop.ExperimentalForeignApi::class)
 
-import platform.PerformanceAnalysisKit.HiLog.OH_LOG_Print
-import platform.PerformanceAnalysisKit.HiLog.LOG_APP
-import platform.PerformanceAnalysisKit.HiLog.LOG_INFO
-// a->b test: AssetApi (depends AssetType) — both from the cpf 0.4-built ohos-capi (maven local).
-import platform.AssetStoreKit.AssetApi.OH_Asset_FreeBlob
-import platform.AssetStoreKit.AssetType.Asset_Blob
-// staticLibraries demo: mylib_add/mylib_answer come from .a embedded in static-lib-demo klib.
-import demo.mylib.mylib_add
-import demo.mylib.mylib_answer
-// posix demo: getenv comes from the posix klib (com.example:ohos-capi-cinterop-posix), built from
-// the dist-only posix.def now checked into the producer. Tests that a Linux-base platform lib
-// resolves at compile + link + runtime on ohos (carries linkerOpts -lresolv -lm -lpthread ...).
-import platform.posix.getenv
-import kotlinx.cinterop.toKString
+// 隔离验证:本文件只调用 biz-klib 的 bizAip(),它引用 platform.DataAugmentationKit.AIP.AIP_OK
+// (AIP 是 CPF 独有、HUAWEI 无的 platform 库)。不调任何其它 platform 符号,以隔离变量。
+//
+// 验证命题:
+//  - 消费者加 implementation("com.example:ohos-capi") 独立 binding → bizAip() 能 link(独立 binding
+//    提供了 platform.DataAugmentationKit.AIP package,按 FQN 找到 AIP_OK)
+//  - 消费者不加独立 binding → bizAip() 符号找不到,link 失败
+//  - biz-klib manifest depends 写 org.jetbrains.kotlin.native.platform.AIP(HUAWEI 无),不 patch,
+//    对 link 无影响(unique_name 不被严格要求)
 
 @CName("kn_helloworld")
 fun helloworld(): String {
-    OH_LOG_Print(LOG_APP, LOG_INFO, 0x1234u, "kn_demo", "HiLog klib OK; testing AssetApi->AssetType")
-    // Exercise a symbol from AssetApi that references a type (Asset_Blob) defined in AssetType —
-    // proves the a->b klib dependency resolves at compile + link time. Pass null (free of nothing).
-    OH_Asset_FreeBlob(null)
-    // staticLibraries demo: .a linked automatically by KGP (no -L/-l), symbol resolves at link.
-    val r = mylib_add(mylib_answer(), mylib_answer())  // 42 + 42 = 84
-    OH_LOG_Print(LOG_APP, LOG_INFO, 0x1234u, "kn_demo", "static-lib-demo mylib_add(42,42)=$r")
-    // posix demo: read PATH env var. Proves the posix klib (Linux-base platform lib) resolves end
-    // to end — getenv symbol from our com.example posix klib, libc at runtime on the device.
-    val path = getenv("PATH")?.toKString() ?: "<null>"
-    OH_LOG_Print(LOG_APP, LOG_INFO, 0x1234u, "kn_demo", "posix getenv(PATH)=$path")
-    return "Hello from Kotlin/Native"
+    // 调 bizAvTranscoder(),它引用 platform.MediaKit.AVTranscoder.OH_AVTranscoderConfig_Create(真函数)。
+    // link 成功 ⇔ 消费者依赖里有提供 platform.MediaKit.AVTranscoder package 的库(独立 binding)。
+    val ptr = bizAvTranscoder()
+    return "bizAvTranscoder()=0x${ptr.toString(16)}"
 }

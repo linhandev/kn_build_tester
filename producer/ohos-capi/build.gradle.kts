@@ -1,11 +1,12 @@
+import java.util.Properties
+
 plugins {
     kotlin("multiplatform")
     `maven-publish`
 }
 
 // NOTE: groupId `com.example` is a placeholder — pending decision (see design/DESIGN.md §6).
-group = "com.example"
-version = "22-0.1-SNAPSHOT"
+group = "org.cpf.kotlin"
 
 base.archivesName.set("ohos-capi")
 
@@ -109,7 +110,29 @@ publishing {
     }
     // Publish to the repo-local Maven repo (kn_sample/m2, gitignored) instead of ~/.m2, so the
     // published klibs are inspectable alongside the source. Use `./gradlew :ohos-capi:publish`.
+    // 同时发布到 colab 远程仓库(凭据在 local.properties 的 colabMavenUser/Pass),供消费者拉取。
     repositories {
         maven { url = uri(rootProject.projectDir.parentFile.resolve("m2")) }
+        val localProps = Properties().apply {
+            runCatching { rootProject.file("local.properties").inputStream() }.getOrNull()?.let { load(it) }
+        }
+        val colabUser = System.getenv("COLAB_MAVEN_USER") ?: localProps.getProperty("colabMavenUser")
+        val colabPass = System.getenv("COLAB_MAVEN_PASS") ?: localProps.getProperty("colabMavenPass")
+        if (!colabUser.isNullOrEmpty() && !colabPass.isNullOrEmpty()) {
+            maven {
+                name = "colab"
+                url = uri("https://packages.aliyun.com/687e79a0e94e043d2d0f76ea/maven/colab")
+                credentials { username = colabUser; password = colabPass }
+                authentication { create("basic", org.gradle.authentication.http.BasicAuthentication::class.java) }
+            }
+        }
     }
 }
+
+// colab 远程仓库不允许同路径覆盖(409),而 KMP 的 kotlinMultiplatform metadata publication 与
+// ohosArm64 target publication 共用 artifactId,两者都 PUT <artifact>-<version>.pom/.module 会
+// 冲突。本地 m2 允许覆盖(benign,见 DESIGN.md #17),colab 不允许。只发 target publication 到
+// colab(含 .klib + .module + .pom,consumer 按 .module 的 ohosArm64 variant 解析),跳过 metadata。
+tasks.matching {
+    it.name == "publishKotlinMultiplatformPublicationToColabRepository"
+}.configureEach { enabled = false }

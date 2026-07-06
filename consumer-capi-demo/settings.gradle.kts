@@ -10,8 +10,19 @@ pluginManagement {
     }
     val huaweiUser = System.getenv("HUAWEI_MAVEN_USER") ?: localProps.getProperty("huaweiMavenUser")
     val huaweiPass = System.getenv("HUAWEI_MAVEN_PASS") ?: localProps.getProperty("huaweiMavenPass")
+    val colabUser = System.getenv("COLAB_MAVEN_USER") ?: localProps.getProperty("colabMavenUser")
+    val colabPass = System.getenv("COLAB_MAVEN_PASS") ?: localProps.getProperty("colabMavenPass")
     repositories {
-        maven { url = uri(rootDir.parentFile.resolve("m2")) }
+        // colab: 发布 org.cpf.kotlin klib 的仓库(凭据在 local.properties)
+        maven {
+            url = uri("https://packages.aliyun.com/687e79a0e94e043d2d0f76ea/maven/colab")
+            if (colabUser != null && colabPass != null) {
+                credentials { username = colabUser; password = colabPass }
+                authentication { create("basic", org.gradle.authentication.http.BasicAuthentication::class.java) }
+            }
+        }
+        // 本地 m2 已注释——走 colab 远程仓验证。需本地调试时解开。
+        // maven { url = uri(rootDir.parentFile.resolve("m2")) }
         maven {
             url = uri("https://devrepo.devcloud.cn-north-4.huaweicloud.com/artgalaxy/cn-north-4_a8338babc8534bb8aabb062c35845155_maven_7_1/")
             if (huaweiUser != null && huaweiPass != null) {
@@ -38,8 +49,19 @@ dependencyResolutionManagement {
     }
     val huaweiUser = System.getenv("HUAWEI_MAVEN_USER") ?: localProps.getProperty("huaweiMavenUser")
     val huaweiPass = System.getenv("HUAWEI_MAVEN_PASS") ?: localProps.getProperty("huaweiMavenPass")
+    val colabUser = System.getenv("COLAB_MAVEN_USER") ?: localProps.getProperty("colabMavenUser")
+    val colabPass = System.getenv("COLAB_MAVEN_PASS") ?: localProps.getProperty("colabMavenPass")
     repositories {
-        maven { url = uri(rootDir.parentFile.resolve("m2")) }
+        // colab: 发布 org.cpf.kotlin klib 的仓库(凭据在 local.properties)
+        maven {
+            url = uri("https://packages.aliyun.com/687e79a0e94e043d2d0f76ea/maven/colab")
+            if (colabUser != null && colabPass != null) {
+                credentials { username = colabUser; password = colabPass }
+                authentication { create("basic", org.gradle.authentication.http.BasicAuthentication::class.java) }
+            }
+        }
+        // 本地 m2 已注释——走 colab 远程仓验证。需本地调试时解开。
+        // maven { url = uri(rootDir.parentFile.resolve("m2")) }
         maven {
             url = uri("https://devrepo.devcloud.cn-north-4.huaweicloud.com/artgalaxy/cn-north-4_a8338babc8534bb8aabb062c35845155_maven_7_1/")
             if (huaweiUser != null && huaweiPass != null) {

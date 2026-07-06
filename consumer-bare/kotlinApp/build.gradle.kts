@@ -2,15 +2,35 @@ plugins {
     kotlin("multiplatform")
 }
 
-group = "com.example"
-version = "22-0.1-SNAPSHOT"
+group = "org.cpf.kotlin"
 
 fun String.capitalize() = replaceFirstChar { it.uppercase() }
+
+// ─── patch depends 闭环(透明 ArtifactTransform,不侵入开发者依赖声明) ──────────
+// 开发者写正常 maven 坐标 implementation("org.cpf.kotlin:biz-klib:..."),Gradle 解析出原始
+// klib artifact(org.jetbrains.kotlin.klib type)后,buildSrc 里的 PatchBizKlibTransform
+// 自动把它换成 patched 版本:manifest depends 从 org.jetbrains.kotlin.native.platform.HiLog
+// 重定向到 org.cpf.kotlin:ohos-capi-cinterop-HiLog(m2 里 ohos-capi 聚合自带)。开发者无需感知。
+// 盘上 patch:zip 解包 → 改 default/manifest → 重打包。无完整性校验。
+// 详见 task/独立capi封装/场景1-patch实现对比.html。
+
+// 重定向规则:org.jetbrains.kotlin.native.platform.AIP -> org.cpf.kotlin:ohos-capi-cinterop-AIP
+// AIP 是 CPF 独有库(DataAugmentationKit),HUAWEI dist 既无此 unique_name 也无此 package 聚合,
+// 是真"patch 必要"场景。
+val bizDependRedirects = mapOf(
+    "org.jetbrains.kotlin.native.platform.AIP" to "org.cpf.kotlin:ohos-capi-cinterop-AIP",
+)
+
+// 注册 transform(放 buildSrc 是因为 build script 顶层 registerTransform 的 lambda 类型
+// 在 Kotlin DSL 里有歧义重载,SAM 转换不工作)。
+// 当前验证:同 type transform 不触发,且按 FQN 解析可能不需要 patch。先注释掉,验证未 patch
+// 时 bizAip() 调用能否 link 成功(消费者有 ohos-capi 提供 AIP package)。
+// org.cpf.kotlin.patch.applyBizKlibPatchTransform(project, bizDependRedirects, namePrefix = "biz-klib")
 
 kotlin {
     ohosArm64 {
         // HiLog bindings now come from the cpf 0.4-built klib published to maven local
-        // (com.example:ohos-capi:22-0.1-SNAPSHOT, package platform.PerformanceAnalysisKit.HiLog),
+        // (org.cpf.kotlin:ohos-capi:22-0.1-SNAPSHOT, package platform.PerformanceAnalysisKit.HiLog),
         // built in the kn_samples-ohos-def repo. No local cinterop here.
         binaries {
             sharedLib {
@@ -35,11 +55,12 @@ kotlin {
     sourceSets {
         val ohosArm64Main by getting {
             dependencies {
-                // klib built with cpf 0.4 (abi_version 2.2.0); read by 2.3.20-HUAWEI (same major 2.x).
-                implementation("com.example:ohos-capi:22-0.1-SNAPSHOT")
-                // static-lib-demo: cinterop with staticLibraries (.a embedded in klib).
-                // Consumer links the .a automatically (KGP handles included .a), no -L/-l needed.
-                implementation("com.example:static-lib-demo:22-0.1-SNAPSHOT")
+                // 隔离验证:只依赖 biz-klib(它 depends 写 org.jetbrains.kotlin.native.platform.AIP,
+                // HUAWEI dist 无此库)。切换下面一行注释来对照"有/无独立 binding"两种情况。
+                implementation("org.cpf.kotlin:biz-klib:${property("klibVersion")}")
+                // ✅ 有独立 binding:解开下面这行,bizAip() 能 link(ohos-capi 提供 AIP package)
+                implementation("org.cpf.kotlin:ohos-capi:${property("klibVersion")}")
+                // ❌ 无独立 binding:注释掉上面这行,bizAip() 符号找不到,link 失败
             }
         }
     }

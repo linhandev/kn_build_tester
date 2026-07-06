@@ -27,3 +27,4 @@ rootProject.name = "c2k"
 
 include("ohos-capi")
 include("static-lib-demo")
+include("biz-klib")

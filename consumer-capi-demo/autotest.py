@@ -127,28 +127,66 @@ class ModuleTestRunner:
             return subprocess.CompletedProcess(args, 1, "", str(e))
 
     def _dump_layout(self) -> str:
-        """dump 当前页面布局并返回文本"""
+        """dump 当前页面布局并返回文本。用 -i 不合并窗口——App 窗口常被 sceneboard
+        遮挡层级，合并模式抓不到 com.kotlin.demo 节点；-i 输出所有窗口根节点（list）。
+        下游 find_button/extract_page_text 期望单个根 dict，这里把 list 合成虚拟根。"""
         layout_file = "/data/local/tmp/_autotest_layout.json"
-        self._hdc(["shell", "uitest", "dumpLayout", "-p", layout_file], timeout=15)
-        return self._hdc(["shell", "cat", layout_file], timeout=15).stdout
+        self._hdc(["shell", "uitest", "dumpLayout", "-i", "-p", layout_file], timeout=15)
+        raw = self._hdc(["shell", "cat", layout_file], timeout=15).stdout
+        try:
+            data = json.loads(raw)
+            if isinstance(data, list):
+                # 多窗口 list → 合成虚拟根，children 为各窗口根节点
+                return json.dumps({"attributes": {}, "children": data})
+            return raw  # 已经是单个 dict
+        except Exception:
+            return raw
+
+    def wake_unlock(self) -> None:
+        """亮屏 + 上滑解锁。设备锁屏时 aa start 虽返回 success 但 App UI 不渲染，
+        dump 全是 com.ohos.sceneboard/ScreenLock。每个模块开始前调用。
+        keyEvent 224 = WAKEUP（比 Power 可靠，Power 会切亮/灭）。"""
+        self._hdc(["shell", "uitest", "uiInput", "keyEvent", "224"], timeout=8)
+        time.sleep(0.4)
+        self._hdc(["shell", "uitest", "uiInput", "swipe", "500", "2000", "500", "300", "400"], timeout=8)
+        time.sleep(0.4)
 
     def _poll_text(self, needles, timeout: int = 10, interval: float = 0.5) -> Optional[str]:
-        """轮询 dumpLayout 直到页面出现任一目标文字（短 sleep + 断言），超时返回 None。"""
+        """轮询 dumpLayout 直到页面出现任一目标文字（短 sleep + 断言），超时返回 None。
+        dump 过短（<200 字符，黑屏/锁屏）时触发亮屏解锁重试。"""
         if isinstance(needles, str):
             needles = [needles]
         deadline = time.time() + timeout
+        black_streak = 0
         while time.time() < deadline:
             last = self._dump_layout()
+            if len(last) < 200:
+                black_streak += 1
+                if black_streak >= 3:
+                    self.wake_unlock()
+                    black_streak = 0
+            else:
+                black_streak = 0
             if any(n in last for n in needles):
                 return last
             time.sleep(interval)
         return None
 
     def _poll_button(self, patterns, timeout: int = 10, interval: float = 0.5) -> Optional[Tuple[int, int]]:
-        """轮询 dumpLayout 直到目标按钮出现，返回坐标，超时返回 None。"""
+        """轮询 dumpLayout 直到目标按钮出现，返回坐标，超时返回 None。
+        dump 过短（黑屏）时触发亮屏解锁重试。"""
         deadline = time.time() + timeout
+        black_streak = 0
         while time.time() < deadline:
-            pos = self.find_button(self._dump_layout(), patterns)
+            layout = self._dump_layout()
+            if len(layout) < 200:
+                black_streak += 1
+                if black_streak >= 3:
+                    self.wake_unlock()
+                    black_streak = 0
+            else:
+                black_streak = 0
+            pos = self.find_button(layout, patterns)
             if pos:
                 return pos
             time.sleep(interval)
@@ -504,6 +542,7 @@ class ModuleTestRunner:
         
         # 1. 启动App回到主页（轮询等主页渲染，不固定 sleep）
         print("🚀 启动App...")
+        self.wake_unlock()
         self._hdc(["shell", "aa", "start", "-a", ABILITY, "-b", BUNDLE], timeout=15)
         # 2. 轮询查找模块按钮（短 sleep + 断言按钮出现）
         module_patterns = MODULE_UI_LABELS.get(module_name, [module_name])
@@ -588,6 +627,12 @@ class ModuleTestRunner:
             print("❌ 未检测到设备")
             return False
         print(f"✅ 设备已连接: {r.stdout.strip()}")
+
+        # 开头：退出应用 + 重新点亮屏幕，确保从干净状态开始
+        print("💡 亮屏 + 退出旧应用进程...")
+        self.wake_unlock()
+        self._hdc(["shell", "aa", "force-stop", "com.kotlin.demo"], timeout=10)
+        time.sleep(1)
         
         modules = ["RDB", "CommonEvent", "HuksKeyApi", "NetConnection",
                    "HiAppEvent", "HiLog", "Drawing", "Failure", "VersionGuard"]

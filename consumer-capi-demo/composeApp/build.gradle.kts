@@ -61,7 +61,7 @@ kotlin {
         val ohosArm64Main by getting {
             dependencies {
                 // klib built with cpf 0.4 (159 ohos-only defs), consumed by 2.3.20-HUAWEI.
-                implementation("com.example:ohos-capi:22-0.1-SNAPSHOT")
+                implementation("org.cpf.kotlin:ohos-capi:${property("klibVersion")}")
             }
         }
     }

@@ -1,7 +1,7 @@
 # Plan: build & publish HiLog cinterop klib (cpf 0.4) for the HUAWEI consumer
 
 ## Goal
-Produce a klib `com.example:ohos-capi:22-0.1-SNAPSHOT` (package `platform.PerformanceAnalysisKit.HiLog`,
+Produce a klib `org.cpf.kotlin:ohos-capi:22-0.1` (package `platform.PerformanceAnalysisKit.HiLog`,
 symbols identical to cpf 0.4's platformLib HiLog) built with **cpf 0.4** (`2.2.21-0.4.0-03`), published
 to **maven local**. It is consumed by the **2.3.20-HUAWEI** project in the `kn_samples-bare` repo.
 
@@ -65,7 +65,7 @@ to confirm `OH_LOG_Print` etc. are present.
 
 ## Consumer (in kn_samples-bare, after producer publishes) — separate step
 - `kotlinApp/build.gradle.kts`: drop `cinterops { hiLog }`, drop `nativeInterop/`, add
-  `dependencies { ohosArm64MainImplementation("com.example:ohos-capi:22-0.1-SNAPSHOT") }`
+  `dependencies { ohosArm64MainImplementation("org.cpf.kotlin:ohos-capi:22-0.1") }`
 - `settings.gradle.kts` already has `mavenLocal()` and stays on `2.3.20-HUAWEI`.
 - Run `startHarmonyAppDebug` to validate the HUAWEI project links the cpf-0.4-built klib.
 - ABI note: klib `abi_version=2.2.0` read by `2.3.20` compiler — same major (2.x), supported;
