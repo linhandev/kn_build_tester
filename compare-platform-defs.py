@@ -104,33 +104,50 @@ def main():
     # 以 cpf 为准建 package→targets 映射(判断"其他 target 也有")
     cpf_mapping = build_cpf_pkg_targets(cpf_root)
 
+    # 三组交集合并成表:每行一个库名,标注在 byte/kuikly/bilibili 哪几家有冲突
+    # 列:库名 | 其他target有 | byte | kuikly | bilibili(huawei)
+    # 按"冲突家数"降序,再按库名排序
+    inter_byte = cpf_pkgs & byte_pkgs
+    inter_kuikly = cpf_pkgs & kuikly_pkgs
+    inter_huawei = cpf_pkgs & huawei_pkgs
+    all_conflict = inter_byte | inter_kuikly | inter_huawei
+
+    # 给每个库名算:冲突家数(0-3),其他target有没有
+    rows = []
+    for p in all_conflict:
+        in_byte = "v" if p in inter_byte else ""
+        in_kuikly = "v" if p in inter_kuikly else ""
+        in_bilibili = "v" if p in inter_huawei else ""
+        # 其他target:以 cpf 为准,有非 ohos target 就标 v
+        targets = cpf_mapping.get(p, set())
+        other_targets = any(not t.startswith("ohos_") for t in targets)
+        other_mark = "v" if other_targets else ""
+        count = (1 if in_byte else 0) + (1 if in_kuikly else 0) + (1 if in_bilibili else 0)
+        rows.append((count, p, other_mark, in_byte, in_kuikly, in_bilibili))
+
+    # 按冲突家数降序,再按库名
+    rows.sort(key=lambda r: (-r[0], r[1]))
+
     print("=" * 70)
-    print("  与 cpf 的交集 (所有冲突都列出)")
-    print("  [其他target也有] = cpf dist 里该 package 还出现在非 ohos_arm64 target")
+    print("  与 cpf 的冲突 (按冲突家数降序)")
+    print("  其他target有 = cpf dist 里该 package 还出现在非 ohos target")
+    print("  byte/kuikly/bilibili 列:与 cpf 撞名写 v")
     print("=" * 70)
     print()
-
-    def print_intersect(name, other_pkgs):
-        inter = sorted(cpf_pkgs & other_pkgs)
-        print(f"====== {name} ({len(inter)} 个) ======")
-        if not inter:
-            print("(无)")
-        else:
-            for p in inter:
-                print(f"{p}{mark_other_targets(p, cpf_mapping)}")
-        print()
-
-    print_intersect("cpf ∩ byte", byte_pkgs)
-    print_intersect("cpf ∩ kuikly", kuikly_pkgs)
-    print_intersect("cpf ∩ huawei", huawei_pkgs)
+    print(f"| {'库名':<28} | 其他target有 | byte | kuikly | bilibili |")
+    print(f"|{'-'*30}|{'-'*14}|{'-'*6}|{'-'*8}|{'-'*10}|")
+    for count, p, other_mark, in_byte, in_kuikly, in_bilibili in rows:
+        print(f"| {p:<28} | {other_mark:<12} | {in_byte:<4} | {in_kuikly:<6} | {in_bilibili:<8} |")
+    print()
 
     print("=" * 70)
     print("  说明")
     print("=" * 70)
     print("- 冲突 = 同 package FQN 在 cpf 和该 dist 都存在")
-    print("- [其他target也有] = 该 package 在 cpf dist 的非 ohos_arm64 target")
-    print("  (linux_x64/android_arm64/ios_arm64 等)也存在——独立封装若发会和多家 dist 撞定义")
-    print("- 无标注 = 该 package 只在 cpf 的 ohos_arm64 出现,是 ohos 独有")
+    print("- 其他target有 v = 该 package 在 cpf dist 的非 ohos target(linux/android/ios 等)")
+    print("  也存在——独立封装若发会和多家 dist 撞定义")
+    print("- 其他target有 空 = 该 package 只在 ohos target 出现,是 ohos 独有")
+    print("- byte/kuikly/bilibili 列 v = 与 cpf 该 dist 撞名")
 
 if __name__ == "__main__":
     main()
