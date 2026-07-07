@@ -26,5 +26,6 @@ dependencyResolutionManagement {
 rootProject.name = "c2k"
 
 include("ohos-capi")
+include("hms-capi")
 include("static-lib-demo")
 include("biz-klib")

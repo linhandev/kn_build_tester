@@ -20,13 +20,6 @@ base.archivesName.set("ohos-capi")
 
 val defDir = file("$projectDir/nativeInterop/ohosArm64")
 val cinteropOutDir = layout.buildDirectory.dir("classes/kotlin/ohosArm64/main/cinterop")
-// Sysroots are checked into the repo (sysroot/ at repo root, parent of producer/).
-val repoRoot = rootProject.projectDir.parentFile!!
-val hmsSysroot = file("$repoRoot/sysroot/sysroot-hms-aarch64-6.0.2.640-02")
-// HMS sysroot (additionalTargetSysRoot.ohos in cpf 0.4 konan.properties) — HarmonyOS-SDK-Only Kits
-// (AppGalleryKit/CANNKit/DeviceSecurityKit/dataaugmentation/xengine etc.) whose headers the main
-// ohos sysroot lacks. cinterop doesn't auto-add it, so add -I here.
-val hmsInclude = file("$hmsSysroot/usr/include")
 
 // Parse each def: name -> depends (by short_name as written in the def).
 data class DefInfo(val name: String, val depends: List<String>)
@@ -69,11 +62,6 @@ kotlin {
                             // (org.jetbrains.kotlin.native.platform.*). Mirrors cpf's
                             // GeneratePlatformLibraries -no-default-libs.
                             extraOpts("-no-default-libs")
-                            // HMS sysroot (additionalTargetSysRoot in cpf 0.4 konan.properties)
-                            // holds the HarmonyOS-SDK-Only Kit headers (AppGalleryKit/CANNKit/
-                            // DeviceSecurityKit/dataaugmentation/xengine etc.) that the main ohos
-                            // sysroot lacks. cinterop doesn't auto-add it, so add -I here.
-                            extraOpts("-compiler-option", "-I$hmsInclude")
                             // Load the full transitive closure of depends as -library (cinterop's
                             // -library only loads direct deps; a depended klib's own transitive
                             // depends aren't auto-resolved from -libraryPath, so pass them all).

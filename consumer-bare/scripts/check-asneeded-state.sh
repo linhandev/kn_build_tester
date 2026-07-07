@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # 两个断言一起验证 def 的 --push-state --as-needed ... --pop-state 既"不泄漏"又"真生效":
 #
-# 断言 1(不泄漏):全局 as 状态探针 -ltss2-tctildr
+# 断言 1(不泄漏):全局 as 状态探针 -lEGL
 #   consumer-bare 链接器处于 no-as-needed(lld 默认)。
-#   故意 -ltss2-tctildr(bare 没用到、不在任何 def 的 linkerOpts、HMS sysroot 有 stub)。
+#   故意 -lEGL(bare 没用到、不在任何 def 的 linkerOpts、ohos 主 sysroot 有 stub,KN 自动 -L)。
 #     - 全局 no-as-needed → 探针库(哪怕未引用)进 NEEDED  ← 我们要的
 #     - 全局被泄漏成 as-needed → 探针库被当未引用丢弃,不在 NEEDED  ← 失败
 #   探针在 NEEDED ⇔ 全局 no-as-needed ⇔ def 的 push/pop 没把 --as-needed 泄漏到全局。
@@ -28,9 +28,10 @@ cd "$_script_dir/.."
 DEV="/Applications/DevEco-Studio.app"
 READELF="$DEV/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf"
 SO="kotlinApp/build/bin/ohosArm64/debugShared/libc2k.so"
-# 探针:全局 as 状态探针。bare 没用到、不在任何 def 的 linkerOpts 里、HMS sysroot 有 stub。
-# 全局 no-as-needed → 进 NEEDED;全局被泄漏成 as-needed → 被丢,不在 NEEDED。
-PROBE="libtss2-tctildr.so"
+# 探针:全局 as 状态探针。bare 没用到、不在任何 def 的 linkerOpts 里、ohos 主 sysroot 有 stub
+# (KN 自动加 -L 指向 ohos 主 sysroot,无需 consumer 配)。全局 no-as-needed → 进 NEEDED;
+# 全局被泄漏成 as-needed → 被丢,不在 NEEDED。
+PROBE="libEGL.so"
 # 反例:按需生效探针。bare 没用到,但多个 def 的 linkerOpts 里有 -lohcrypto(ohos 主 sysroot
 # 有 stub)。def 内 --push-state --as-needed 生效 → 未引用的 ohcrypto 被丢,不在 NEEDED;
 # 若 def 内 as-needed 没生效 → ohcrypto 进 NEEDED(连同其余 150+ 个库)。

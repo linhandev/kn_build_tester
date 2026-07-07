@@ -29,7 +29,11 @@ import sys, os, re, argparse
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent
-DEF_DIR = REPO_ROOT / "producer" / "ohos-capi" / "nativeInterop" / "ohosArm64"
+# 拆分后 def 分布在两个模块:ohos-capi(144 ohos def)+ hms-capi(19 hms def)。脚本对两边都管。
+DEF_DIRS = [
+    REPO_ROOT / "producer" / "ohos-capi" / "nativeInterop" / "ohosArm64",
+    REPO_ROOT / "producer" / "hms-capi" / "nativeInterop" / "ohosArm64",
+]
 
 # 状态控制类 token:这些一旦出现就会改变链接器 as-needed 状态,绝不能混进我们的 push/pop 组里
 # (否则我们就在改变"原有链接选项状态",违反硬约束)。
@@ -174,9 +178,12 @@ def check_file(def_path: Path):
 # ---------- 主流程 ----------
 
 def iter_def_files():
-    if not DEF_DIR.is_dir():
-        sys.exit(f"❌ def 目录不存在: {DEF_DIR}")
-    return sorted(DEF_DIR.glob("*.def"))
+    files = []
+    for d in DEF_DIRS:
+        if not d.is_dir():
+            sys.exit(f"❌ def 目录不存在: {d}")
+        files.extend(d.glob("*.def"))
+    return sorted(files)
 
 def cmd_dryrun(files):
     """打印将改写的 def + 前后对比,不落盘。"""
@@ -208,7 +215,7 @@ def cmd_dryrun(files):
     print("=" * 70)
     print("  wrap-linkeropts dry-run (不落盘)")
     print("=" * 70)
-    print(f"def 目录: {DEF_DIR}")
+    print(f"def 目录: {[str(d.relative_to(REPO_ROOT)) for d in DEF_DIRS]}")
     print(f"def 总数: {len(files)}")
     print()
 

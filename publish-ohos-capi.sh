@@ -40,9 +40,9 @@ export GRADLE_USER_HOME="${GRADLE_USER_HOME:-$ROOT/kn_sample-gradle-home}"
 [ -d "$GRADLE_USER_HOME" ] || export GRADLE_USER_HOME="$HOME/.gradle"
 
 cd "$PROD"
-env kotlin.native.home="$CPF_DIST" ./gradlew :ohos-capi:publish --no-daemon
+env kotlin.native.home="$CPF_DIST" ./gradlew :ohos-capi:publish :hms-capi:publish --no-daemon
 
-echo "✅ 发布完成: org.cpf.kotlin:ohos-capi:$KLIB_VER"
+echo "✅ 发布完成: org.cpf.kotlin:ohos-capi:$KLIB_VER + org.cpf.kotlin:hms-capi:$KLIB_VER"
 
 # 验证
 if [ "$REMOTE" = "true" ]; then
@@ -56,6 +56,13 @@ if [ "$REMOTE" = "true" ]; then
     done
 fi
 echo "本地 m2:"
-ls "$ROOT/m2/org/cpf/kotlin/ohos-capi/$KLIB_VER/"*.klib 2>/dev/null | head -3 | while read -r f; do
+ohosCount=$(ls "$ROOT/m2/org/cpf/kotlin/ohos-capi/$KLIB_VER/"*.klib 2>/dev/null | wc -l | tr -d ' ')
+hmsCount=$(ls "$ROOT/m2/org/cpf/kotlin/hms-capi/$KLIB_VER/"*.klib 2>/dev/null | wc -l | tr -d ' ')
+echo "  ohos-capi: $ohosCount 个 klib (期望 144)"
+echo "  hms-capi:  $hmsCount 个 klib (期望 19)"
+ls "$ROOT/m2/org/cpf/kotlin/ohos-capi/$KLIB_VER/"*.klib 2>/dev/null | head -2 | while read -r f; do
+    echo "  $(basename "$f")"
+done
+ls "$ROOT/m2/org/cpf/kotlin/hms-capi/$KLIB_VER/"*.klib 2>/dev/null | head -2 | while read -r f; do
     echo "  $(basename "$f")"
 done
