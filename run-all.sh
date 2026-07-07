@@ -35,21 +35,31 @@ done
 green "✅ java/hdc/DevEco/HMS sysroot/设备/凭据 齐全"
 
 # ============ 1/4  producer: publish klib to repo-local m2 ============
-step "1/4  producer: publish (cpf 0.4 → ohos-capi + hms-capi + static-lib-demo, 仓库内 m2/)"
+step "1/4  producer: publish (cpf 0.4 → ohos-capi + hms-capi + biz-klib + static-lib-demo, 仓库内 m2/)"
 cd "$PROD"
-export GRADLE_USER_HOME="${GRADLE_USER_HOME:-$ROOT/kn_sample-gradle-home}"
 export kotlin.native.home="${kotlin.native.home:-$HOME/.konan/kotlin-native-prebuilt-macos-aarch64-2.2.21-0.4.0-03}"
+KLIB_VER=$(grep '^klibVersion=' "$PROD/gradle.properties" | cut -d= -f2)
 ./gradlew --stop >/dev/null 2>&1 || true
-rm -rf "$ROOT/m2/org/cpf/kotlin/ohos-capi" "$ROOT/m2/org/cpf/kotlin/hms-capi" "$ROOT/m2/org/cpf/kotlin/static-lib-demo"
+rm -rf "$ROOT/m2/org/cpf/kotlin/ohos-capi" "$ROOT/m2/org/cpf/kotlin/hms-capi" "$ROOT/m2/org/cpf/kotlin/biz-klib" "$ROOT/m2/org/cpf/kotlin/static-lib-demo"
 if ./gradlew :ohos-capi:publish :hms-capi:publish :static-lib-demo:publish --no-daemon 2>&1 | tail -20 | grep -q "BUILD SUCCESSFUL"; then
-  klibs=$(ls "$ROOT/m2/org/cpf/kotlin/ohos-capi/22-0.1/"*.klib 2>/dev/null | wc -l | tr -d ' ')
-  green "✅ ohos-capi 发布: $klibs 个 klib (期望 144)"
-  hklibs=$(ls "$ROOT/m2/org/cpf/kotlin/hms-capi/22-0.1/"*.klib 2>/dev/null | wc -l | tr -d ' ')
-  green "✅ hms-capi 发布: $hklibs 个 klib (期望 19)"
-  slklibs=$(ls "$ROOT/m2/org/cpf/kotlin/static-lib-demo/22-0.1/"*.klib 2>/dev/null | wc -l | tr -d ' ')
-  green "✅ static-lib-demo 发布: $slklibs 个 klib (含嵌入 .a)"
+  :
 else
   fail "producer publish 失败"
+fi
+# biz-klib:测试用,只发本地 m2(置空 colab 凭据强制不上 colab)。
+if COLAB_MAVEN_USER="" COLAB_MAVEN_PASS="" ./gradlew :biz-klib:publish --no-daemon 2>&1 | tail -20 | grep -q "BUILD SUCCESSFUL"; then
+  :
+else
+  fail "biz-klib publish 失败"
+fi
+klibs=$(ls "$ROOT/m2/org/cpf/kotlin/ohos-capi/$KLIB_VER/"*.klib 2>/dev/null | wc -l | tr -d ' ')
+green "✅ ohos-capi 发布: $klibs 个 klib (期望 145 = 144 cinterop + 1 main)"
+hklibs=$(ls "$ROOT/m2/org/cpf/kotlin/hms-capi/$KLIB_VER/"*.klib 2>/dev/null | wc -l | tr -d ' ')
+green "✅ hms-capi 发布: $hklibs 个 klib (期望 20 = 19 + 1)"
+bklibs=$(ls "$ROOT/m2/org/cpf/kotlin/biz-klib/$KLIB_VER/"*.klib 2>/dev/null | wc -l | tr -d ' ')
+green "✅ biz-klib 发布: $bklibs 个 klib (仅 m2,不上 colab)"
+slklibs=$(ls "$ROOT/m2/org/cpf/kotlin/static-lib-demo/$KLIB_VER/"*.klib 2>/dev/null | wc -l | tr -d ' ')
+green "✅ static-lib-demo 发布: $slklibs 个 klib (含嵌入 .a)"
 fi
 
 # ============ 2/4  consumer-bare: compile + link + deploy + hilog ============

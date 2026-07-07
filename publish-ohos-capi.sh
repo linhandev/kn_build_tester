@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# 发布 org.cpf.kotlin:ohos-capi:<klibVersion>。
-# biz-klib / static-lib-demo 是测试用 klib,不发布。
+# 发布 org.cpf.kotlin:ohos-capi + hms-capi:<klibVersion>(主产物),biz-klib(测试用,bare 依赖)。
+# biz-klib 永远只发本地 m2,不上 colab(测试用 klib,非 capi 封装产物)。
+# static-lib-demo 仍走 ./gradlew :static-lib-demo:publish(测试用,不纳入本脚本)。
 #
 # Usage:
 #   ./publish-ohos-capi.sh              # 只发本地 m2 (默认)
@@ -36,13 +37,15 @@ else
     echo "目标: 仅本地 m2"
 fi
 
-export GRADLE_USER_HOME="${GRADLE_USER_HOME:-$ROOT/kn_sample-gradle-home}"
-[ -d "$GRADLE_USER_HOME" ] || export GRADLE_USER_HOME="$HOME/.gradle"
-
 cd "$PROD"
+# ohos-capi + hms-capi:主产物,REMOTE=true 时发 colab + 本地 m2。
 env kotlin.native.home="$CPF_DIST" ./gradlew :ohos-capi:publish :hms-capi:publish --no-daemon
 
-echo "✅ 发布完成: org.cpf.kotlin:ohos-capi:$KLIB_VER + org.cpf.kotlin:hms-capi:$KLIB_VER"
+# biz-klib:测试用 klib(bare 依赖它),永远只发本地 m2,不上 colab(置空凭据强制跳过 colab repo)。
+COLAB_MAVEN_USER="" COLAB_MAVEN_PASS="" env kotlin.native.home="$CPF_DIST" \
+  ./gradlew :biz-klib:publish --no-daemon
+
+echo "✅ 发布完成: org.cpf.kotlin:ohos-capi:$KLIB_VER + org.cpf.kotlin:hms-capi:$KLIB_VER (colab+m2); biz-klib:$KLIB_VER (仅 m2)"
 
 # 验证
 if [ "$REMOTE" = "true" ]; then
@@ -58,8 +61,10 @@ fi
 echo "本地 m2:"
 ohosCount=$(ls "$ROOT/m2/org/cpf/kotlin/ohos-capi/$KLIB_VER/"*.klib 2>/dev/null | wc -l | tr -d ' ')
 hmsCount=$(ls "$ROOT/m2/org/cpf/kotlin/hms-capi/$KLIB_VER/"*.klib 2>/dev/null | wc -l | tr -d ' ')
-echo "  ohos-capi: $ohosCount 个 klib (期望 144)"
-echo "  hms-capi:  $hmsCount 个 klib (期望 19)"
+bizCount=$(ls "$ROOT/m2/org/cpf/kotlin/biz-klib/$KLIB_VER/"*.klib 2>/dev/null | wc -l | tr -d ' ')
+echo "  ohos-capi: $ohosCount 个 klib (期望 145 = 144 cinterop + 1 main)"
+echo "  hms-capi:  $hmsCount 个 klib (期望 20 = 19 + 1)"
+echo "  biz-klib:  $bizCount 个 klib (仅 m2,不上 colab)"
 ls "$ROOT/m2/org/cpf/kotlin/ohos-capi/$KLIB_VER/"*.klib 2>/dev/null | head -2 | while read -r f; do
     echo "  $(basename "$f")"
 done

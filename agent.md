@@ -41,7 +41,7 @@ That single command does the whole pipeline. It is the canonical way to validate
 
 ### What the 4 steps do
 
-1. **producer publish** — `./publish-ohos-capi.sh` (发 `org.cpf.kotlin:ohos-capi` + `org.cpf.kotlin:hms-capi` 到 colab + m2; `static-lib-demo` 仍走 `./gradlew :static-lib-demo:publish`; `biz-klib` 由 `./gradlew :biz-klib:publish` 单独发到 m2,bare 依赖它). Clears `m2/org/cpf/kotlin/{ohos-capi,hms-capi,static-lib-demo}` first, then republishes. Expects ohos-capi 145 klibs (144 cinterop + 1 main) + hms-capi 20 (19 + 1). Count drift from added defs is fine, a *missing* klib is not.
+1. **producer publish** — `./publish-ohos-capi.sh` 发 `ohos-capi` + `hms-capi`(主产物,REMOTE=true 时上 colab + m2)+ `biz-klib`(测试用,bare 依赖,**永远只本地 m2 不上 colab**,脚本内置置空 colab 凭据);`static-lib-demo` 仍走 `./gradlew :static-lib-demo:publish`. Clears `m2/org/cpf/kotlin/{ohos-capi,hms-capi,biz-klib,static-lib-demo}` first, then republishes. Expects ohos-capi 145 klibs (144 cinterop + 1 main) + hms-capi 20 (19 + 1) + biz-klib (仅 m2). Count drift from added defs is fine, a *missing* klib is not. 不设 `GRADLE_USER_HOME`,用默认 `~/.gradle`.
 
 > **开发流程(本地 m2 vs colab)**:有变更测试时,consumer 走**本地 m2**(解开 `consumer-capi-demo/settings.gradle.kts` 的本地 m2 注释,从 `m2/` 拉待测版本);`consumer-bare` 本地 m2 常开。发布完新版本后,consumer 改回走 colab 远程仓(本地 m2 注释)。当前 `klibVersion=22-0.2`,本地 m2 已发,consumer-capi-demo settings 本地 m2 已解开(测试期)。
 2. **consumer-bare** — links `:kotlinApp:linkDebugSharedOhosArm64` (只依赖 ohos-capi,不加 hms,无 `-L<HMS>`), prints `libc2k.so` NEEDED (only `libc/libavtranscoder/libhilog_ndk.z/libc++_shared` + 探针 `libEGL` — bare sonames, no embedded `.so`), then `scripts/check-asneeded-state.sh` 断言探针在 NEEDED (全局 no-as-needed) + ohcrypto 不在 NEEDED (def 内 as-needed 生效). Then `startHarmonyAppDebug` deploys.
