@@ -1,6 +1,6 @@
 package = platform.PerformanceAnalysisKit.HiDebug
 headers = hidebug/hidebug_type.h hidebug/hidebug.h
 headerFilter = hidebug/**
-linkerOpts = -lohhidebug
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lohhidebug -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

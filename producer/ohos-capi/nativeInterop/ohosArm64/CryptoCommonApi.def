@@ -1,6 +1,6 @@
 package = platform.CryptoArchitectureKit.CryptoCommonApi
 headers = CryptoArchitectureKit/crypto_common.h
 headerFilter = CryptoArchitectureKit/crypto_common.h
-linkerOpts = -lohcrypto
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lohcrypto -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

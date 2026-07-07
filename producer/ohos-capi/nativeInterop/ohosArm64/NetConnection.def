@@ -1,7 +1,7 @@
 package = platform.NetworkKit.NetConnection
 headers = network/netmanager/net_connection.h network/netmanager/net_connection_type.h
 headerFilter = network/netmanager/**
-linkerOpts = -lnet_connection
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lnet_connection -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17
 depends = posix

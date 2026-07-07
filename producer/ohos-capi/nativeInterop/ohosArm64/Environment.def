@@ -2,6 +2,6 @@ package = platform.CoreFileKit.Environment
 headers = filemanagement/environment/oh_environment.h
 headerFilter = filemanagement/environment/oh_environment.h
 depends = FileIO
-linkerOpts = -lohenvironment
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lohenvironment -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

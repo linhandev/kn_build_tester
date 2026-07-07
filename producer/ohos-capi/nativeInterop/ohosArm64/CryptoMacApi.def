@@ -2,6 +2,6 @@ package = platform.CryptoArchitectureKit.CryptoMacApi
 headers = CryptoArchitectureKit/crypto_mac.h
 headerFilter = CryptoArchitectureKit/crypto_mac.h
 depends = CryptoCommonApi CryptoSymKeyApi
-linkerOpts = -lohcrypto
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lohcrypto -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

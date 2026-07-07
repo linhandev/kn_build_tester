@@ -1,6 +1,6 @@
 package = platform.SensorServiceKit.Sensor
 headers = sensors/oh_sensor_type.h sensors/oh_sensor.h
 headerFilter = sensors/**
-linkerOpts = -lohsensor
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lohsensor -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

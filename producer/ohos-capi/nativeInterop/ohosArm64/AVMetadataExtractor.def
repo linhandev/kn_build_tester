@@ -2,6 +2,6 @@ package = platform.MediaKit.AVMetadataExtractor
 headers = multimedia/player_framework/avmetadata_extractor.h multimedia/player_framework/avmetadata_extractor_base.h
 headerFilter = multimedia/player_framework/**
 depends = CodecBase Core Image_NativeModule
-linkerOpts = -lavmetadata_extractor
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lavmetadata_extractor -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

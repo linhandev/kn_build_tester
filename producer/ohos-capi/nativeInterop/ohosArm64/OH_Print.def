@@ -1,6 +1,6 @@
 package = platform.BasicServicesKit.OH_Print
 headers = BasicServicesKit/ohprint.h
 headerFilter = BasicServicesKit/ohprint.h
-linkerOpts = -lohprint
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lohprint -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

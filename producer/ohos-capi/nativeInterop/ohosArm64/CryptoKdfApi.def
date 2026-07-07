@@ -2,6 +2,6 @@ package = platform.CryptoArchitectureKit.CryptoKdfApi
 headers = CryptoArchitectureKit/crypto_kdf.h
 headerFilter = CryptoArchitectureKit/crypto_kdf.h
 depends = CryptoCommonApi
-linkerOpts = -lohcrypto
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lohcrypto -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

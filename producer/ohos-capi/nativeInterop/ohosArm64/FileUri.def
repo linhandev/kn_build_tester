@@ -2,6 +2,6 @@ package = platform.CoreFileKit.FileUri
 headers = filemanagement/file_uri/oh_file_uri.h
 headerFilter = filemanagement/file_uri/oh_file_uri.h
 depends = FileIO
-linkerOpts = -lohfileuri
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lohfileuri -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

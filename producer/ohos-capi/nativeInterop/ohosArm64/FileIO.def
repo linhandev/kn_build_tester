@@ -3,4 +3,4 @@ headers = filemanagement/file_uri/error_code.h filemanagement/fileio/error_code.
 headerFilter = filemanagement/environment/error_code.h filemanagement/file_uri/error_code.h filemanagement/fileio/** filemanagement/fileshare/error_code.h
 language = C++
 compilerOpts = -std=c++17
-linkerOpts = -lohfileio
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lohfileio -Wl,--pop-state

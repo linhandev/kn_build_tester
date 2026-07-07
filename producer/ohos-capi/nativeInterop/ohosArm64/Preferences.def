@@ -1,6 +1,6 @@
 package = platform.ArkData.Preferences
 headers = database/preferences/oh_preferences_err_code.h database/preferences/oh_preferences_option.h database/preferences/oh_preferences.h database/preferences/oh_preferences_value.h
 headerFilter = database/preferences/**
-linkerOpts = -lohpreferences
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lohpreferences -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

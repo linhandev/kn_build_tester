@@ -1,6 +1,6 @@
 package = platform.BasicServicesKit.OsAccount
 headers = BasicServicesKit/os_account.h BasicServicesKit/os_account_common.h
 headerFilter = BasicServicesKit/**
-linkerOpts = -los_account_ndk
+linkerOpts = -Wl,--push-state -Wl,--as-needed -los_account_ndk -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

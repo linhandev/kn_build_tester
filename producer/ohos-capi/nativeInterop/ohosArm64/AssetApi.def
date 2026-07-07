@@ -2,6 +2,6 @@ package = platform.AssetStoreKit.AssetApi
 headers = asset/asset_api.h
 headerFilter = asset/asset_api.h
 depends = AssetType
-linkerOpts = -lasset_ndk.z
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lasset_ndk.z -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

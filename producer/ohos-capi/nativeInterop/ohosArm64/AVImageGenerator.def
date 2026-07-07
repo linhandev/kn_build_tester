@@ -2,6 +2,6 @@ package = platform.MediaKit.AVImageGenerator
 headers = multimedia/player_framework/avimage_generator_base.h multimedia/player_framework/avimage_generator.h
 headerFilter = multimedia/player_framework/**
 depends = Core Image_NativeModule
-linkerOpts = -lavimage_generator
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lavimage_generator -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

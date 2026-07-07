@@ -1,6 +1,6 @@
 package = platform.KernelEnhanceKit.Memory
 headers = purgeable_memory/purgeable_memory.h
 headerFilter = purgeable_memory/purgeable_memory.h
-linkerOpts = -lpurgeable_memory_ndk.z
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lpurgeable_memory_ndk.z -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

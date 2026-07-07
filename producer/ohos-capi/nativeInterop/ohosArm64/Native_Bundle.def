@@ -1,7 +1,7 @@
 package = platform.AbilityKit.Native_Bundle
 headers = bundle/native_interface_bundle.h bundle/ability_resource_info.h bundle/bundle_manager_common.h
 headerFilter = bundle/**
-linkerOpts = -lbundle_ndk.z
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lbundle_ndk.z -Wl,--pop-state
 depends = ArkUI_NativeModule
 language = C++
 compilerOpts = -std=c++17

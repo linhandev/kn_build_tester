@@ -2,6 +2,6 @@ package = platform.LocalizationKit.RawFile
 headers = rawfile/raw_dir.h rawfile/raw_file_manager.h rawfile/raw_file.h
 headerFilter = rawfile/**
 depends = ArkTS_Napi_NativeModule
-linkerOpts = -lrawfile.z
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lrawfile.z -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

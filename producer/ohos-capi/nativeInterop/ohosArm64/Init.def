@@ -1,6 +1,6 @@
 package = platform.BasicServicesKit.Init
 headers = syscap_ndk.h
 headerFilter = syscap_ndk.h
-linkerOpts = -ldeviceinfo_ndk.z
+linkerOpts = -Wl,--push-state -Wl,--as-needed -ldeviceinfo_ndk.z -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

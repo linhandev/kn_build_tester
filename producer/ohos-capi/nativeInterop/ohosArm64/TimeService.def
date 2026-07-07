@@ -1,6 +1,6 @@
 package = platform.BasicServicesKit.TimeService
 headers = BasicServicesKit/time_service.h
 headerFilter = BasicServicesKit/time_service.h
-linkerOpts = -ltime_service_ndk
+linkerOpts = -Wl,--push-state -Wl,--as-needed -ltime_service_ndk -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

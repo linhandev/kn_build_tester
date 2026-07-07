@@ -1,7 +1,7 @@
 package = platform.OnlineAuthenticationKit.FIDO2
 headers = OnlineAuthenticationKit/fido2_api.h
 headerFilter = OnlineAuthenticationKit/fido2_api.h
-linkerOpts = -lfido2_ndk.z
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lfido2_ndk.z -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17
 #harmonyOS SDK Only

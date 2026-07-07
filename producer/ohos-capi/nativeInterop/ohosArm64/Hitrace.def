@@ -1,6 +1,6 @@
 package = platform.PerformanceAnalysisKit.Hitrace
 headers = hitrace/trace.h
 headerFilter = hitrace/trace.h
-linkerOpts = -lhitrace_ndk.z
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lhitrace_ndk.z -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

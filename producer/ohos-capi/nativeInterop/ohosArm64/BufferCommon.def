@@ -1,6 +1,6 @@
 package = platform.ArkGraphics2D.BufferCommon
 headers = native_buffer/buffer_common.h
 headerFilter = native_buffer/buffer_common.h
-linkerOpts = -lnative_buffer
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lnative_buffer -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

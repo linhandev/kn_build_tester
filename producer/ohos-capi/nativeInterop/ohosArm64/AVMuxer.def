@@ -2,6 +2,6 @@ package = platform.AVCodecKit.AVMuxer
 headers = multimedia/player_framework/native_avmuxer.h
 headerFilter = multimedia/player_framework/native_avmuxer.h
 depends = CodecBase
-linkerOpts = -lnative_media_avmuxer
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lnative_media_avmuxer -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

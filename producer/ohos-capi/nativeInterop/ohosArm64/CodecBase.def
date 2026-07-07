@@ -2,6 +2,6 @@ package = platform.AVCodecKit.CodecBase
 headers = multimedia/player_framework/avcodec_audio_channel_layout.h multimedia/player_framework/native_avcodec_base.h
 headerFilter = multimedia/player_framework/**
 depends = Core
-linkerOpts = -lnative_media_codecbase
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lnative_media_codecbase -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

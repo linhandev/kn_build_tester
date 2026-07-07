@@ -2,6 +2,6 @@ package = platform.ArkUI.WindowManager
 headers = cstddef window_manager/oh_window.h window_manager/oh_window_comm.h window_manager/oh_window_event_filter.h window_manager/oh_window_pip.h
 headerFilter = window_manager/**
 depends = Input
-linkerOpts = -lnative_window_manager
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lnative_window_manager -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

@@ -39,16 +39,23 @@ kotlin {
                 // absolute IMPORTED_LOCATION path), letting the device dlopen it from the app's
                 // libs dir. Without this, runHelloWorld fails with {} (libentry.so can't load).
                 freeCompilerArgs += "-linker-options=-Wl,-soname,libc2k.so"
-                // --as-needed: only NEEDED libs whose symbols are actually referenced (UND) by
-                // libc2k.so. The klib aggregate carries linkerOpts for all 159 defs incl. HMS Kits
-                // whose .so the consumer sysroot may lack; --as-needed drops the unreferenced ones.
-                freeCompilerArgs += "-linker-options=-Wl,--as-needed"
+                // 按需链接已下沉到每个 def 的 linkerOpts(--push-state --as-needed <libs> --pop-state),
+                // 不再在这里加全局 -Wl,--as-needed。全局 --as-needed 会泄漏到 consumer 后续所有 -l
+                // 和 trailing flags,改变它们的链接行为;def 内 push/pop 把 as-needed 限定在各 def
+                // 的库组内,pop 后全局状态恢复 push 前,即"原来是 as 还是 as,原来是 noas 还是 noas"。
+                //
                 // HMS sysroot (.so stubs for HarmonyOS-SDK-Only Kits) checked into the repo.
                 // The ohos-capi aggregate carries linkerOpts for all 159 defs incl. HMS Kits;
                 // --as-needed drops unused ones from NEEDED but ld must locate them to judge
                 // unreferenced, so add -L here. (After #14 split, non-HMS consumers won't need this.)
                 val hmsLib = "${rootProject.projectDir.parentFile}/sysroot/sysroot-hms-aarch64-6.0.2.640-02/usr/lib/aarch64-linux-ohos"
                 freeCompilerArgs += "-linker-options=-L$hmsLib"
+                // 探针:故意 link 一个 bare 完全没用到的库(libtss2-tctildr,TPM2 库,不在任何 def
+                // 的 linkerOpts 里,HMS sysroot 有 stub)。全局处于 no-as-needed(lld 默认,且我们已
+                // 去掉全局 --as-needed)时,这个未引用的探针库应进入 NEEDED;若 def 的 push/pop
+                // 泄漏了 --as-needed 到全局,探针库会被当未引用丢弃,不在 NEEDED → 测试失败。
+                // 见 scripts/check-asneeded-state.sh。
+                freeCompilerArgs += "-linker-options=-ltss2-tctildr"
             }
         }
     }

@@ -2,6 +2,6 @@ package = platform.CryptoArchitectureKit.CryptoSignatureApi
 headers = CryptoArchitectureKit/crypto_signature.h
 headerFilter = CryptoArchitectureKit/crypto_signature.h
 depends = CryptoAsymKeyApi CryptoCommonApi
-linkerOpts = -lohcrypto
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lohcrypto -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

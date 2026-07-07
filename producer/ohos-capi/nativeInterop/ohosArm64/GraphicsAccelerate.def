@@ -6,7 +6,7 @@ headers = graphics_game_sdk/abr_base.h \
     graphics_game_sdk/frame_generation_gles.h \
     graphics_game_sdk/frame_generation_vk.h
 headerFilter = graphics_game_sdk/**
-linkerOpts = -labr -lopengtx -lframegeneration
+linkerOpts = -Wl,--push-state -Wl,--as-needed -labr -lopengtx -lframegeneration -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17
 depends = vulkan

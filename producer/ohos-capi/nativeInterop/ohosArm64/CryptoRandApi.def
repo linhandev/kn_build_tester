@@ -2,6 +2,6 @@ package = platform.CryptoArchitectureKit.CryptoRandApi
 headers = CryptoArchitectureKit/crypto_rand.h
 headerFilter = CryptoArchitectureKit/crypto_rand.h
 depends = CryptoCommonApi
-linkerOpts = -lohcrypto
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lohcrypto -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

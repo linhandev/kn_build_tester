@@ -2,6 +2,6 @@ package = platform.CryptoArchitectureKit.CryptoSymCipherApi
 headers = CryptoArchitectureKit/crypto_sym_cipher.h
 headerFilter = CryptoArchitectureKit/crypto_sym_cipher.h
 depends = CryptoCommonApi CryptoSymKeyApi
-linkerOpts = -lohcrypto
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lohcrypto -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17

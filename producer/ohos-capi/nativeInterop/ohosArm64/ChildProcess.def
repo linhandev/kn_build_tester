@@ -2,6 +2,6 @@ package = platform.AbilityKit.ChildProcess
 headers = AbilityKit/native_child_process.h
 headerFilter = AbilityKit/native_child_process.h
 depends = OHIPCParcel
-linkerOpts = -lchild_process
+linkerOpts = -Wl,--push-state -Wl,--as-needed -lchild_process -Wl,--pop-state
 language = C++
 compilerOpts = -std=c++17
