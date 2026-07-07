@@ -29,6 +29,11 @@ export const CAPI_MODULES: CapiModuleItem[] = [
     subtitle: 'ApiGuard · API18–22 分档调用与版本拦截（函数/常量）',
   },
   {
+    key: 'hms',
+    title: '模块8：HMS扩展Kit模块',
+    subtitle: 'Rcp CreateForm（不依赖 ohos）/ CANN HiAI 版本（依赖 ohos，验 POM 传递）',
+  },
+  {
     key: 'performance',
     title: '性能验证模块',
     subtitle: '自封装/系统库对比验证',

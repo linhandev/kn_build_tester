@@ -21,8 +21,9 @@ pluginManagement {
                 authentication { create("basic", org.gradle.authentication.http.BasicAuthentication::class.java) }
             }
         }
-        // 本地 m2 已注释——走 colab 远程仓验证。需本地调试时解开。
-        // maven { url = uri(rootDir.parentFile.resolve("m2")) }
+        // 本地 m2:测试期走本地 m2(producer 发布的待测版本);发布期改回 colab 远程仓。
+        // 开发流程:有变更测试时先走本地 m2,发布完新版本后再走 colab(见根 agent.md)。
+        maven { url = uri(rootDir.parentFile.resolve("m2")) }
         maven {
             url = uri("https://devrepo.devcloud.cn-north-4.huaweicloud.com/artgalaxy/cn-north-4_a8338babc8534bb8aabb062c35845155_maven_7_1/")
             if (huaweiUser != null && huaweiPass != null) {
@@ -60,8 +61,9 @@ dependencyResolutionManagement {
                 authentication { create("basic", org.gradle.authentication.http.BasicAuthentication::class.java) }
             }
         }
-        // 本地 m2 已注释——走 colab 远程仓验证。需本地调试时解开。
-        // maven { url = uri(rootDir.parentFile.resolve("m2")) }
+        // 本地 m2:测试期走本地 m2(producer 发布的待测版本);发布期改回 colab 远程仓。
+        // 开发流程:有变更测试时先走本地 m2,发布完新版本后再走 colab(见根 agent.md)。
+        maven { url = uri(rootDir.parentFile.resolve("m2")) }
         maven {
             url = uri("https://devrepo.devcloud.cn-north-4.huaweicloud.com/artgalaxy/cn-north-4_a8338babc8534bb8aabb062c35845155_maven_7_1/")
             if (huaweiUser != null && huaweiPass != null) {

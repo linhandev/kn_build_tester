@@ -34,6 +34,7 @@ MODULE_UI_LABELS = {
     "HiAppEvent": ["模块5", "HiAppEvent", "用户打点模块"],
     "HiLog": ["模块6", "HiLog", "日志模块"],
     "Drawing": ["模块7", "Drawing模块"],
+    "Hms": ["模块8", "HMS模块", "HMS扩展Kit模块"],
     "Failure": ["失败场景模块", "失败场景"],
     "VersionGuard": ["版本检测机制模块", "版本检测"],
 }
@@ -47,6 +48,7 @@ MODULE_WAIT_TIME = {
     "HiAppEvent": 12,
     "HiLog": 6,
     "Drawing": 35,
+    "Hms": 10,
     "Failure": 12,
     "VersionGuard": 18,
 }
@@ -88,6 +90,8 @@ class TestCase:
             return "HiLog"
         if any(k in n for k in ('Drawing', 'OH_Drawing_')):
             return "Drawing"
+        if any(k in n for k in ('HMS', 'HMS_Rcp_', 'HMS_HiAI_', 'RemoteCommunication', 'CANN')):
+            return "Hms"
         return "Unknown"
 
     def _extract_function_name(self) -> str:
@@ -635,7 +639,7 @@ class ModuleTestRunner:
         time.sleep(1)
         
         modules = ["RDB", "CommonEvent", "HuksKeyApi", "NetConnection",
-                   "HiAppEvent", "HiLog", "Drawing", "Failure", "VersionGuard"]
+                   "HiAppEvent", "HiLog", "Drawing", "Hms", "Failure", "VersionGuard"]
         
         success_count = 0
         for idx, module in enumerate(modules, 1):

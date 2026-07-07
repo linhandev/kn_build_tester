@@ -58,6 +58,9 @@ export struct CapiDetailContent {
   @State hiLogReport: string = '点击「运行验证」查看各 API 返回值说明。';
   @State hiLogBusy: boolean = false;
 
+  @State hmsReport: string = '点击「运行验证」查看各 API 返回值说明。';
+  @State hmsBusy: boolean = false;
+
   @State failureReport: string = '点击「运行验证」查看各 API 返回值说明。';
   @State failureBusy: boolean = false;
 
@@ -359,6 +362,30 @@ export struct CapiDetailContent {
     }
   }
 
+  private runHmsFlow(): void {
+    if (this.hmsBusy) {
+      return;
+    }
+    if (!this.bundleName || this.bundleName.length === 0) {
+      this.hmsReport = '未获取到 bundleName（应用包名），请返回后重试。';
+      return;
+    }
+    this.hmsBusy = true;
+    try {
+      hilog.info(HI_LOG_CAP_DOMAIN, HI_LOG_CAP_TAG,
+        'runHms begin dbDir=%{public}s bundle=%{public}s', this.databaseDir, this.bundleName);
+      const text: string = lib.runHmsModuleSmokeTest(this.databaseDir, this.bundleName, this.moduleName);
+      this.hmsReport = text ?? '(无返回内容)';
+      hilog.info(HI_LOG_CAP_DOMAIN, HI_LOG_CAP_TAG, 'runHms done len=%{public}d', this.hmsReport.length);
+    } catch (e) {
+      const msg = `${e}`;
+      this.hmsReport = `调用失败: ${msg}`;
+      hilog.error(HI_LOG_CAP_DOMAIN, HI_LOG_CAP_TAG, 'runHms err %{public}s', msg);
+    } finally {
+      this.hmsBusy = false;
+    }
+  }
+
   build() {
     Column() {
       this.DetailBody()
@@ -531,6 +558,31 @@ export struct CapiDetailContent {
 
         Scroll() {
           Text(this.hiLogReport)
+            .fontSize(11)
+            .fontFamily('monospace')
+            .width('100%')
+            .padding(12)
+        }
+        .layoutWeight(1)
+        .width('100%')
+        .constraintSize({ minHeight: 200 })
+        .backgroundColor('#F2F4F7')
+        .borderRadius(8)
+      }
+      .width('100%')
+      .height('100%')
+      .alignItems(HorizontalAlign.Start)
+    } else if (this.moduleKey === 'hms') {
+      Column({ space: 12 }) {
+        Button(this.hmsBusy ? '执行中…' : '运行验证')
+          .width('100%')
+          .enabled(!this.hmsBusy)
+          .onClick(() => {
+            this.runHmsFlow();
+          })
+
+        Scroll() {
+          Text(this.hmsReport)
             .fontSize(11)
             .fontFamily('monospace')
             .width('100%')

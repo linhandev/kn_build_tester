@@ -60,8 +60,11 @@ kotlin {
         }
         val ohosArm64Main by getting {
             dependencies {
-                // klib built with cpf 0.4 (159 ohos-only defs), consumed by 2.3.20-HUAWEI.
+                // klib built with cpf 0.4, consumed by 2.3.20-HUAWEI.
+                // ohos-capi(144 ohos def)+ hms-capi(19 hms 扩展 def,hms POM depend ohos-capi)。
+                // demo 测 hms API(HandWrite 不依赖 ohos / CANN 依赖 ohos 的 NeuralNetworkRuntime)。
                 implementation("org.cpf.kotlin:ohos-capi:${property("klibVersion")}")
+                implementation("org.cpf.kotlin:hms-capi:${property("klibVersion")}")
             }
         }
     }

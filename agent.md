@@ -13,9 +13,9 @@ The klib `depends` are self-closed to `org.cpf.kotlin` coordinates — no depend
 
 | Dir | Role | Kotlin | Artifact |
 |---|---|---|---|
-| `producer/` | builds & publishes klibs | `2.2.21-0.4.0-03` (cpf 0.4) | `org.cpf.kotlin:ohos-capi` (→ colab + m2), `:static-lib-demo` (test-only, m2 only) → repo-local `m2/` |
-| `consumer-bare/` | minimal smoke consumer | `2.3.20-HUAWEI` | `kotlinApp` (HiLog + Asset) |
-| `consumer-capi-demo/` | full CAPI smoke consumer | `2.3.20-HUAWEI` | `composeApp` + `harmonyApp` (9-module UI autotest) |
+| `producer/` | builds & publishes klibs | `2.2.21-0.4.0-03` (cpf 0.4) | `org.cpf.kotlin:ohos-capi` (144 ohos def) + `org.cpf.kotlin:hms-capi` (19 hms 扩展 def, POM depend ohos-capi) → colab + m2; `:static-lib-demo` (test-only, m2 only) → repo-local `m2/` |
+| `consumer-bare/` | minimal smoke consumer (只 ohos, 无 hms, 无 -L<HMS>) | `2.3.20-HUAWEI` | `kotlinApp` (HiLog + AVTranscoder via biz-klib) |
+| `consumer-capi-demo/` | full CAPI smoke consumer (ohos + hms 两坐标) | `2.3.20-HUAWEI` | `composeApp` + `harmonyApp` (10-module UI autotest, 含 HMS 模块验 HandWrite+CANN) |
 | `m2/` | repo-local Maven (gitignored, inspectable) | — | producer publishes here, consumers resolve from here |
 | `sysroot/` | checked-in ohos + HMS sysroot (git-lfs for `.so/.a/.o`) | — | producer `-I`, consumer `-L` |
 | `design/` | `DESIGN.md` + `SUMMARY.html` | — | link strategy, def-dependency design |
@@ -41,10 +41,12 @@ That single command does the whole pipeline. It is the canonical way to validate
 
 ### What the 4 steps do
 
-1. **producer publish** — `./publish-ohos-capi.sh` (只发 `org.cpf.kotlin:ohos-capi` 到 colab + m2; `static-lib-demo` 仍走 `./gradlew :static-lib-demo:publish`). Clears `m2/org/cpf/kotlin/{ohos-capi,static-lib-demo}` first, then republishes. Expects ~160 `ohos-capi` klibs (1 per def × targets; recent runs emit 164 — count drift from added defs is fine, a *missing* klib is not).
-2. **consumer-bare** — links `:kotlinApp:linkDebugSharedOhosArm64`, prints `libc2k.so` NEEDED (should be only `libc/libhilog_ndk.z/libasset_ndk.z/libc++_shared` — bare sonames, no embedded `.so`), then `startHarmonyAppDebug` deploys, starts `EntryAbility`, and greps hilog for the KN log (`A01234 ... kn_demo`) and the ArkTS greeting (`Kotlin greeting: Hello from Kotlin/Native`).
+1. **producer publish** — `./publish-ohos-capi.sh` (发 `org.cpf.kotlin:ohos-capi` + `org.cpf.kotlin:hms-capi` 到 colab + m2; `static-lib-demo` 仍走 `./gradlew :static-lib-demo:publish`; `biz-klib` 由 `./gradlew :biz-klib:publish` 单独发到 m2,bare 依赖它). Clears `m2/org/cpf/kotlin/{ohos-capi,hms-capi,static-lib-demo}` first, then republishes. Expects ohos-capi 145 klibs (144 cinterop + 1 main) + hms-capi 20 (19 + 1). Count drift from added defs is fine, a *missing* klib is not.
+
+> **开发流程(本地 m2 vs colab)**:有变更测试时,consumer 走**本地 m2**(解开 `consumer-capi-demo/settings.gradle.kts` 的本地 m2 注释,从 `m2/` 拉待测版本);`consumer-bare` 本地 m2 常开。发布完新版本后,consumer 改回走 colab 远程仓(本地 m2 注释)。当前 `klibVersion=22-0.2`,本地 m2 已发,consumer-capi-demo settings 本地 m2 已解开(测试期)。
+2. **consumer-bare** — links `:kotlinApp:linkDebugSharedOhosArm64` (只依赖 ohos-capi,不加 hms,无 `-L<HMS>`), prints `libc2k.so` NEEDED (only `libc/libavtranscoder/libhilog_ndk.z/libc++_shared` + 探针 `libEGL` — bare sonames, no embedded `.so`), then `scripts/check-asneeded-state.sh` 断言探针在 NEEDED (全局 no-as-needed) + ohcrypto 不在 NEEDED (def 内 as-needed 生效). Then `startHarmonyAppDebug` deploys.
 3. **consumer-capi-demo build** — `:composeApp:publishDebugBinariesToHarmonyApp` builds `libkn.so`, then `ohpm install` + `hvigor assembleHap` produces `entry-default-signed.hap`, `hdc install`.
-4. **consumer-capi-demo autotest** — `python3 autotest.py`: enters each of 9 module pages, taps "运行验证", polls `dumpLayout` for the manifest stats, writes `test_reports/` (HTML+CSV). Parses the case-level summary (`成功/失败/总计`), not the module-level "9/9".
+4. **consumer-capi-demo autotest** — `python3 autotest.py`: enters each of 10 module pages (含 HMS 模块:HandWrite 预测点不依赖 ohos / CANN HiAI 版本依赖 ohos 验 POM 传递), taps "运行验证", polls `dumpLayout` for the manifest stats, writes `test_reports/` (HTML+CSV). Parses the case-level summary (`成功/失败/总计`), not the module-level "10/10".
 
 ### Reading the result
 
