@@ -11,6 +11,7 @@ pluginManagement {
             }
         }
         mavenCentral()
+        maven("https://maven.eazytec-cloud.com/nexus/repository/maven-public/")
         gradlePluginPortal()
     }
 }
@@ -25,9 +26,9 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        maven("https://maven.eazytec-cloud.com/nexus/repository/maven-public/")
     }
 }
 
-include(":androidApp")
 include(":shared")
 include(":webApp")
