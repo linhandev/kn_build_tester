@@ -11,6 +11,7 @@ pluginManagement {
             }
         }
         mavenCentral()
+        maven("file:///Users/ohoskt/git/worktree/kotlin-wasm/build/repo/")
         maven("https://maven.eazytec-cloud.com/nexus/repository/maven-public/")
         gradlePluginPortal()
     }
@@ -26,6 +27,7 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        maven("file:///Users/ohoskt/git/worktree/kotlin-wasm/build/repo/")
         maven("https://maven.eazytec-cloud.com/nexus/repository/maven-public/")
     }
 }

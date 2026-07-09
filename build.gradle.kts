@@ -10,7 +10,7 @@ subprojects {
     configurations.configureEach {
         resolutionStrategy.eachDependency {
             if (requested.group == "org.jetbrains.kotlin") {
-                useVersion("2.2.21-0.3.0-06")
+                useVersion("2.2.21-0.99.0-99")
                 because("Align Kotlin artifacts with CPF compiler")
             }
         }
