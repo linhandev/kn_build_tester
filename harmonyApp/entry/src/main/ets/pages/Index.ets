@@ -6,30 +6,52 @@ const DOMAIN = 0x0000;
 @Entry
 @Component
 struct Index {
-  @State message: string = '';
+  @State firstMsg: string = 'loading k2n.so …';
+  @State secondMsg: string = 'tap anywhere to load n2k.so';
+  @State secondLoaded: boolean = false;
 
   aboutToAppear(): void {
     try {
-      this.message = testNapi.runHelloWorld();
-      hilog.info(DOMAIN, 'testTag', 'Kotlin greeting: %{public}s', this.message);
+      this.firstMsg = testNapi.loadFirstModule();
+      hilog.info(DOMAIN, 'ondemand', 'first module: %{public}s', this.firstMsg);
     } catch (err) {
-      hilog.error(DOMAIN, 'testTag', 'runHelloWorld failed: %{public}s', JSON.stringify(err));
+      this.firstMsg = 'loadFirstModule failed: ' + JSON.stringify(err);
+      hilog.error(DOMAIN, 'ondemand', '%{public}s', this.firstMsg);
+    }
+  }
+
+  private loadSecond(): void {
+    if (this.secondLoaded) {
+      return;
+    }
+    try {
+      this.secondMsg = testNapi.loadSecondModule();
+      this.secondLoaded = true;
+      hilog.info(DOMAIN, 'ondemand', 'second module: %{public}s', this.secondMsg);
+    } catch (err) {
+      this.secondMsg = 'loadSecondModule failed: ' + JSON.stringify(err);
+      hilog.error(DOMAIN, 'ondemand', '%{public}s', this.secondMsg);
     }
   }
 
   build() {
-    Row() {
-      Column() {
-        Text(this.message)
-          .fontSize($r('app.float.page_text_font_size'))
-          .fontWeight(FontWeight.Bold)
-          .onClick(() => {
-            this.message = 'Welcome';
-            hilog.info(DOMAIN, 'testTag', 'NAPI add 2 + 3 = %{public}d', testNapi.add(2, 3));
-          })
-      }
-      .width('100%')
+    Column() {
+      Text('4-SO on-demand (runtime/std + k2n/n2k)')
+        .fontSize(18)
+        .fontWeight(FontWeight.Bold)
+        .margin({ bottom: 16 })
+      Text(this.firstMsg)
+        .fontSize(16)
+        .margin({ bottom: 12 })
+      Text(this.secondMsg)
+        .fontSize(16)
     }
+    .width('100%')
     .height('100%')
+    .padding(24)
+    .justifyContent(FlexAlign.Center)
+    .onClick(() => {
+      this.loadSecond();
+    })
   }
 }

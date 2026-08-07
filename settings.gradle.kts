@@ -31,4 +31,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "c2k"
 
+include("k2n")
+include("n2k")
 include("kotlinApp")

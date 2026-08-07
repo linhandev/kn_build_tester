@@ -1,0 +1,17 @@
+package = com.example.n2k.cb
+---
+typedef void (*n2k_cb_t)(int);
+
+static n2k_cb_t g_n2k_cb = 0;
+
+void n2k_register_cb(n2k_cb_t cb) {
+    g_n2k_cb = cb;
+}
+
+int n2k_invoke_cb(int x) {
+    if (g_n2k_cb) {
+        g_n2k_cb(x);
+        return 1;
+    }
+    return 0;
+}

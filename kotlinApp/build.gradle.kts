@@ -9,42 +9,99 @@ fun String.capitalize() = replaceFirstChar { it.uppercase() }
 
 kotlin {
     ohosArm64 {
-        binaries {
-            sharedLib {
-                baseName = "c2k"
-                freeCompilerArgs += "-Xadd-light-debug=enable"
-                // Keep runtime/static libs' DWARF in the linked .so (pairs with kotlin.native.isNativeRuntimeDebugInfoEnabled in Kotlin repo local.properties).
-                freeCompilerArgs += "-Xbinary=stripDebugInfoFromNativeLibs=false"
+        val ohosLinkerOpts = listOf("-lhilog_ndk.z")
+        // KN sharedLibs UND `main` via __libc_start_main; on-demand dlopen needs a real def.
+        val mainStubDir = rootProject.file("harmonyApp/entry/libs/arm64-v8a").absolutePath
+        val mainStubOpts = listOf("-L$mainStubDir", "-lmainstub")
+        // unique_name = com.example:k2n / com.example:n2k — must match moduleIncludes.
+        val k2nDep = project(":k2n")
+        val n2kDep = project(":n2k")
+        val modularArgs = listOf(
+            "-Xbinary=runtimeName=runtime",
+            "-Xbinary=stdlibName=std",
+            "-Xbinary=splitBCfile=8",
+        )
+
+        binaries.sharedLib("runtime") {
+            baseName = "runtime"
+            export(k2nDep)
+            export(n2kDep)
+            freeCompilerArgs += modularArgs + "-Xbinary=emitRuntime=true"
+            linkerOpts(ohosLinkerOpts)
+        }
+
+        binaries.sharedLib("std") {
+            baseName = "std"
+            export(k2nDep)
+            export(n2kDep)
+            freeCompilerArgs += modularArgs + "-Xbinary=emitStdlib=true"
+            linkerOpts(ohosLinkerOpts)
+        }
+
+        // Business SO #1: only its own klib in moduleIncludes (no cross-key dump).
+        binaries.sharedLib("k2n") {
+            baseName = "k2n"
+            export(k2nDep)
+            export(n2kDep)
+            freeCompilerArgs += modularArgs + listOf(
+                "-Xbinary=moduleIncludes={k2n:[com.example:k2n]}",
+                "-Xbinary=outputModule=k2n",
+            )
+            linkerOpts(ohosLinkerOpts + mainStubOpts)
+        }
+
+        // Business SO #2: only its own klib — must NOT list k2n.
+        binaries.sharedLib("n2k") {
+            baseName = "n2k"
+            export(k2nDep)
+            export(n2kDep)
+            freeCompilerArgs += modularArgs + listOf(
+                "-Xbinary=moduleIncludes={n2k:[com.example:n2k]}",
+                "-Xbinary=outputModule=n2k",
+            )
+            linkerOpts(ohosLinkerOpts + mainStubOpts)
+        }
+    }
+
+    sourceSets {
+        val ohosArm64Main by getting {
+            dependencies {
+                api(project(":k2n"))
+                api(project(":n2k"))
             }
         }
     }
 }
 
+val modularLibs = listOf("runtime", "std", "k2n", "n2k")
+
 arrayOf("debug", "release").forEach { type ->
     fun normalizeDir(dir: String) = dir.trim('/', '\\')
-    // Copy after link in doLast: Gradle's Copy task was NO-SOURCE when from() pointed at files
-    // that did not exist yet at configuration time, so libc2k.so never reached harmonyApp → crashes.
+
     val publishTask = tasks.register("publish${type.capitalize()}BinariesToHarmonyApp") {
         group = "harmony"
-        val baseName: String by project
-        val buildTaskSuffix: String by project
         val harmonyAppDir: String by project
         val soFileDst: String by project
         val hFileDst: String by project
 
-        val buildTaskName = "link${type.capitalize()}Shared${buildTaskSuffix.capitalize()}"
-        dependsOn(buildTaskName)
+        val linkTasks = modularLibs.map { lib ->
+            "link${lib.capitalize()}${type.capitalize()}SharedOhosArm64"
+        }
+        dependsOn(linkTasks)
 
         doLast {
-            val binDir = layout.buildDirectory.get().asFile.resolve("bin/ohosArm64/${type}Shared")
-            val soSrc = binDir.resolve("lib${baseName}.so")
-            val headerSrc = binDir.resolve("lib${baseName}_api.h")
-            check(soSrc.exists()) { "Missing $soSrc after $buildTaskName" }
-            check(headerSrc.exists()) { "Missing $headerSrc after $buildTaskName" }
-            copy {
-                into(rootProject.file(harmonyAppDir))
-                from(soSrc) { into(normalizeDir(soFileDst)) }
-                from(headerSrc) { into(normalizeDir(hFileDst)) }
+            for (lib in modularLibs) {
+                val binDir = layout.buildDirectory.get().asFile
+                    .resolve("bin/ohosArm64/${lib}${type.capitalize()}Shared")
+                val soSrc = binDir.resolve("lib${lib}.so")
+                val headerSrc = binDir.resolve("lib${lib}_api.h")
+                check(soSrc.exists()) { "Missing $soSrc" }
+                check(headerSrc.exists()) { "Missing $headerSrc" }
+                copy {
+                    into(rootProject.file(harmonyAppDir))
+                    from(soSrc) { into(normalizeDir(soFileDst)) }
+                    from(headerSrc) { into(normalizeDir(hFileDst)) }
+                }
             }
         }
     }
@@ -177,4 +234,6 @@ arrayOf("debug", "release").forEach { type ->
     }
 }
 
-tasks.findByName("linkDebugSharedOhosArm64")?.outputs?.upToDateWhen { false }
+modularLibs.forEach { lib ->
+    tasks.findByName("link${lib.capitalize()}DebugSharedOhosArm64")?.outputs?.upToDateWhen { false }
+}

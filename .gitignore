@@ -4,7 +4,10 @@
 *.o
 *.bc
 *.ll
-harmonyApp/entry/src/main/cpp/include/libc2k_api.h
+harmonyApp/entry/src/main/cpp/include/*_api.h
+
+# Local toolchain path (kotlin.native.home)
+local.properties
 
 # project specific
 *.log

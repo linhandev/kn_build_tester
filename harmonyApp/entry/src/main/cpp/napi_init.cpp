@@ -1,52 +1,88 @@
 #include "napi/native_api.h"
 
-extern "C" const char* kn_helloworld(void);
+#include <dlfcn.h>
+#include <hilog/log.h>
+#include <string>
 
-static napi_value RunHelloWorld(napi_env env, napi_callback_info info)
+#undef LOG_DOMAIN
+#undef LOG_TAG
+#define LOG_DOMAIN 0x0A00
+#define LOG_TAG "ondemand"
+
+using RunFn = const char *(*)();
+
+static std::string g_lastError;
+
+static void *OpenSo(const char *soName)
 {
-    const char* msg = kn_helloworld();
-    if (msg == nullptr) {
-        napi_value emptyStr;
-        napi_create_string_utf8(env, "", NAPI_AUTO_LENGTH, &emptyStr);
-        return emptyStr;
+    dlerror();
+    void *handle = dlopen(soName, RTLD_NOW);
+    if (handle != nullptr) {
+        return handle;
     }
+    std::string path = std::string("/data/storage/el1/bundle/libs/arm64/") + soName;
+    dlerror();
+    return dlopen(path.c_str(), RTLD_NOW);
+}
+
+static const char *CallExported(const char *soName, const char *symName)
+{
+    g_lastError.clear();
+    void *handle = OpenSo(soName);
+    if (handle == nullptr) {
+        const char *err = dlerror();
+        g_lastError = std::string("dlopen ") + soName + " failed: " + (err ? err : "?");
+        OH_LOG_ERROR(LOG_APP, "%{public}s", g_lastError.c_str());
+        return nullptr;
+    }
+    dlerror();
+    auto *fn = reinterpret_cast<RunFn>(dlsym(handle, symName));
+    const char *err = dlerror();
+    if (fn == nullptr || err != nullptr) {
+        g_lastError = std::string("dlsym ") + symName + " failed: " + (err ? err : "null");
+        OH_LOG_ERROR(LOG_APP, "%{public}s", g_lastError.c_str());
+        return nullptr;
+    }
+    const char *msg = fn();
+    if (msg == nullptr) {
+        g_lastError = std::string(symName) + " returned null";
+        OH_LOG_ERROR(LOG_APP, "%{public}s", g_lastError.c_str());
+        return nullptr;
+    }
+    OH_LOG_INFO(LOG_APP, "called %{public}s!%{public}s -> %{public}s", soName, symName, msg);
+    return msg;
+}
+
+static napi_value MakeString(napi_env env, const char *msg)
+{
     napi_value result;
+    if (msg == nullptr) {
+        const char *fallback = g_lastError.empty() ? "(null)" : g_lastError.c_str();
+        napi_create_string_utf8(env, fallback, NAPI_AUTO_LENGTH, &result);
+        return result;
+    }
     napi_create_string_utf8(env, msg, NAPI_AUTO_LENGTH, &result);
     return result;
 }
 
-static napi_value Add(napi_env env, napi_callback_info info)
+static napi_value LoadFirstModule(napi_env env, napi_callback_info info)
 {
-    size_t argc = 2;
-    napi_value args[2] = {nullptr};
+    (void)info;
+    return MakeString(env, CallExported("libk2n.so", "kn_k2n_run"));
+}
 
-    napi_get_cb_info(env, info, &argc, args, nullptr, nullptr);
-
-    napi_valuetype valuetype0;
-    napi_typeof(env, args[0], &valuetype0);
-
-    napi_valuetype valuetype1;
-    napi_typeof(env, args[1], &valuetype1);
-
-    double value0;
-    napi_get_value_double(env, args[0], &value0);
-
-    double value1;
-    napi_get_value_double(env, args[1], &value1);
-
-    napi_value sum;
-    napi_create_double(env, value0 + value1, &sum);
-
-    return sum;
-
+static napi_value LoadSecondModule(napi_env env, napi_callback_info info)
+{
+    (void)info;
+    return MakeString(env, CallExported("libn2k.so", "kn_n2k_run"));
 }
 
 EXTERN_C_START
 static napi_value Init(napi_env env, napi_value exports)
 {
     napi_property_descriptor desc[] = {
-        { "add", nullptr, Add, nullptr, nullptr, nullptr, napi_default, nullptr },
-        { "runHelloWorld", nullptr, RunHelloWorld, nullptr, nullptr, nullptr, napi_default, nullptr }
+        {"loadFirstModule", nullptr, LoadFirstModule, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"loadSecondModule", nullptr, LoadSecondModule, nullptr, nullptr, nullptr, napi_default, nullptr},
     };
     napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc);
     return exports;
@@ -59,8 +95,8 @@ static napi_module demoModule = {
     .nm_filename = nullptr,
     .nm_register_func = Init,
     .nm_modname = "entry",
-    .nm_priv = ((void*)0),
-    .reserved = { 0 },
+    .nm_priv = ((void *)0),
+    .reserved = {0},
 };
 
 extern "C" __attribute__((constructor)) void RegisterEntryModule(void)
