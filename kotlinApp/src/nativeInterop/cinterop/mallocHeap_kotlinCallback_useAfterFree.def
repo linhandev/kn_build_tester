@@ -1,0 +1,9 @@
+package = mallocHeap_kotlinCallback_useAfterFree
+---
+#include <stdlib.h>
+typedef void (*writer_cb)(char* p);
+static char* c_malloc_n(int n) { return (char*)malloc((size_t)n); }
+static void free_then_cb(char* p, writer_cb cb) {
+    free(p);
+    cb(p);
+}

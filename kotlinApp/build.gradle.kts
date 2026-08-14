@@ -9,12 +9,22 @@ fun String.capitalize() = replaceFirstChar { it.uppercase() }
 
 kotlin {
     ohosArm64 {
+        compilations.getByName("main") {
+            cinterops {
+                val mallocHeap_kotlinCallback_useAfterFree by creating
+            }
+        }
         binaries {
             sharedLib {
                 baseName = "c2k"
                 freeCompilerArgs += "-Xadd-light-debug=enable"
-                // Keep runtime/static libs' DWARF in the linked .so (pairs with kotlin.native.isNativeRuntimeDebugInfoEnabled in Kotlin repo local.properties).
                 freeCompilerArgs += "-Xbinary=stripDebugInfoFromNativeLibs=false"
+                freeCompilerArgs += "-Xbinary=sanitizer=HWADDRESS"
+            }
+            executable {
+                baseName = "uaf_cb"
+                entryPoint = "main"
+                freeCompilerArgs += "-Xbinary=sanitizer=HWADDRESS"
             }
         }
     }

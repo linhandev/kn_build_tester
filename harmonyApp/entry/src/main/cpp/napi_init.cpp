@@ -1,6 +1,7 @@
 #include "napi/native_api.h"
 
 extern "C" const char* kn_helloworld(void);
+extern "C" void kn_run_mallocHeap_kotlinCallback_useAfterFree(void);
 
 static napi_value RunHelloWorld(napi_env env, napi_callback_info info)
 {
@@ -12,6 +13,15 @@ static napi_value RunHelloWorld(napi_env env, napi_callback_info info)
     }
     napi_value result;
     napi_create_string_utf8(env, msg, NAPI_AUTO_LENGTH, &result);
+    return result;
+}
+
+static napi_value RunUafCallback(napi_env env, napi_callback_info info)
+{
+    (void)info;
+    kn_run_mallocHeap_kotlinCallback_useAfterFree();
+    napi_value result;
+    napi_get_undefined(env, &result);
     return result;
 }
 
@@ -46,7 +56,8 @@ static napi_value Init(napi_env env, napi_value exports)
 {
     napi_property_descriptor desc[] = {
         { "add", nullptr, Add, nullptr, nullptr, nullptr, napi_default, nullptr },
-        { "runHelloWorld", nullptr, RunHelloWorld, nullptr, nullptr, nullptr, napi_default, nullptr }
+        { "runHelloWorld", nullptr, RunHelloWorld, nullptr, nullptr, nullptr, napi_default, nullptr },
+        { "runUafCallback", nullptr, RunUafCallback, nullptr, nullptr, nullptr, napi_default, nullptr }
     };
     napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc);
     return exports;
