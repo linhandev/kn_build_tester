@@ -56,7 +56,7 @@ cd kn_samples/repro
 | `+fix-cortex-a53-835769,+fp-armv8,+neon,+reserve-x28,+v8a` (issue) | **26m 7s** | 100% | 5-7 GB |
 | `+fp-armv8,+neon,+reserve-x28,+v8a` (no fix) | 10m 38s | 100% | 0.5-3 GB |
 | Default konan features (baseline) | 10m 14s | 100% | 0.5-3 GB |
-| `+fix-cortex-a53-835769` (alone) | _in progress_ | 100% | 5.8 GB |
+| `+fix-cortex-a53-835769` (alone) | **10m 39s** | 100% | 1.5-5.8 GB |
 
 ## Evidence
 
@@ -86,6 +86,10 @@ consuming the majority of the 26-minute build time. Without it, clang++ peaks at
   for 2.2.21-0.5.0-14 has `+fix-cortex-a53-835769` but builds in 10m 14s. The slowdown
   appears to require the *combination* of `+fix-cortex-a53-835769` with the issue's
   specific feature set (which lacks `+aes`, `+sha2`, `+asimd` but adds `+fp-armv8`, `+v8a`)
+- **`+fix-cortex-a53-835769` alone is NOT the trigger**: tested with only `+fix-cortex-a53-835769`
+  and no other features — build takes 10m 39s, same as baseline. The trigger is the
+  *combination* of `+fix-cortex-a53-835769` with `+fp-armv8,+neon,+reserve-x28,+v8a`.
+  Further bisection needed to identify which specific feature(s) interact with the erratum fix.
 
 ## Notable Observations
 
