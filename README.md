@@ -1,256 +1,100 @@
-# Kotlin Multiplatform Multi-Module Demo
+# IS-87 Reproduction: `+fix-cortex-a53-835769` causes slow OHOS arm64 release build
 
-This project demonstrates how to create a Kotlin Multiplatform application with multiple modules where:
-- **mathlib**: Compiled as a **static library** (.a files) for native targets and JAR for JVM
-- **stringlib**: Compiled as a **dynamic library** (.dylib/.so files) for native targets and JAR for JVM
-- **app**: Application that uses both libraries
+## Issue
 
-## Project Structure
+Setting OHOS arm64 target CPU features to include `+fix-cortex-a53-835769` causes the
+LLVM codegen step (`clang++ -O3`) to take 2-3x longer than without it, turning a ~10
+minute release build into a 26+ minute build. With the full issue feature set
+(`+fix-cortex-a53-835769,+fp-armv8,+neon,+reserve-x28,+v8a`), the build takes **26m 7s**.
+Removing `+fix-cortex-a53-835769` drops it to **10m 38s**, nearly matching the baseline
+of **10m 14s**.
+
+## Environment
+
+- **Host**: macOS arm64 (Apple M-series)
+- **Kotlin/Native prebuilt**: `2.2.21-0.5.0-14` (CPF 2.2.21 series)
+- **LLVM**: CPF LLVM 19 (`cpf-llvm-19-aarch64-macos-dev-19`)
+- **Demo repo**: `kmp-cmp-test-demo`, `Performance` branch
+- **Build task**: `linkReleaseSharedOhosArm64` (release shared library)
+- **CPU features location**: `~/.konan/kotlin-native-prebuilt-macos-aarch64-2.2.21-0.5.0-14/konan/konan.properties`
+
+## Default vs Issue CPU features
 
 ```
-kn-sample/
-├── README.md
-├── build.gradle.kts              # Root build configuration
-├── settings.gradle.kts           # Project modules declaration
-├── gradle.properties             # Gradle configuration (includes heap space settings)
-├── run.sh                        # Demo script
-├── mathlib/                      # Static library module
-│   ├── build.gradle.kts         # Static library build configuration
-│   └── src/
-│       ├── commonMain/kotlin/   # 🌍 Shared code: MathUtils.kt, PlatformExpected.kt
-│       ├── commonNative/kotlin/ # 🖥️ Native code: Platform.kt
-│       └── jvmMain/kotlin/      # ☕ JVM code: Platform.kt
-├── stringlib/                   # Dynamic library module
-│   ├── build.gradle.kts         # Dynamic library build configuration  
-│   └── src/
-│       ├── commonMain/kotlin/   # 🌍 Shared code: StringUtils.kt, StringPlatformExpected.kt
-│       ├── commonNative/kotlin/ # 🖥️ Native code: StringPlatform.kt
-│       └── jvmMain/kotlin/      # ☕ JVM code: StringPlatform.kt
-└── app/                         # Application module
-    ├── build.gradle.kts         # App build configuration
-    └── src/
-        └── commonMain/kotlin/   # 🌍 Main.kt (uses both libraries)
-            └── Main.kt          
+# Default (konan.properties 2.2.21-0.5.0-14):
+targetCpu.ohos_arm64 = cortex-a57
+targetCpuFeatures.ohos_arm64 = +aes,+fp,+neon,+sha2,+asimd,+reserve-x28,+fix-cortex-a53-835769
+
+# Issue (user-set):
+targetCpuFeatures.ohos_arm64 = +fix-cortex-a53-835769,+fp-armv8,+neon,+reserve-x28,+v8a
 ```
 
-## Modules
-
-### 1. mathlib (Static Library Module)
-- **Purpose**: Simple math function to demonstrate static library linking
-- **Targets**: JVM, Linux x64, macOS x64, macOS ARM64
-- **Outputs**: 
-  - **JVM**: `mathlib-jvm.jar`
-  - **Native**: `libmathlib.a` (static libraries)
-- **Function**: `mathLibFunction(x: Int, y: Int): Int` - adds two numbers
-
-### 2. stringlib (Dynamic Library Module)  
-- **Purpose**: Simple string function to demonstrate dynamic library linking
-- **Targets**: JVM, Linux x64, macOS x64, macOS ARM64
-- **Outputs**: 
-  - **JVM**: `stringlib-jvm.jar`
-  - **Native**: `libstringlib.dylib/.so` (dynamic/shared libraries)
-- **Function**: `stringLibFunction(text: String): String` - processes text
-
-### 3. app (Application Module)
-- **Purpose**: Demonstrates usage of both static and dynamic libraries
-- **Dependencies**: Links against both mathlib (static) and stringlib (dynamic)
-- **Output**: Calls functions from both libraries and shows platform information
-
-## How App Depends on Libraries
-
-The dependency configuration demonstrates Kotlin Multiplatform's automatic cross-module linking:
-
-### In `app/build.gradle.kts`:
-```kotlin
-sourceSets {
-    val commonMain by getting {
-        dependencies {
-            implementation(project(":mathlib"))    // Static library
-            implementation(project(":stringlib"))  // Dynamic library
-        }
-    }
-}
-```
-
-### What Happens Automatically:
-1. **JVM→JVM**: App's JVM target depends on both libraries' JARs
-2. **Native→Native**: App's native targets link against libraries (static + dynamic)
-3. **Source Resolution**: Each platform gets the right source code via hierarchy
-
-## Library Types Demonstrated
-
-### Static Library (mathlib)
-- **Build Config**: `staticLib()` in binaries block
-- **Native Output**: `libmathlib.a` files
-- **Linking**: Embedded into final executable at compile time
-- **JVM Output**: Regular JAR file
-
-### Dynamic Library (stringlib)  
-- **Build Config**: `sharedLib()` in binaries block
-- **Native Output**: `libstringlib.dylib` (macOS) / `libstringlib.so` (Linux)
-- **Linking**: Loaded at runtime, must be available in library path
-- **JVM Output**: Regular JAR file
-
-## Technologies Used
-
-- **Kotlin**: 2.2.0
-- **Gradle**: 9.0.0 
-- **Target Platforms**: JVM, Linux x64, macOS x64, macOS ARM64
-- **Heap Configuration**: 4GB max heap for Kotlin/Native compilation
-
-## Compilation Process
-
-### 1. Static Library Compilation (mathlib)
+## Reproduction Steps
 
 ```bash
-./gradlew :mathlib:linkReleaseStaticNative
+# Clone this reproduction branch
+git clone -b repro/is87-fix-cortex-a53-slow-codegen https://github.com/linhandev/kn_samples.git
+cd kn_samples/repro
+
+# Option A: Full issue feature set (slow, ~26 min)
+./reproduce.sh issue
+
+# Option B: Without +fix-cortex-a53-835769 (fast, ~10 min)
+./reproduce.sh no-fix
+
+# Option C: +fix-cortex-a53-835769 alone (isolating the trigger)
+./reproduce.sh fix-only
+
+# Restore default konan.properties
+./patch-konan-properties.sh default
 ```
 
-**Output**: `mathlib/build/bin/native/releaseStatic/libmathlib.a`
+## Expected Results
 
-### 2. Dynamic Library Compilation (stringlib)
+| Feature set | Build time | clang++ CPU | clang++ RSS |
+|---|---|---|---|
+| `+fix-cortex-a53-835769,+fp-armv8,+neon,+reserve-x28,+v8a` (issue) | **26m 7s** | 100% | 5-7 GB |
+| `+fp-armv8,+neon,+reserve-x28,+v8a` (no fix) | 10m 38s | 100% | 0.5-3 GB |
+| Default konan features (baseline) | 10m 14s | 100% | 0.5-3 GB |
+| `+fix-cortex-a53-835769` (alone) | _in progress_ | 100% | 5.8 GB |
 
-```bash  
-./gradlew :stringlib:linkReleaseSharedNative
-```
+## Evidence
 
-**Output**: `stringlib/build/bin/native/releaseShared/libstringlib.dylib`
-
-### 3. Application Compilation (app)
-
-```bash
-./gradlew :app:linkReleaseExecutableNative  
-```
-
-Links against both static and dynamic libraries.
-**Output**: `app/build/bin/native/releaseExecutable/app.kexe`
-
-Builds both modules in the correct dependency order.
-
-## How to Build and Run
-
-### Prerequisites
-
-- Java 8 or higher
-- Gradle (or use the included wrapper)
-- Linux environment (for running the executable)
-
-### Build Steps
-
-1. **Clone and navigate to the project**:
-   ```bash
-   git clone <repository-url>
-   cd kn-sample
-   ```
-
-2. **Build the entire project** (all targets):
-   ```bash
-   ./gradlew build
-   ```
-
-## Quick Start
-
-### Using the Demo Script
-```bash
-# Run both native and JVM versions automatically  
-bash run.sh
-```
-
-### Manual Build and Run
-
-1. **Build everything**:
-   ```bash
-   ./gradlew build
-   ```
-
-2. **Run Native** (auto-detects platform):
-   ```bash
-   # macOS ARM64
-   ./app/build/bin/macosArm/releaseExecutable/app.kexe
-   
-   # macOS x64  
-   ./app/build/bin/macos/releaseExecutable/app.kexe
-   
-   # Linux x64
-   ./app/build/bin/native/releaseExecutable/app.kexe
-   ```
-
-3. **Run JVM**:
-   ```bash
-   java -cp "app/build/classes/kotlin/jvm/main:mathlib/build/libs/mathlib-jvm.jar:stringlib/build/libs/stringlib-jvm.jar:$KOTLIN_STDLIB" MainKt
-   ```
-
-## Expected Output
-
-When running the application, you should see:
+The slowdown occurs during the LLVM codegen phase. The `clang++` process compiles
+`out.bc` (LLVM bitcode produced by Kotlin/Native) to `libkn.so.o` with `-O3`:
 
 ```
-=== Kotlin Multi-Module Demo ===
-Running on: [JVM (Java 21.0.8) | Native (Linux/macOS)]
-String platform: [JVM (Dynamic JAR) | Native (Dynamic Library)]
-Called mathLibAddFunction from static library
-Result from static library: 8
-Called stringLibFunction from dynamic library  
-Result from dynamic library: Processed: Hello from app!
-=== Demo completed ===
+/Users/ohoskt/.konan/dependencies/cpf-llvm-19-aarch64-macos-dev-19/bin/clang++ \
+  -cc1 -emit-obj -mllvm -enable-compressed-bitmap-stackmap=true \
+  -mllvm -global-isel=0 -mllvm -enable-kotlin-stub-generator=true \
+  -x ir -triple aarch64-linux-ohos -O3 -ffunction-sections \
+  -mrelocation-model pic \
+  /var/folders/.../konan_temp.../out.bc \
+  -o /var/folders/.../konan_temp.../libkn.so.o
 ```
 
-The output shows:
-- **Platform detection** from both libraries
-- **Static library call** (mathlib) - embedded in executable
-- **Dynamic library call** (stringlib) - loaded at runtime
-- **Cross-module dependencies** working correctly
+With `+fix-cortex-a53-835769`, clang++ sustains 100% CPU and peaks at 5-7 GB RSS,
+consuming the majority of the 26-minute build time. Without it, clang++ peaks at
+0.5-3 GB RSS and completes in about 4-5 minutes (out of the total 10-minute build).
 
-## Key Learning Points
+## Boundary Observations
 
-### 1. Static vs Dynamic Libraries
-- **Static Library (mathlib)**: Code embedded in final executable, no runtime dependencies
-- **Dynamic Library (stringlib)**: Loaded at runtime, smaller executable but needs library files
+- **Reproduces consistently**: the 26-minute build time is stable across multiple runs
+- **CPU-bound**: clang++ runs at 100% CPU — this is not an I/O wait or lock contention
+- **Memory-intensive**: RSS peaks at 5-7 GB with `+fix-cortex-a53-835769` vs 0.5-3 GB without
+- **Default features also include `+fix-cortex-a53-835769`**: the default konan.properties
+  for 2.2.21-0.5.0-14 has `+fix-cortex-a53-835769` but builds in 10m 14s. The slowdown
+  appears to require the *combination* of `+fix-cortex-a53-835769` with the issue's
+  specific feature set (which lacks `+aes`, `+sha2`, `+asimd` but adds `+fp-armv8`, `+v8a`)
 
-### 2. Automatic Dependency Resolution
-- Gradle handles build order automatically based on dependencies
-- Both libraries built before application that depends on them
-- JVM gets JARs, Native gets appropriate library files
+## Notable Observations
 
-### 3. Multiplatform Module Architecture
-- Single codebase supports JVM + multiple native platforms
-- `expect`/`actual` pattern for platform-specific code
-- Source set hierarchy shares code efficiently
-
-### 4. Build Configuration Benefits
-- Heap space configuration prevents out-of-memory errors
-- Configuration cache speeds up repeated builds
-- Parallel builds improve performance
-
-## Build Artifacts
-
-After a successful build, you'll find:
-
-**mathlib (Static Library):**
-- **JVM**: `mathlib/build/libs/mathlib-jvm.jar`
-- **Native**: `mathlib/build/bin/{platform}/releaseStatic/libmathlib.a`
-
-**stringlib (Dynamic Library):**
-- **JVM**: `stringlib/build/libs/stringlib-jvm.jar`  
-- **Native**: `stringlib/build/bin/{platform}/releaseShared/libstringlib.{dylib|so}`
-
-**app (Application):**
-- **JVM**: `app/build/classes/kotlin/jvm/main/` (class files)
-- **Native**: `app/build/bin/{platform}/releaseExecutable/app.kexe`
-
-Where `{platform}` is: `native` (Linux x64), `macos` (macOS x64), or `macosArm` (macOS ARM64).
-
-## Extending to Other Targets
-
-To add support for other platforms, modify the build scripts:
-
-```kotlin
-kotlin {
-    linuxX64("linux")
-    macosX64("macos") 
-    macosArm64("macosArm")
-    mingwX64("windows")
-}
-```
-
-This demonstrates the power of Kotlin Multiplatform for creating modular native applications with both static and dynamic library linking.
+- `+fix-cortex-a53-835769` is a Cortex-A53 erratum 835769 workaround that patches certain
+  load/store instruction sequences. The LLVM backend applies it during codegen, and
+  the resulting instruction rewriting may trigger a pathological case at `-O3`
+- The `clangFlags.ohos_arm64` in konan.properties includes `-mllvm -global-isel=0`,
+  which disables GlobalISel. The erratum fix may interact with the default instruction
+  selector path in a way that causes excessive compilation time
+- The issue's feature set uses `+fp-armv8` and `+v8a` instead of the default's `+fp`
+  and `+asimd`. These may enable different instruction patterns that trigger more
+  erratum fix insertions
