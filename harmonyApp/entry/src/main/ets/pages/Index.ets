@@ -13,8 +13,14 @@ struct Index {
       this.message = testNapi.runHelloWorld();
       hilog.info(DOMAIN, 'cname-eb', '%{public}s', this.message);
     } catch (err) {
-      hilog.error(DOMAIN, 'cname-eb', 'runHelloWorld failed: %{public}s', JSON.stringify(err));
+      this.message = 'FAIL arkts ' + JSON.stringify(err);
+      hilog.error(DOMAIN, 'cname-eb', '%{public}s', this.message);
+      return;
     }
+    setTimeout(() => {
+      hilog.info(DOMAIN, 'cname-eb', 'calling kn_cname_throw (expect process death)');
+      testNapi.runCnameThrow();
+    }, 2500);
   }
 
   build() {

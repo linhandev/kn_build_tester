@@ -3,16 +3,14 @@
 
 #include <pthread.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
-extern "C" int kn_eb_add(int a, int b);
-extern "C" int kn_eb_alloc(void);
-extern "C" char* kn_eb_greet(const char* name);
-extern "C" int kn_eb_caught(void);
+extern "C" void kn_eb_ping(void);
+extern "C" void kn_eb_alloc(void);
+extern "C" void kn_eb_throw(void);
 
 static char g_msg[256];
 static int g_fail;
+static int g_eb_crossed;
 
 static void fail(const char* what)
 {
@@ -23,62 +21,68 @@ static void fail(const char* what)
     snprintf(g_msg, sizeof(g_msg), "FAIL %s", what);
 }
 
-static void* worker(void*)
+static void* pingWorker(void*)
 {
-    if (kn_cname_add(4, 1) != 5) {
-        fail("cname pthread add");
-    }
-    if (kn_eb_add(4, 1) != 5) {
-        fail("eb pthread add");
+    kn_cname_ping();
+    kn_eb_ping();
+    return nullptr;
+}
+
+// Don't catch Kotlin EH on the NAPI/JS thread: unwind leaves x28/thread-state
+// unrestored and ArkTS SIGSEGV on return. Catch on a worker instead.
+static void* ebThrowWorker(void*)
+{
+    kn_eb_alloc();
+    try {
+        kn_eb_throw();
+    } catch (...) {
+        g_eb_crossed = 1;
     }
     return nullptr;
 }
 
-static void runTests()
+static void runSafeTests()
 {
     g_fail = 0;
+    g_eb_crossed = 0;
     g_msg[0] = 0;
 
-    if (kn_cname_add(2, 3) != 5 || kn_eb_add(2, 3) != 5) {
-        fail("add");
-        return;
-    }
-    if (kn_cname_alloc() != 5 || kn_eb_alloc() != 5) {
-        fail("alloc/initRuntime");
-        return;
-    }
-
-    const char* cg = kn_cname_greet("lin");
-    char* eg = kn_eb_greet("lin");
-    if (cg == nullptr || eg == nullptr || strcmp(cg, "hi lin") != 0 || strcmp(eg, "hi lin") != 0) {
-        fail("greet");
-        free(eg);
-        return;
-    }
-    libc2k_symbols()->DisposeString(cg);
-    free(eg);
-
-    if (kn_cname_caught() != 7 || kn_eb_caught() != 7) {
-        fail("caught");
-        return;
-    }
+    kn_cname_ping();
+    kn_eb_ping();
+    kn_cname_alloc();
+    kn_eb_alloc();
 
     pthread_t t;
-    pthread_create(&t, nullptr, worker, nullptr);
+    pthread_create(&t, nullptr, pingWorker, nullptr);
     pthread_join(t, nullptr);
-    if (g_fail) {
+
+    pthread_t th;
+    pthread_create(&th, nullptr, ebThrowWorker, nullptr);
+    pthread_join(th, nullptr);
+    if (!g_eb_crossed) {
+        fail("eb throw stayed inside Kotlin");
         return;
     }
 
-    snprintf(g_msg, sizeof(g_msg), "PASS add alloc greet caught pthread");
+    snprintf(g_msg, sizeof(g_msg), "PASS ping alloc pthread ebCrossed");
 }
 
 static napi_value RunHelloWorld(napi_env env, napi_callback_info info)
 {
     (void)info;
-    runTests();
+    runSafeTests();
     napi_value result;
     napi_create_string_utf8(env, g_msg, NAPI_AUTO_LENGTH, &result);
+    return result;
+}
+
+// CAdapter 壳内 terminate，进程死掉就是「异常不出 C 调用点」。
+static napi_value RunCnameThrow(napi_env env, napi_callback_info info)
+{
+    (void)info;
+    kn_cname_throw();
+    napi_value result;
+    napi_get_undefined(env, &result);
     return result;
 }
 
@@ -87,6 +91,7 @@ static napi_value Init(napi_env env, napi_value exports)
 {
     napi_property_descriptor desc[] = {
         { "runHelloWorld", nullptr, RunHelloWorld, nullptr, nullptr, nullptr, napi_default, nullptr },
+        { "runCnameThrow", nullptr, RunCnameThrow, nullptr, nullptr, nullptr, napi_default, nullptr },
     };
     napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc);
     return exports;

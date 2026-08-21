@@ -1,23 +1,46 @@
 # CExport+@CName vs @ExportedBridge
 
-Minimal HAP on `bare`. Kotlin **2.2.21-1.1.0-01**. One `libc2k.so` (default CExport V1).
+Minimal HAP on `bare`. One `libc2k.so`（默认 CExport V1）。ArkTS 导出场景通常是无参 register/init，本 demo 不测 String 编解码。
 
-CAdapter (`@CName`) C 壳会做：`Kotlin_initRuntimeIfNeeded`、`ScopedRunnableState`、`char*`↔`String`、Kotlin 异常 `terminate`。
+设备 `23E0123523000348`。入口：`kn_*_ping` / `kn_*_alloc` / `kn_*_throw`。
 
-`@ExportedBridge` + stackmap：`Kotlin_N2KStub` → `SaveLastFrameAndStatus` 已经做了 **initRuntime + 切 Runnable**。Kotlin 函数体不再做这两件事。要补的是 **C ABI 编解码**（本 demo 的 `ebGreet`：`toKString`/`strdup`）。
+## 谁做 initRuntime / 线程态
 
-| 点 | CName V1 谁做 | EB 谁做 | 本 demo |
+| | `@CName`（CAdapter 壳） | `@ExportedBridge` stackmap **ON** | `@ExportedBridge` stackmap **OFF** |
 |--|--|--|--|
-| initRuntime | C 壳 | N2K stub | `alloc`：两边都能分配 String |
-| 线程态 | C 壳 ScopedRunnableState | N2K stub | `pthread` 调 `add` |
-| 栈图/N2K | C `_impl` ktstub | trampoline ktstub | 跟着上面两条 |
-| 原语 | 透传 | 透传 | `add` |
-| String↔char* | CAdapter | **EB 函数里补** | `greet` |
-| Kotlin 里 catch | 两边一样 | 两边一样 | `caught`→7 |
-| 未捕获异常出 C | C 壳 terminate | N2K unwind 到 C | 不在 HAP 里测（会杀进程） |
+| initRuntime / 线程态 | C 壳 `Kotlin_initRuntimeIfNeeded` + `ScopedRunnableState` | N2K trampoline：`kn_eb_*` → `kn_eb_*_kbridge`，stub 里 `SaveLastFrameAndStatus` | **无 trampoline**；Kotlin 函数自己 `needsRuntimeInit` + `switchToRunnable` |
+| 本 demo 证据 | `alloc` 能分配；`pthread` 调 `ping` | dynsym 有 `kn_eb_*_kbridge` + `KotlinStubGV` | dynsym **没有** `_kbridge` / `KotlinStubGV` |
+
+## 未捕获 Kotlin 异常出不出 N/K 边界
+
+C 侧 `catch (...)` 住 = 出了边界。CName 杀进程也是结果。
+
+EB 的 catch 放在 **worker pthread** 上（NAPI/JS 线程上 catch 会把 x28/线程态弄脏，回 ArkTS 直接 SIGSEGV）。
+
+| | CName `kn_cname_throw` | EB `kn_eb_throw` |
+|--|--|--|
+| 机制 | 壳内 `catch` → `HandleCurrentExceptionWhenLeavingKotlinCode` → `std::terminate` | 异常 unwind 进 C |
+| **ON** 1.1.0-01 | hilog `PASS ping alloc pthread ebCrossed` 后 `SIGABRT`，`Reason: kotlin.RuntimeException: cname`，栈 `kn_cname_throw` → `std::terminate` | worker 上 `catch (...)` 成功（否则到不了 PASS） |
+| **OFF** 本地 dist | 同上：PASS 然后 `kn_cname_throw` → `terminate` | 同上：C catch 成功 |
+
+OFF dist：`~/git/worktree/kotlin-cname-eb-stackmap-off`（`cpf/develop-2.2.21-OH` `e928f6a5df74`），`-Pkotlin.native.precise.stackmap=false :kotlin-native:bundle`。应用侧必须同关：`-Pkotlin.native.home=<dist> -PenableStackmap=false`。
+
+## 跑法
+
+精确栈 **ON**（发布版 dist，默认）：
 
 ```shell
+export GRADLE_USER_HOME=~/git/worktree/kn_samples-cname-vs-eb-gradle_home
 ./gradlew startHarmonyAppDebug
 ```
 
-页面 / hilog tag `cname-eb` 应为 `PASS add alloc greet caught pthread`。
+精确栈 **OFF**（本地 matching dist）：
+
+```shell
+export GRADLE_USER_HOME=~/git/worktree/kn_samples-cname-vs-eb-gradle_home
+./gradlew startHarmonyAppDebug \
+  -Pkotlin.native.home=/path/to/kotlin-native/dist \
+  -PenableStackmap=false
+```
+
+hilog tag `cname-eb` 先出 `PASS ping alloc pthread ebCrossed`，约 2.5s 后调 `kn_cname_throw`，进程 `SIGABRT`。

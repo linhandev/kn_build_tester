@@ -15,6 +15,10 @@ kotlin {
                 freeCompilerArgs += "-Xadd-light-debug=enable"
                 // Keep runtime/static libs' DWARF in the linked .so (pairs with kotlin.native.isNativeRuntimeDebugInfoEnabled in Kotlin repo local.properties).
                 freeCompilerArgs += "-Xbinary=stripDebugInfoFromNativeLibs=false"
+                // Must match the dist flavour. Local OFF dist: -PenableStackmap=false
+                if (findProperty("enableStackmap") == "false") {
+                    freeCompilerArgs += "-Xbinary=enableStackmap=false"
+                }
             }
         }
     }
