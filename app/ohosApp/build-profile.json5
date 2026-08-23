@@ -1,0 +1,63 @@
+{
+  "app": {
+    "products": [
+      {
+        "name": "default",
+        "signingConfig": "default",
+        "compatibleSdkVersion": "5.0.1(13)",
+        "compatibleSdkVersionStage": "beta3",
+        "runtimeOS": "HarmonyOS",
+        "buildOption": {
+          "strictMode": {
+            "useNormalizedOHMUrl": false
+          },
+          "arkOptions": {
+          }
+        }
+      }
+    ],
+    "buildModeSet": [
+      {
+        "name": "debug",
+        "buildOption": {
+          "nativeLib": {
+            "filter": {
+              "enableOverride": true
+            }
+          }
+        }
+      },
+      {
+        "name": "release",
+        "buildOption": {
+          "nativeLib": {
+            "filter": {
+              "enableOverride": true
+            }
+          }
+        }
+      }
+    ],
+    "signingConfigs": [
+
+    ]
+  },
+  "modules": [
+    {
+      "name": "entry",
+      "srcPath": "./entry",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "kmp_ability_impl",
+      "srcPath": "./kmp_ability_impl"
+    }
+  ]
+}

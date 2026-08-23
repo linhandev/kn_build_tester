@@ -1,34 +1,42 @@
 pluginManagement {
-    // CI sets KN_ACTION_BUILD_REPO_ABS to an absolute path to kotlin build/repo (Maven layout). Optional for local dev.
-    val knActionMavenUrl: String? = System.getenv("KN_ACTION_BUILD_REPO_ABS")
-        ?.let { java.io.File(it).toURI().toString() }
+    includeBuild("build-logic")
     repositories {
-        knActionMavenUrl?.let { maven(it) }
-        maven("https://maven.eazytec-cloud.com/nexus/repository/maven-public")
-        maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
-        maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
-        gradlePluginPortal()
+        mavenLocal()
+        apply(from = "${rootDir}/build_properties.gradle")
+        maven(url = "https://artifact.bytedance.com/repository/releases")
+        val buildProperties = extensions.findByName("build_properties") as Map<String, Any?>
+        buildProperties["custom_maven_url"]?.let {
+            maven(url = it)
+        }
         mavenCentral()
+        google()
     }
-    plugins {
-        val kotlinVersion: String by settings
-        kotlin("multiplatform") version kotlinVersion
-    }
+}
+
+plugins {
+    id("com.bytekmp.settings")
 }
 
 dependencyResolutionManagement {
-    val knActionMavenUrl: String? = System.getenv("KN_ACTION_BUILD_REPO_ABS")
-        ?.let { java.io.File(it).toURI().toString() }
     repositories {
-        knActionMavenUrl?.let { maven(it) }
         mavenLocal()
-        maven("https://maven.eazytec-cloud.com/nexus/repository/maven-public")
-        maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
-        maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
+        val buildProperties = extensions.findByName("build_properties") as Map<String, Any?>
+        mavenLocal()
+        maven(url = "https://artifact.bytedance.com/repository/releases")
+        buildProperties["custom_maven_url"]?.let {
+            maven(url = it)
+        }
         mavenCentral()
     }
 }
 
-rootProject.name = "c2k"
+rootProject.name = "Bytekmp_sample"
 
-include("kotlinApp")
+// demo App
+include(":app")
+include(":app:ohosApp")
+include(":app:androidApp")
+
+include(":launcher")
+include(":sample")
+include(":todo")

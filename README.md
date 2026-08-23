@@ -1,44 +1,16 @@
-# Kotlin/Native Exception Demo (Minimal)
+# ByteKMPSample (场景3)
 
-Keep `bare` branch a starting point for doing a demo, impl demos on another branch.
+原样复制自 [ByteKMPSample](https://github.com/ByteKMP/ByteKMPSample)（depth-1 clone）。
 
-Full build command.
+## 原样复制内容
+- `sample/` + `todo/`：KMP 模块，OHOS 产 liblauncher.so（ByteKMP 插件配置）
+- `launcher/`：入口模块（iOS/Android）
+- `app/ohosApp/`：OHOS app 工程
+- `build-logic/`：ByteKmpSettingsPlugin（composite build）
+- 编译器：ByteKMP Kotlin fork `2.0.20-bytekmp-1001`（`kotlin.version.non-ios`）
+- ByteKMP 插件（`com.bytekmp.*`）从 `artifact.bytedance.com` maven 拉，**不在本仓**
 
-```shell
-clear
-hdc uninstall com.kotlin.demo \
-./gradlew clean \
-./gradlew --stop \
-./gradlew startHarmonyAppDebug --rerun-tasks
-```
+bundleName 原版 `com.bytekmp.sample`；编译验证时临时改 `com.kotlin.demo` + bare debug 签名（不随 demo commit）。
 
-## Bundle name (from project)
-
-The installed app’s **bundle name** is **`app.bundleName`** in **`harmonyApp/AppScope/app.json5`** (for this sample it is `com.kotlin.demo`). Use the same value for `hdc uninstall`, `aa start`, and filtering crash logs.
-
-Read it from the repo (from the project root):
-
-```shell
-grep bundleName harmonyApp/AppScope/app.json5
-```
-
-## Pull the latest crash / fault log for this app
-
-Fault dumps for apps usually land under **`/data/log/faultlog/faultlogger/`** (freeze-related dumps often under **`/data/log/faultlog/freeze_ext/`**). Filenames typically include the **bundle name**, so you can take the newest matching file.
-
-From the project root (macOS/Linux; strips a trailing CR from `hdc` output):
-
-```shell
-bundle=$(grep bundleName harmonyApp/AppScope/app.json5 | sed -n 's/.*"bundleName"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
-latest=$(hdc shell "ls -t /data/log/faultlog/faultlogger/" | tr -d '\r' | grep -F "$bundle" | head -1)
-hdc file recv "/data/log/faultlog/faultlogger/$latest" ./
-```
-
-Freeze logs for the same app (same idea, different directory):
-
-```shell
-latest=$(hdc shell "ls -t /data/log/faultlog/freeze_ext/" | tr -d '\r' | grep -F "$bundle" | head -1)
-hdc file recv "/data/log/faultlog/freeze_ext/$latest" ./
-```
-
-If `latest` is empty, list recent files and pick the one whose name matches your bundle: `hdc shell "ls -lt /data/log/faultlog/faultlogger/ | head -n 20"`.
+## 改造 commit
+见下一笔 commit：`cInterfaceMode=none` + Init→`@ExportedBridge`（后者在 ByteKMP 插件层，本仓文档化引用 OV 实测）。

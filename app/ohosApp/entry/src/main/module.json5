@@ -1,0 +1,40 @@
+{
+  "module": {
+    "name": "entry",
+    "type": "entry",
+    "description": "$string:module_desc",
+    "srcEntry": "./ets/ability_stage/MainAbilityStage.ets",
+    "mainElement": "MainAbility",
+    "deviceTypes": [
+      "phone",
+      "tablet",
+      "2in1"
+    ],
+    "compressNativeLibs": true,
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "pages": "$profile:main_pages",
+    "abilities": [
+      {
+        "name": "MainAbility",
+        "srcEntry": "./ets/ability_stage/MainAbility.ets",
+        "description": "$string:EntryAbility_desc",
+        "icon": "$media:bytekmp_icon_without_text",
+        "label": "$string:app_name",
+        "startWindowIcon": "$media:bytekmp_icon_without_text",
+        "startWindowBackground": "$color:start_window_background",
+        "exported": true,
+        "skills": [
+          {
+            "entities": [
+              "entity.system.home"
+            ],
+            "actions": [
+              "action.system.home"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

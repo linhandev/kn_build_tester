@@ -1,0 +1,7 @@
+<component name="CopyrightManager">
+  <settings default="Bytedance">
+    <module2copyright>
+      <element module="All" copyright="Bytedance" />
+    </module2copyright>
+  </settings>
+</component>

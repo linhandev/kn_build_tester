@@ -1,0 +1,14 @@
+{
+  "modelVersion": "5.0.0",
+  "dependencies": {
+  },
+  "logging": {
+    // "level": "info"                          /* Define the log level. Value: [ "debug" | "info" | "warn" | "error" ]. Default: "info" */
+  },
+  "debugging": {
+    // "stacktrace": false                      /* Disable stacktrace compilation. Default: false */
+  },
+  "properties": {
+    "ohos.pack.compressLevel": "ultimate",
+  }
+}

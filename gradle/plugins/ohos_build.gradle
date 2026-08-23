@@ -1,0 +1,16 @@
+
+boolean isIOS = gradle.startParameter.taskNames.any {
+    it.toLowerCase().contains("ios") || it.contains("syncFramework")
+}
+
+if(!isIOS) {
+    kotlin {
+        ohosArm64()
+    }
+} else {
+    kotlin {
+        sourceSets {
+            create("ohosArm64Main")
+        }
+    }
+}

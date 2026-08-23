@@ -1,0 +1,83 @@
+[versions]
+android-compileSdk = "34"
+android-minSdk = "21"
+android-targetSdk = "34"
+agp = "7.4.2"
+bytekmp_plugin = "1.0.0-bytekmp.3"
+bytekmp_leakcanary_plugin = "1.0.0-bytekmp.4"
+compose-resource-plugin = "1.6.10-bytekmp.9"
+compose-common = "1.6.10-bytekmp.9"
+compose-resources = "1.6.10-bytekmp.9"
+compose-lifecycle = "2.8.0-bytekmp.9"
+compose-navigation = "2.7.7-bytekmp.9"
+androidx-compose-activity = "1.7.0"
+android-compose = "1.6.8"
+
+disko-version="1.0.0-bytekmp.1"
+
+kotlinx-coroutines = "1.8.1-bytekmp.3"
+
+kotlinx-serialization = "1.7.1-bytekmp.4"
+atomicfu = "0.25.0-bytekmp.4"
+kotlinx-datetime = "0.6.1-bytekmp-opensource.6"
+
+
+[libraries]
+# Compose
+androidx-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "androidx-compose-activity" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-common" }
+compose-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-resources" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-common" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-common" }
+compose-material = { module = "org.jetbrains.compose.material:material", version.ref = "compose-common" }
+compose-lifecycle = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "compose-lifecycle" }
+compose-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "compose-lifecycle" }
+compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "compose-navigation" }
+
+# iOS Compose
+disko = { module = "com.bytedance.kmp:disko", version.ref = "disko-version" }
+
+# serialization
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+
+# datetime
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+
+# ohos ffi
+ohos-ffi-jsbind-generator = { module = "com.bytedance.kmp.ohos.ffi:jsbind_generator", version.ref = "bytekmp_plugin" }
+ohos-ffi-annotation = { module = "com.bytedance.kmp.ohos.ffi:annotation", version.ref = "bytekmp_plugin" }
+ohos-ffi-library = { module = "com.bytedance.kmp.ohos.ffi:library", version.ref = "bytekmp_plugin" }
+
+# spi
+spi = { module = "com.bytedance.kmp.spi:spi", version.ref = "bytekmp_plugin" }
+spi-processor = { module = "com.bytedance.kmp.spi:processor", version.ref = "bytekmp_plugin" }
+
+# compose ohos
+compose-ohos-annotation = { module = "com.bytedance.kmp.compose.ohos:annotation", version.ref = "bytekmp_plugin" }
+compose-ohos-library = { module = "com.bytedance.kmp.compose.ohos:library", version.ref = "bytekmp_plugin" }
+compose-ohos-processor = { module = "com.bytedance.kmp.compose.ohos:processor", version.ref = "bytekmp_plugin" }
+compose-ohos-performance = { module = "com.bytedance.kmp.compose.ohos:performance", version.ref = "bytekmp_plugin" }
+
+# 协程
+kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+atomic-fu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "atomicfu" }
+bytekmp-leak-core = { module = "com.bytedance.kmp.kmpleakcanary:core", version.ref = "bytekmp_leakcanary_plugin" }
+
+[plugins]
+
+# Multiplatform
+jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "compose-resource-plugin" }
+bytekmp-all = { id = "com.bytedance.kmp.all" , version.ref = "bytekmp_plugin"}
+# Android
+android-library = { id = "com.android.library", version.ref = "agp" }
+android-application = { id = "com.android.application", version.ref = "agp" }
+
+so_har_generator = { id = "com.bytedance.kmp.ohos.ffi:so_har_generator", version.ref = "bytekmp_plugin" }
+compose-runtime = { id = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-common" }
+bytekmp-leakcanary-plugin = { id = "com.bytedance.kmp.kmpleakcanary", version.ref = "bytekmp_leakcanary_plugin" }
+[bundles]
+coreCompose = [
+    "compose-ui",
+    "compose-runtime",
+    "compose-foundation",
+]

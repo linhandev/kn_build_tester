@@ -1,0 +1,12 @@
+{
+  "name": "@kmp/ability_impl",
+  "version": "1.0.0",
+  "description": "Please describe the basic information.",
+  "main": "Index.ets",
+  "author": "",
+  "license": "Apache-2.0",
+  "packageType": "InterfaceHar",
+  "dependencies": {
+    "@bytekmp/sample": "1.0.0",
+  }
+}

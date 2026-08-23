@@ -1,0 +1,178 @@
+source 'https://cdn.cocoapods.org/'
+
+require 'fileutils'
+
+DANCEUI_PATH = "DanceUIWorkSpace/DanceUI"
+
+require_relative 'DanceUIWorkSpace/DanceUI/Scripts/pod_env'
+require_relative 'DanceUIWorkSpace/DanceUI/Scripts/gen_umbrealla_headers'
+require_relative 'DanceUIWorkSpace/DanceUI/utils/bootstrap'
+
+def danceui_dependency
+  pod 'DanceUIObservation',        :path => "#{DANCEUI_PATH}/Modules/DanceUIObservation"
+  pod 'DanceUIObservationMacro',   :path => "#{DANCEUI_PATH}/Modules/DanceUIObservation"
+
+  pod 'MyShims', :git => 'https://github.com/RetVal/MyShims', :branch => 'master'
+
+  pod 'DanceUI',        :path => "#{DANCEUI_PATH}"
+  pod 'DanceUIRuntime', :path => "DanceUIWorkSpace/DanceUIRuntime"
+  pod 'DanceUIGraph',   :path => "DanceUIWorkSpace/DanceUIGraph"
+
+  pod 'OpenCombine',             '0.14.0'
+  pod 'OpenCombineFoundation',   '0.14.0'
+  pod 'OpenCombineDispatch',     '0.14.0'
+  pod 'Resolver',                '1.5.1'
+
+  pod 'swift', :path => "DanceUIWorkSpace/DanceUIDependencies/swift"
+  pod 'boost', :path => "DanceUIWorkSpace/DanceUIDependencies/boost"
+end
+
+def danceui_compose
+  pod 'DanceUICompose',       :path => "#{DANCEUI_PATH}/Modules/DanceUICompose"
+  pod 'DanceUIComposeModule', :path => "#{DANCEUI_PATH}/Modules/DanceUIComposeModule"
+
+  pod 'RxAnnotation',     :path => "#{DANCEUI_PATH}/Modules/RxAnnotation"
+  pod 'RxFoundation',     :path => "#{DANCEUI_PATH}/Modules/RxFoundation"
+  pod 'RxCoreComponents', :path => "#{DANCEUI_PATH}/Modules/RxCoreComponents"
+  pod 'RxInjector',       :path => "#{DANCEUI_PATH}/Modules/RxInjector"
+end
+
+use_modular_headers!
+target 'iosApp' do
+    platform :ios, '13.0'
+    danceui_dependency
+    danceui_compose
+    pod 'launcher', :path => '../../launcher'
+    #pod 'cronet_wrapper'
+end
+
+pre_install do |_installer|
+  bootstrap
+end
+
+post_install do |installer|
+  generate_module_map(installer)
+
+  # Fix paths for pods that reference DanceUIDependencies.
+  # In this app, PODS_ROOT resolves to <repo>/app/iosApp/Pods, so the sibling
+  # DanceUIWorkSpace directory is one level up at ../DanceUIWorkSpace.
+  dependent_pods = ['DanceUIRuntime', 'DanceUIGraph']
+  dependent_pods.each do |pod_name|
+    xcconfig_dir = File.join(installer.sandbox.target_support_files_root.to_s, pod_name)
+    next unless File.directory?(xcconfig_dir)
+
+    Dir.glob(File.join(xcconfig_dir, '*.xcconfig')).each do |xcconfig_path|
+      content = File.read(xcconfig_path)
+      modified = false
+
+      if content.include?('$(PODS_TARGET_SRCROOT)/DanceUIWorkSpace/DanceUIDependencies')
+        content.gsub!(
+          '$(PODS_TARGET_SRCROOT)/DanceUIWorkSpace/DanceUIDependencies',
+          '${PODS_ROOT}/../DanceUIWorkSpace/DanceUIDependencies'
+        )
+        modified = true
+      end
+
+      if content.include?('$(PODS_ROOT)/swift/')
+        content.gsub!(
+          '$(PODS_ROOT)/swift/',
+          '${PODS_ROOT}/../DanceUIWorkSpace/DanceUIDependencies/swift/'
+        )
+        modified = true
+      end
+
+      if content.match?(/\$\(PODS_ROOT\)\/boost[\/"\s]/)
+        content.gsub!(
+          '$(PODS_ROOT)/boost/',
+          '${PODS_ROOT}/../DanceUIWorkSpace/DanceUIDependencies/boost/'
+        )
+        content.gsub!(
+          '$(PODS_ROOT)/boost"',
+          '${PODS_ROOT}/../DanceUIWorkSpace/DanceUIDependencies/boost"'
+        )
+        content.gsub!(
+          '$(PODS_ROOT)/boost ',
+          '${PODS_ROOT}/../DanceUIWorkSpace/DanceUIDependencies/boost '
+        )
+        modified = true
+      end
+
+      if content.include?('"$(PODS_ROOT)/"')
+        content.gsub!(
+          '"$(PODS_ROOT)/"',
+          '"${PODS_ROOT}/../DanceUIWorkSpace/DanceUIDependencies/"'
+        )
+        modified = true
+      end
+
+      if modified
+        File.write(xcconfig_path, content)
+        puts "Fixed DanceUIDependencies paths in #{File.basename(xcconfig_path)} for #{pod_name}"
+      end
+    end
+  end
+
+  aggregate_targets = ['Pods-iosApp']
+  aggregate_targets.each do |target_name|
+    xcconfig_dir = File.join(installer.sandbox.target_support_files_root.to_s, target_name)
+    next unless File.directory?(xcconfig_dir)
+
+    Dir.glob(File.join(xcconfig_dir, '*.xcconfig')).each do |xcconfig_path|
+      content = File.read(xcconfig_path)
+      modified = false
+
+      if content.include?('${PODS_TARGET_SRCROOT}/Source/swift/include/')
+        content.gsub!(
+          '${PODS_TARGET_SRCROOT}/Source/swift/include/',
+          '${PODS_ROOT}/../DanceUIWorkSpace/DanceUIDependencies/swift/Source/swift/include/'
+        )
+        modified = true
+      end
+
+      if content.include?('${PODS_TARGET_SRCROOT}/Source/')
+        content.gsub!(
+          '${PODS_TARGET_SRCROOT}/Source/',
+          '${PODS_ROOT}/../DanceUIWorkSpace/DanceUIDependencies/swift/Source/'
+        )
+        modified = true
+      end
+
+      if content.include?('${PODS_ROOT}/../../Modules/DanceUIObservation/.product/DanceUIObservationMacroImpl')
+        content.gsub!(
+          '${PODS_ROOT}/../../Modules/DanceUIObservation/.product/DanceUIObservationMacroImpl',
+          '${PODS_ROOT}/../DanceUIWorkSpace/DanceUI/Modules/DanceUIObservation/.product/DanceUIObservationMacroImpl'
+        )
+        modified = true
+      end
+
+      if modified
+        File.write(xcconfig_path, content)
+        puts "Fixed aggregate target paths in #{File.basename(xcconfig_path)} for #{target_name}"
+      end
+    end
+  end
+
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings.delete "IPHONEOS_DEPLOYMENT_TARGET"
+      config.build_settings['CODE_SIGN_IDENTITY'] = ''
+
+      if ["DanceUIGraph", "DanceUIRuntime"].include?(target.name) &&
+         ["Debug", "Inhouse"].include?(config.name)
+        swift_conditions = config.build_settings['SWIFT_ACTIVE_COMPILATION_CONDITIONS']
+        swift_conditions = swift_conditions ? swift_conditions.to_s.split(' ') : []
+        unless swift_conditions.include?('DANCE_UI_INHOUSE')
+          swift_conditions << 'DANCE_UI_INHOUSE'
+          config.build_settings['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] = swift_conditions.join(' ')
+        end
+
+        gcc_definitions = config.build_settings['GCC_PREPROCESSOR_DEFINITIONS']
+        gcc_definitions = gcc_definitions ? gcc_definitions.to_s.split(' ') : ['$(inherited)']
+        unless gcc_definitions.include?('DANCE_UI_INHOUSE')
+          gcc_definitions << 'DANCE_UI_INHOUSE'
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = gcc_definitions.join(' ')
+        end
+      end
+    end
+  end
+end

@@ -1,28 +1,39 @@
-# Kotlin Native Build Outputs
-*.kexe
-*.so
-*.o
-*.bc
-*.ll
-harmonyApp/entry/src/main/cpp/include/libc2k_api.h
-
-# project specific
-*.log
-
-# Gradle
-.gradle/
-build/
-kotlinApp/build/
-
-# IDE
-.idea/
+**/.idea/**
+/.gradle/
+/.kotlin/
+.project
+.settings/
+project.properties
+local.properties
+local.build.properties
+**/bin
+**/gen
 *.iml
+**/out
+build/
+**/build
+**/.idea/**
+!**/.idea/copyright
+!.idea/copyright/
+!.idea/copyright/Bytedance.xml
+!.idea/copyright/profiles_settings.xml
 
-# HarmonyOS
-harmonyApp/.hvigor/
-harmonyApp/oh_modules/
-harmonyApp/entry/build/
-harmonyApp/build/
-harmonyApp/node_modules/
-harmonyApp/local.properties
+*.DS_Store
+xcuserdata/
+/app/iosApp/iosApp.xcodeproj/xcuserdata/
+/app/iosApp/iosApp.xcodeproj/project.xcworkspace/xcuserdata/
 
+# pod
+
+app/iosApp/Podfile.lock.json
+app/iosApp/pod.json
+app/iosApp/pods.json
+app/iosApp/unbinary.json
+app/iosApp/*.xcworkspace/pod.json
+app/iosApp/DanceUIWorkSpace
+
+app/iosApp/iosApp.xcworkspace/xcuserdata/
+app/iosApp/Pods/
+!app/iosApp/Pods/Pods.xcodeproj/xcshareddata/IDETemplateMacros.plist
+app/iosApp//Pods/Pods.xcodeproj/project.pbxproj
+/build-logic/.gradle/

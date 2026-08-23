@@ -1,0 +1,17 @@
+{
+  "modelVersion": "5.0.0",
+  "license": "",
+  "devDependencies": {
+  },
+  "author": "bytedance.kmp",
+  "name": "bytekmp",
+  "description": "Please describe the basic information.",
+  "main": "",
+  "version": "1.0.0",
+  "dependencies": {
+    "@bytekmp/sample": "file:.local_har/bytekmp_sample.har"
+  },
+  "overrides": {
+    "@bytekmp/sample": "file:.local_har/bytekmp_sample.har",
+  }
+}
