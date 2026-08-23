@@ -27,18 +27,9 @@ rm -rf "$RAW_DIR"; mkdir -p "$RAW_DIR"
 # Gradle's jsNodeTest spawns node; the build.gradle.kts testTask block propagates NODE_V8_COVERAGE
 # to the forked node process (Gradle does not forward arbitrary env vars automatically).
 export NODE_V8_COVERAGE="$RAW_DIR"
-# Force a clean re-run so the node process actually executes with the env var set this run.
-gradle_run "$OUT/01-jsNodeTest.log" :library:clean :library:jsNodeTest
+# Force a re-run so the node process actually executes with the env var set this run.
+gradle_run "$OUT/01-jsNodeTest.log" :library:jsNodeTest --rerun-tasks
 ok "jsNodeTest passed"
-# Node writes V8 coverage asynchronously on graceful exit; wait until files stabilize.
-sync
-# poll up to ~10s for at least one coverage file to stop growing in count
-for _ in 1 2 3 4 5 6 7 8 9 10; do
-  n=$(ls "$RAW_DIR" 2>/dev/null | wc -l | tr -d ' ')
-  sleep 1
-  n2=$(ls "$RAW_DIR" 2>/dev/null | wc -l | tr -d ' ')
-  [ "$n" = "$n2" ] && [ "$n" -gt 0 ] && break
-done
 log "V8 raw coverage files: $(ls "$RAW_DIR" 2>/dev/null | wc -l | tr -d ' ')"
 
 # 2. Feed V8 coverage to c8, remap via compiler-generated source map back to .kt.

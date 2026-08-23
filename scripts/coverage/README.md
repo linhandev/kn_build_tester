@@ -44,7 +44,6 @@ The coverage **numbers** are not the point — all backends share the same commo
   1. Gradle does **not** forward arbitrary env vars to the forked node process. The `testTask { environment("NODE_V8_COVERAGE", ...) }` block in `library/build.gradle.kts` is mandatory.
   2. `c8` resolves source maps relative to **cwd** — the script runs c8 from the worktree root, not from `$PWD`.
   3. `c8 report` defaults `--clean=true`; pass `--clean false` so it doesn't wipe the temp dir before reading.
-  4. Node writes coverage asynchronously on graceful exit; the script waits for the file count to stabilize.
 
 ### wasmJs — `run-wasm.sh`
 - wasmJs has **no off-the-shelf coverage path** — c8/istanbul do not consume wasm source maps. This script drives a working custom flow on **Node 25+**.
