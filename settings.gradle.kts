@@ -29,6 +29,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "c2k"
+rootProject.name = "kn-samples"
 
 include("kotlinApp")

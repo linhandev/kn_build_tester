@@ -1,35 +1,42 @@
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import testNapi from 'libentry.so';
+import demo from 'libentry.so';
 
 const DOMAIN = 0x0000;
 
 @Entry
 @Component
 struct Index {
-  @State message: string = '';
-
-  aboutToAppear(): void {
-    try {
-      this.message = testNapi.runHelloWorld();
-      hilog.info(DOMAIN, 'testTag', 'Kotlin greeting: %{public}s', this.message);
-    } catch (err) {
-      hilog.error(DOMAIN, 'testTag', 'runHelloWorld failed: %{public}s', JSON.stringify(err));
-    }
-  }
+  @State result: string = '';
 
   build() {
     Row() {
-      Column() {
-        Text(this.message)
-          .fontSize($r('app.float.page_text_font_size'))
-          .fontWeight(FontWeight.Bold)
+      Column({ space: 16 }) {
+        Button('greet')
+          .width('80%').height(48)
+          .onClick(() => { this.result = demo.greet('World'); })
+        Button('Counter')
+          .width('80%').height(48)
           .onClick(() => {
-            this.message = 'Welcome';
-            hilog.info(DOMAIN, 'testTag', 'NAPI add 2 + 3 = %{public}d', testNapi.add(2, 3));
+            const c = new demo.Counter();
+            const a = c.increment();
+            const b = c.increment();
+            c.reset();
+            this.result = `inc=${a},inc2=${b},after reset=${c.getCount()}`;
           })
+        Text(this.result)
+          .width('80%').fontSize(16).margin({ top: 10 })
       }
       .width('100%')
     }
     .height('100%')
+  }
+
+  aboutToAppear(): void {
+    try {
+      this.result = demo.greet('akinterop');
+      hilog.info(DOMAIN, 'akinterop', 'greet: %{public}s', this.result);
+    } catch (err) {
+      hilog.error(DOMAIN, 'akinterop', 'greet failed: %{public}s', JSON.stringify(err));
+    }
   }
 }

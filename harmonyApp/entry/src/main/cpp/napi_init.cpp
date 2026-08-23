@@ -1,54 +1,29 @@
 #include "napi/native_api.h"
+#include <cstdlib>
+#include <dlfcn.h>
 
-extern "C" const char* kn_helloworld(void);
+typedef void (*RegisterKnSymbolsFuncPtr)(napi_env, napi_value, const char*, const char*);
+static RegisterKnSymbolsFuncPtr g_registerKnSymbolsFuncPtr = nullptr;
 
-static napi_value RunHelloWorld(napi_env env, napi_callback_info info)
+static const char *BUNDLE_NAME = "com.kotlin.demo";
+static const char *MODULE_NAME = "entry";
+
+static void append_kotlin_exports(napi_env env, napi_value exports)
 {
-    const char* msg = kn_helloworld();
-    if (msg == nullptr) {
-        napi_value emptyStr;
-        napi_create_string_utf8(env, "", NAPI_AUTO_LENGTH, &emptyStr);
-        return emptyStr;
+    if (g_registerKnSymbolsFuncPtr == nullptr) {
+        auto handle = dlopen("libkn.so", RTLD_LAZY);
+        if (handle == nullptr) return;
+        g_registerKnSymbolsFuncPtr = reinterpret_cast<RegisterKnSymbolsFuncPtr>(
+            dlsym(handle, "org_cpf_kotlin_akinterop_register"));
     }
-    napi_value result;
-    napi_create_string_utf8(env, msg, NAPI_AUTO_LENGTH, &result);
-    return result;
-}
-
-static napi_value Add(napi_env env, napi_callback_info info)
-{
-    size_t argc = 2;
-    napi_value args[2] = {nullptr};
-
-    napi_get_cb_info(env, info, &argc, args, nullptr, nullptr);
-
-    napi_valuetype valuetype0;
-    napi_typeof(env, args[0], &valuetype0);
-
-    napi_valuetype valuetype1;
-    napi_typeof(env, args[1], &valuetype1);
-
-    double value0;
-    napi_get_value_double(env, args[0], &value0);
-
-    double value1;
-    napi_get_value_double(env, args[1], &value1);
-
-    napi_value sum;
-    napi_create_double(env, value0 + value1, &sum);
-
-    return sum;
-
+    if (g_registerKnSymbolsFuncPtr == nullptr) return;
+    g_registerKnSymbolsFuncPtr(env, exports, BUNDLE_NAME, MODULE_NAME);
 }
 
 EXTERN_C_START
 static napi_value Init(napi_env env, napi_value exports)
 {
-    napi_property_descriptor desc[] = {
-        { "add", nullptr, Add, nullptr, nullptr, nullptr, napi_default, nullptr },
-        { "runHelloWorld", nullptr, RunHelloWorld, nullptr, nullptr, nullptr, napi_default, nullptr }
-    };
-    napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc);
+    append_kotlin_exports(env, exports);
     return exports;
 }
 EXTERN_C_END
@@ -59,8 +34,8 @@ static napi_module demoModule = {
     .nm_filename = nullptr,
     .nm_register_func = Init,
     .nm_modname = "entry",
-    .nm_priv = ((void*)0),
-    .reserved = { 0 },
+    .nm_priv = ((void *)0),
+    .reserved = {0},
 };
 
 extern "C" __attribute__((constructor)) void RegisterEntryModule(void)

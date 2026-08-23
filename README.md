@@ -1,44 +1,16 @@
-# Kotlin/Native Exception Demo (Minimal)
+# akinterop helloworld (场景3)
 
-Keep `bare` branch a starting point for doing a demo, impl demos on another branch.
+复制自 [akinterop](https://gitcode.com/CPF-KMP-CMP/akinterop) 官方 `example/helloworld` demo
+（reference clone `~/git/reference/akinterop` @ develop `d9ec6d2`）。
 
-Full build command.
+## 原样复制内容
+- `kotlinApp/src/ohosArm64Main/kotlin/com/example/helloworld/`：HelloWorldModule.kt + ExportKotlin.kt
+- `kotlinApp/build.gradle.kts`：akinterop-gradle-plugin 0.5.0-09 + 单 SO `libkn.so`
+  + `-PcInterfaceMode` / `-PenableStackmap` 开关（akinterop 原版支持 V1/none 切换）
+- `harmonyApp/entry/src/main/cpp/napi_init.cpp`：dlsym `org_cpf_kotlin_akinterop_register` NAPI 注册
+- `harmonyApp/entry/src/main/ets/pages/Index.ets`：`import demo from 'libentry.so'` 调 `greet`/`Counter`
 
-```shell
-clear
-hdc uninstall com.kotlin.demo \
-./gradlew clean \
-./gradlew --stop \
-./gradlew startHarmonyAppDebug --rerun-tasks
-```
+bundleName 用 bare 骨架的 `com.kotlin.demo`（复用本地 debug 签名证书，不随 demo commit）。
 
-## Bundle name (from project)
-
-The installed app’s **bundle name** is **`app.bundleName`** in **`harmonyApp/AppScope/app.json5`** (for this sample it is `com.kotlin.demo`). Use the same value for `hdc uninstall`, `aa start`, and filtering crash logs.
-
-Read it from the repo (from the project root):
-
-```shell
-grep bundleName harmonyApp/AppScope/app.json5
-```
-
-## Pull the latest crash / fault log for this app
-
-Fault dumps for apps usually land under **`/data/log/faultlog/faultlogger/`** (freeze-related dumps often under **`/data/log/faultlog/freeze_ext/`**). Filenames typically include the **bundle name**, so you can take the newest matching file.
-
-From the project root (macOS/Linux; strips a trailing CR from `hdc` output):
-
-```shell
-bundle=$(grep bundleName harmonyApp/AppScope/app.json5 | sed -n 's/.*"bundleName"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
-latest=$(hdc shell "ls -t /data/log/faultlog/faultlogger/" | tr -d '\r' | grep -F "$bundle" | head -1)
-hdc file recv "/data/log/faultlog/faultlogger/$latest" ./
-```
-
-Freeze logs for the same app (same idea, different directory):
-
-```shell
-latest=$(hdc shell "ls -t /data/log/faultlog/freeze_ext/" | tr -d '\r' | grep -F "$bundle" | head -1)
-hdc file recv "/data/log/faultlog/freeze_ext/$latest" ./
-```
-
-If `latest` is empty, list recent files and pick the one whose name matches your bundle: `hdc shell "ls -lt /data/log/faultlog/faultlogger/ | head -n 20"`.
+## 改造 commit
+见下一笔 commit：默认 `cInterfaceMode=none` 关 CExport + V1/none 体积对比。
