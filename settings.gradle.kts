@@ -1,34 +1,33 @@
 pluginManagement {
-    // CI sets KN_ACTION_BUILD_REPO_ABS to an absolute path to kotlin build/repo (Maven layout). Optional for local dev.
-    val knActionMavenUrl: String? = System.getenv("KN_ACTION_BUILD_REPO_ABS")
-        ?.let { java.io.File(it).toURI().toString() }
     repositories {
-        knActionMavenUrl?.let { maven(it) }
-        maven("https://maven.eazytec-cloud.com/nexus/repository/maven-public")
-        maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
+        maven("https://oss.sonatype.org/content/repositories/snapshots")
+        maven("https://oss.sonatype.org/content/groups/public/")
         maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
+        google()
         gradlePluginPortal()
         mavenCentral()
-    }
-    plugins {
-        val kotlinVersion: String by settings
-        kotlin("multiplatform") version kotlinVersion
     }
 }
 
 dependencyResolutionManagement {
-    val knActionMavenUrl: String? = System.getenv("KN_ACTION_BUILD_REPO_ABS")
-        ?.let { java.io.File(it).toURI().toString() }
     repositories {
-        knActionMavenUrl?.let { maven(it) }
-        mavenLocal()
-        maven("https://maven.eazytec-cloud.com/nexus/repository/maven-public")
-        maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
+        maven("https://oss.sonatype.org/content/repositories/snapshots")
+        maven("https://oss.sonatype.org/content/groups/public/")
         maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
+        google()
         mavenCentral()
     }
 }
 
-rootProject.name = "c2k"
-
-include("kotlinApp")
+rootProject.name = "knoi"
+include(":knoi-annotation")
+include(":knoi")
+include(":knoi-processor")
+include(":knoi-gradle-plugin")
+//
+include(":example:sample")
+include(":example:sample-api")
+include(":example:lib1")
+include(":example:lib2")
+include(":example:empty")
+include(":example:knoiapp")

@@ -1,0 +1,49 @@
+{
+  "apiType": "stageMode",
+  "buildOption": {
+    "arkOptions": {
+      "types": [
+      ]
+      // "apPath": "./modules.ap"  /* Profile used for profile-guided optimization (PGO), a compiler optimization technique to improve app runtime performance. */
+    },
+    "sourceOption": {
+      "workers": [
+        './src/main/ets/workers/KnoiWorker.ets'
+      ]
+    }
+  },
+  "buildOptionSet": [
+    {
+      "name": "release",
+      "arkOptions": {
+        "obfuscation": {
+          "ruleOptions": {
+            "enable": true,
+            "files": [
+              "./obfuscation-rules.txt"
+            ]
+          }
+        }
+      }
+    },{
+      "name": "debug",
+      "copyFrom": "release",
+      "nativeLib": {
+        "debugSymbol": {
+          "strip": true,
+          "exclude": [
+            "**/libkn.so"
+          ]
+        }
+      }
+    }
+  ],
+  "targets": [
+    {
+      "name": "default"
+    },
+    {
+      "name": "ohosTest",
+    }
+  ]
+}

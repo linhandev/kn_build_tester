@@ -1,0 +1,74 @@
+def GRADLE_PROPERTIES = "gradle.properties"
+def PROJECT_GROUP_FIELD = "group"
+def PROJECT_VERSION_FIELD = "version"
+def PROPERTY_MAVEN_GROUP = "MAVEN_GROUP"
+def PROPERTY_MAVEN_VERSION = "MAVEN_VERSION"
+def PROPERTY_ARTIFACT_NAME = "ARTIFACT_NAME"
+
+//加载Properties
+def gradleFile = rootProject.file(GRADLE_PROPERTIES)
+Properties properties = new Properties()
+gradleFile.withInputStream { stream ->
+    properties.load(stream)
+}
+
+//获取配置的发布组件列表
+def uploadModules = []
+properties.stringPropertyNames().forEach { key ->
+    if (key.startsWith("UPLOAD_ARCHIVES_MODULE")) {
+        uploadModules.add(properties.getProperty(key))
+    }
+}
+
+//获取project全名
+def getDisplayProjectName(project) {
+    def startIndex = project.displayName.indexOf("'")
+    return project.displayName.substring(startIndex + 2, project.displayName.size() - 1)
+}
+
+rootProject.subprojects {
+    //注入group、version属性
+    setProperty(PROJECT_GROUP_FIELD, properties.getProperty(PROPERTY_MAVEN_GROUP))
+    setProperty(PROJECT_VERSION_FIELD, properties.getProperty(PROPERTY_MAVEN_VERSION))
+
+    //没有发布组件则返回
+    if (uploadModules.size() == 0 || !uploadModules.contains(getDisplayProjectName(it))) {
+        return
+    }
+    if (!it.plugins.hasPlugin("com.android.application")) {
+        it.getPlugins().apply("maven-publish")
+    }
+    //判断是否添加maven插件
+    it.afterEvaluate {
+        if (it.plugins.hasPlugin("com.android.application")) {
+            return
+        }
+        if (!it.plugins.hasPlugin("easy-publish")) {
+            //获取artifactName，默认为模块名称
+            def artifactName = it.name
+            if (it.hasProperty(PROPERTY_ARTIFACT_NAME)) {
+                artifactName = it.getProperty(PROPERTY_ARTIFACT_NAME)
+            }
+
+            //添加maven发布插件
+//            task sourcesJar(type: Jar) {
+//                from android.sourceSets.main.java.srcDirs
+//                classifier = 'sources'
+//            }
+//
+//            artifacts {
+//                archives sourcesJar
+//            }
+
+            it.pluginManager.apply("easy-publish")
+            EasyPublish {
+                Pom {
+                    name = artifactName
+                    group = properties.getProperty(PROPERTY_MAVEN_GROUP)
+                    version = properties.getProperty(PROPERTY_MAVEN_VERSION)
+                }
+            }
+        }
+
+    }
+}

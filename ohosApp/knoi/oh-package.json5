@@ -1,0 +1,13 @@
+{
+  "name": "@kuiklybase/knoi",
+  "license": "Apache-2.0",
+  "devDependencies": {},
+  "author": "Tencent-TDS",
+  "description": "Kotlin Native Ohos Interaction.",
+  "main": "Index.ets",
+  "version": "0.0.4",
+  "dynamicDependencies": {},
+  "dependencies": {
+    "libknoi.so": "file:./src/main/types/libknoi"
+  }
+}

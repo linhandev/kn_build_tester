@@ -1,28 +1,13 @@
-# Kotlin Native Build Outputs
-*.kexe
-*.so
-*.o
-*.bc
-*.ll
-harmonyApp/entry/src/main/cpp/include/libc2k_api.h
-
-# project specific
-*.log
-
-# Gradle
-.gradle/
-build/
-kotlinApp/build/
-
-# IDE
-.idea/
 *.iml
-
-# HarmonyOS
-harmonyApp/.hvigor/
-harmonyApp/oh_modules/
-harmonyApp/entry/build/
-harmonyApp/build/
-harmonyApp/node_modules/
-harmonyApp/local.properties
-
+.gradle
+.idea
+.DS_Store
+build
+captures
+.externalNativeBuild
+.cxx
+local.properties
+xcuserdata
+/shared/native/thirdparty/aki/build/**
+/knoi/src/nativeInterop/cinterop/cpp/cmake-build-debug*/
+.kotlin
