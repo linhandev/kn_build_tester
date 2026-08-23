@@ -52,6 +52,9 @@ kotlin {
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         nodejs {
+            // Pin Node 25: it exposes V8's --wasm-code-coverage flag (Node 24 does not),
+            // which %DebugCollectWasmCoverage needs to collect wasm block coverage.
+            version = "25.0.0"
             // Propagate NODE_V8_COVERAGE to the node test process (same as js target).
             testTask {
                 val v8 = providers.environmentVariable("NODE_V8_COVERAGE").orNull

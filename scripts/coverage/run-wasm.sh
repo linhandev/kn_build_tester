@@ -1,59 +1,56 @@
 #!/bin/bash
 # run-wasm.sh — Wasm (wasmJs) target coverage.
 #
-# FINDINGS (this is the empirical result of this survey):
-#   1. Kotlin 2.4 DOES emit a wasm source map (.wasm.map) whose `sources` point at the .kt files
-#      — so remapping wasm coverage back to .kt is *theoretically* possible.
-#   2. BUT Node 24 has NO CLI flag to enable wasm code coverage (--experimental-wasm-code-coverage
-#      was never exposed / removed). `node --help` confirms only --disable-wasm-trap-handler.
-#   3. `NODE_V8_COVERAGE` therefore collects coverage ONLY for the .mjs JS glue, NOT for the
-#      .wasm module's functions/blocks — so c8 cannot remap to .kt (the .mjs has no .kt mapping).
-#   4. The only path to wasm block coverage is the V8 Inspector API (Profiler.startPreciseCoverage
-#      with detailed=true), and even then no mainstream tool (c8/istanbul) consumes wasm source maps.
+# Unlike JVM/Android (Kover) and JS (c8), wasmJs has NO off-the-shelf coverage path:
+# c8/istanbul do not consume wasm source maps. This script drives the full flow that
+# DOES work on Node 25+:
+#   build → %DebugCollectWasmCoverage (Node 25 --wasm-code-coverage) → custom remapper → per-.kt report
 #
-# Conclusion: Kotlin/Wasm has NO working, officially-supported coverage path as of Kotlin 2.4 / Node 24.
-# This script verifies the source map exists and records the gap, rather than pretending to produce a report.
+# Caveat: the Kotlin/Wasm source map is sparse (function-granularity), so line-level
+# resolution is coarse; file-level and function-level coverage are accurate.
 set -euo pipefail
 source "$(dirname "$0")/_common.sh"
 
-banner "Wasm target coverage (no JB integration, no working path — recording gap)"
+banner "Wasm target coverage (Node 25 + %DebugCollectWasmCoverage + custom remapper)"
 
 print_env
 
 OUT="$REPORT_ROOT/wasm"
 mkdir -p "$OUT"
 
-# 1. Build + run tests (verifies the toolchain works; V8 coverage of .mjs is a side effect).
-log "Step 1/3: build + :library:wasmJsNodeTest"
-gradle_run "$OUT/01-wasmJsNodeTest.log" :library:wasmJsNodeTest
-ok "wasmJsNodeTest passed (toolchain OK)"
+# 1. Build the wasm test package (produces .wasm + .wasm.map + runUnitTests.mjs).
+log "Step 1/4: build wasmJs test executable"
+gradle_run "$OUT/01-wasmJsBuild.log" :library:wasmJsNodeTest
+ok "wasmJs test package built"
 
-# 2. Locate the wasm source map and verify it maps to .kt.
-log "Step 2/3: verify wasm source map presence and .kt sources"
-WASM_PKG="$WT_ROOT/build/wasm/packages/multiplatform-library-template-library-test/kotlin"
-WASM_MAP="$WASM_PKG/multiplatform-library-template-library-test.wasm.map"
+TEST_PKG="$WT_ROOT/build/wasm/packages/multiplatform-library-template-library-test/kotlin"
+WASM="$TEST_PKG/multiplatform-library-template-library-test.wasm"
+WASM_MAP="$TEST_PKG/multiplatform-library-template-library-test.wasm.map"
+[ -f "$WASM" ] || { err "wasm binary not found: $WASM"; exit 1; }
+[ -f "$WASM_MAP" ] || { err "wasm source map not found: $WASM_MAP"; exit 1; }
 
-if [ -f "$WASM_MAP" ]; then
-  ok "wasm source map: $WASM_MAP"
-  log "source map .kt sources:"
-  python3 - "$WASM_MAP" <<'PY' | sed 's/^/    /'
-import json, sys
-d = json.load(open(sys.argv[1]))
-srcs = [s for s in d.get('sources', []) if s.endswith('.kt')]
-print(f"{len(srcs)} .kt sources mapped:")
-for s in srcs: print(f"      {s}")
-PY
-else
-  err "wasm source map NOT found at $WASM_MAP"
-fi
+# 2. Locate Node 25 (pinned in library/build.gradle.kts via the nodejs plugin).
+log "Step 2/4: locate Node 25"
+NODE25=""
+for d in "$GRADLE_USER_HOME/nodejs" "$HOME/.gradle/nodejs"; do
+  c=$(ls -d "$d"/node-v25.*-darwin-*/bin/node 2>/dev/null | head -1)
+  [ -n "$c" ] && NODE25="$c" && break
+done
+[ -n "$NODE25" ] || { err "Node 25 not found (gradle nodejs cache). Build wasmJsNodeTest with the pinned version=25.x first."; exit 1; }
+ok "Node 25: $($NODE25 -v)"
 
-# 3. Confirm Node has no wasm-coverage CLI flag.
-log "Step 3/3: confirm Node has no wasm coverage flag"
-if node --help 2>&1 | grep -qi 'wasm-code-coverage'; then
-  ok "Node exposes a wasm coverage flag (unexpected — re-evaluate)"
-else
-  warn "Node $(node -v) has NO wasm coverage CLI flag — only --disable-wasm-trap-handler"
-  warn "NODE_V8_COVERAGE collects .mjs glue only, not .wasm blocks → no .kt remap possible"
-fi
+# 3. Collect wasm block coverage via %DebugCollectWasmCoverage.
+log "Step 3/4: collect wasm coverage (%DebugCollectWasmCoverage)"
+COV_JSON="$OUT/wasm-cov.json"
+"$NODE25" --allow-natives-syntax --wasm-code-coverage --no-wasm-lazy-compilation \
+  "$SCRIPT_DIR/wasm-kotlin-collector.mjs" "$TEST_PKG" "$COV_JSON" > "$OUT/02-collector.log" 2>&1
+tail -1 "$OUT/02-collector.log"
+ok "coverage collected: $COV_JSON"
 
-banner "WASM DONE — NO working coverage path (source map exists, collection gap)"
+# 4. Remap to .kt source.
+log "Step 4/4: remap to .kt source"
+python3 "$SCRIPT_DIR/wasm-remap.py" "$WASM_MAP" "$WASM" "$COV_JSON" --lcov "$OUT/wasm.lcov.info" \
+  | tee "$OUT/03-remap.log"
+ok "lcov report: $OUT/wasm.lcov.info"
+
+banner "WASM DONE — coverage works on Node 25 via %DebugCollectWasmCoverage + custom remapper ✅"

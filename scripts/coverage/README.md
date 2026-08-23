@@ -23,7 +23,7 @@ The coverage **numbers** are not the point — all backends share the same commo
 |---|---|---|---|---|
 | **jvm** | ✅ JB official | JaCoCo agent on build-JVM bytecode | Kover (`koverHtmlReportJvm`) | ✅ METHOD 6/7, source page 8 fc + 2 nc lines |
 | **js** | ❌ no JB integration | V8 native coverage + source-map remap to .kt | c8 + `NODE_V8_COVERAGE` | ✅ Calculator % Funcs 75% (uncalledUtility flagged) + `Calculator.kt.html` per-file page |
-| **wasmJs** | ❌ no JB integration | (would need V8 wasm coverage + wasm source-map) | — | ❌ no working path (Node 24 has no wasm-coverage flag) |
+| **wasmJs** | ❌ no JB integration | `%DebugCollectWasmCoverage` (Node 25 `--wasm-code-coverage`) + custom remapper via `.wasm.map` | Node 25 + `wasm-remap.py` | ✅ file/function-level accurate (Calculator.kt 27/34); line-level coarse (sparse source map) |
 | **android** | ✅ JB official | Kover JVM agent on host unit test (runs on build JVM) | Kover (`koverHtmlReportAndroid`) | ✅ same as jvm: METHOD 6/7, source page fc/nc lines |
 
 ## Per-backend notes
@@ -45,10 +45,11 @@ The coverage **numbers** are not the point — all backends share the same commo
   4. Node writes coverage asynchronously on graceful exit; the script waits for the file count to stabilize.
 
 ### wasmJs — `run-wasm.sh`
-- **No working coverage path** as of Kotlin 2.4 / Node 24. The script records this honestly rather than faking a report.
-- What exists: Kotlin emits a `.wasm.map` (source-map v3) whose `sources` correctly point at the `.kt` files — remapping is *theoretically* possible.
-- What's missing: Node 24 exposes **no CLI flag** for wasm code coverage (`--experimental-wasm-code-coverage` is absent; `node --help` shows only `--disable-wasm-trap-handler`). `NODE_V8_COVERAGE` collects coverage for the `.mjs` JS glue only, **not** for `.wasm` function/block ranges — so c8 cannot remap to `.kt`.
-- The only theoretical path is the V8 Inspector `Profiler.startPreciseCoverage{detailed:true}`, and even then no mainstream tool consumes wasm source maps. Left as a documented gap.
+- wasmJs has **no off-the-shelf coverage path** — c8/istanbul do not consume wasm source maps. This script drives a working custom flow on **Node 25+**.
+- Flow: build wasmJs test → `%DebugCollectWasmCoverage()` (Node 25 `--wasm-code-coverage --allow-natives-syntax --no-wasm-lazy-compilation`) → `wasm-remap.py` joins coverage ranges with `.wasm.map` → per-`.kt` report (+ lcov).
+- Why Node 25: Node 24 has **no** `--wasm-code-coverage` flag (`NODE_V8_COVERAGE` collects `.mjs` glue only, not `.wasm` blocks). Node 25 exposes it. `library/build.gradle.kts` pins `version = "25.0.0"` on the wasmJs `nodejs {}` block so gradle downloads it.
+- Verified: 30476 wasm block ranges collected (2071 covered / 28405 uncovered). Remap output: `Calculator.kt 27/34 (79.4%)`, `CalculatorTest.kt 37/40 (92.5%)`; `uncalledUtility()` correctly flagged uncovered.
+- **Caveat — line-level resolution is coarse:** the Kotlin/Wasm `.wasm.map` is sparse (~128 segments, function-granularity), so uncovered ranges get attributed to the nearest preceding mapped line, not precisely the source line. File-level and function-level coverage are accurate. A denser (DWARF line-program) source map would fix line-level.
 
 ### android — `run-android.sh`
 - Official path: **host unit tests run on the build JVM**, so Kover's JVM agent collects coverage directly (same engine as the jvm target — no device/emulator needed). The Android SDK is required only to **compile** `androidMain` (AGP needs `ANDROID_HOME` at configuration time).
