@@ -67,6 +67,18 @@ kotlin {
         }
     }
 
+    // WasmWasi target — same V8 coverage path as wasmJs (%DebugCollectWasmCoverage is V8-level, not target-specific).
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmWasi {
+        nodejs {
+            version = "25.0.0"
+            testTask {
+                val v8 = providers.environmentVariable("NODE_V8_COVERAGE").orNull
+                if (v8 != null) environment("NODE_V8_COVERAGE", v8)
+            }
+        }
+    }
+
     sourceSets {
         commonMain.dependencies {
             //put your multiplatform dependencies here

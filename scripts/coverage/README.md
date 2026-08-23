@@ -12,6 +12,7 @@ cd ~/git/worktree/kn_samples-kmp-coverage-survey
 ./scripts/coverage/run-jvm.sh
 ./scripts/coverage/run-js.sh
 ./scripts/coverage/run-wasm.sh
+./scripts/coverage/run-wasi.sh
 ./scripts/coverage/run-android.sh   # needs ANDROID_HOME — stops and tells you what's missing
 ```
 
@@ -24,6 +25,7 @@ The coverage **numbers** are not the point — all backends share the same commo
 | **jvm** | ✅ JB official | JaCoCo agent on build-JVM bytecode | Kover (`koverHtmlReportJvm`) | ✅ METHOD 6/7, source page 8 fc + 2 nc lines |
 | **js** | ❌ no JB integration | V8 native coverage + source-map remap to .kt | c8 + `NODE_V8_COVERAGE` | ✅ Calculator % Funcs 75% (uncalledUtility flagged) + `Calculator.kt.html` per-file page |
 | **wasmJs** | ❌ no JB integration | `%DebugCollectWasmCoverage` (Node 25 `--wasm-code-coverage`) + custom remapper via `.wasm.map` | Node 25 + `wasm-remap.py` | ✅ file/function-level accurate (Calculator.kt 27/34); line-level coarse (sparse source map) |
+| **wasmWasi** | ❌ no JB integration | same V8 path as wasmJs; WASI test mjs needs `--allow-wasi` + `startUnitTests()` entry | Node 25 + `wasm-remap.py` (shared) | ✅ Calculator.kt 29/39 (74.4%); same line-level caveat as wasmJs |
 | **android** | ✅ JB official | Kover JVM agent on host unit test (runs on build JVM) | Kover (`koverHtmlReportAndroid`) | ✅ same as jvm: METHOD 6/7, source page fc/nc lines |
 
 ## Per-backend notes
@@ -50,6 +52,14 @@ The coverage **numbers** are not the point — all backends share the same commo
 - Why Node 25: Node 24 has **no** `--wasm-code-coverage` flag (`NODE_V8_COVERAGE` collects `.mjs` glue only, not `.wasm` blocks). Node 25 exposes it. `library/build.gradle.kts` pins `version = "25.0.0"` on the wasmJs `nodejs {}` block so gradle downloads it.
 - Verified: 30476 wasm block ranges collected (2071 covered / 28405 uncovered). Remap output: `Calculator.kt 27/34 (79.4%)`, `CalculatorTest.kt 37/40 (92.5%)`; `uncalledUtility()` correctly flagged uncovered.
 - **Caveat — line-level resolution is coarse:** the Kotlin/Wasm `.wasm.map` is sparse (~128 segments, function-granularity), so uncovered ranges get attributed to the nearest preceding mapped line, not precisely the source line. File-level and function-level coverage are accurate. A denser (DWARF line-program) source map would fix line-level.
+
+### wasmWasi — `run-wasi.sh`
+- Same V8 coverage path as wasmJs — `%DebugCollectWasmCoverage` is V8-level and target-agnostic. Shares `wasm-remap.py` unchanged.
+- Only two differences from wasmJs:
+  1. The wasmWasi test mjs sets up WASI (needs `--allow-wasi`, since WASI is experimental in Node 25) and exports `startUnitTests` **without** auto-calling it. `wasm-wasi-collector.mjs` imports it and calls `startUnitTests()` before collecting.
+  2. wasmWasi emits `.wasm.map` **by default** — the `sourceMap`/`sourceMapEmbedSources` compiler options are wasmJs-specific and rejected by wasmWasi, so no extra config is needed.
+- Verified on Kotlin 2.4.0 (no daemon workaround needed): 30541 ranges (2654 covered). Remap: `Calculator.kt 29/39 (74.4%)`, `CalculatorTest.kt 35/36 (97.2%)`.
+- Same line-level caveat as wasmJs (sparse source map).
 
 ### android — `run-android.sh`
 - Official path: **host unit tests run on the build JVM**, so Kover's JVM agent collects coverage directly (same engine as the jvm target — no device/emulator needed). The Android SDK is required only to **compile** `androidMain` (AGP needs `ANDROID_HOME` at configuration time).
