@@ -1,16 +1,33 @@
 # akinterop helloworld (场景3)
 
-复制自 [akinterop](https://gitcode.com/CPF-KMP-CMP/akinterop) 官方 `example/helloworld` demo
-（reference clone `~/git/reference/akinterop` @ develop `d9ec6d2`）。
+## commit1：原样复制官方 demo
+复制自 [akinterop](https://gitcode.com/CPF-KMP-CMP/akinterop) `example/helloworld`（develop `d9ec6d2`）。
+- `HelloWorldModule.kt`：register 入口 `@ExportedBridge("org_cpf_kotlin_akinterop_register")`
+- `ExportKotlin.kt`：`@KNExportFunction greet` + `@KNExportClass Counter`
+- `napi_init.cpp`：dlsym register 名，NAPI 模块
+- `kotlinApp/build.gradle.kts`：akinterop-gradle-plugin 0.5.0-09 + `-PcInterfaceMode` 切换
+- kotlinVersion=2.2.21-0.5.0-16（EB+stackmap N2K trampoline 所需，0.3.0-04 链接报 R_AARCH64_PREL64）
+- bundleName com.kotlin.demo 复用 bare debug 签名
 
-## 原样复制内容
-- `kotlinApp/src/ohosArm64Main/kotlin/com/example/helloworld/`：HelloWorldModule.kt + ExportKotlin.kt
-- `kotlinApp/build.gradle.kts`：akinterop-gradle-plugin 0.5.0-09 + 单 SO `libkn.so`
-  + `-PcInterfaceMode` / `-PenableStackmap` 开关（akinterop 原版支持 V1/none 切换）
-- `harmonyApp/entry/src/main/cpp/napi_init.cpp`：dlsym `org_cpf_kotlin_akinterop_register` NAPI 注册
-- `harmonyApp/entry/src/main/ets/pages/Index.ets`：`import demo from 'libentry.so'` 调 `greet`/`Counter`
+## commit2：默认关 CExport（cInterfaceMode=none）
+`gradle.properties` 设 `cInterfaceMode=none`，register 已是 `@ExportedBridge`（commit1 原样，V1/none 通用）。
 
-bundleName 用 bare 骨架的 `com.kotlin.demo`（复用本地 debug 签名证书，不随 demo commit）。
+### 改造方式
+| 项 | V1（默认） | none（改造后） |
+|--|--|--|
+| CAdapter 头/`*_symbols()` 表 | 生成 | 不生成 |
+| register 入口 | `@ExportedBridge`（EB，stackmap ON 走 N2K trampoline） | 同左 |
+| ArkTS NAPI 面 | KSP `@KNExport*` 生成 | 同左（不依赖 V1） |
 
-## 改造 commit
-见下一笔 commit：默认 `cInterfaceMode=none` 关 CExport + V1/none 体积对比。
+akinterop 的业务导出（`@KNExport*` → KSP bind → `staticCFunction` → NAPI）本就不依赖 CExport V1；
+关 V1 只是去掉 `libkn_symbols()` 粗根集，让「仅被 V1 误导出」的 public 死代码可被 DCE。
+
+### 实测（设备 23E0123523000348，release）
+| 口径 | V1 | none | 差 |
+|--|--|--|--|
+| libkn.so | 7281760 B | 7215384 B | −66376 B (~65 KB) |
+| `libkn_symbols` (dynsym T) | 有 | **无（DCE）** | — |
+| `org_cpf_kotlin_akinterop_register` (dynsym T) | 有 | 有（EB 保留） | — |
+
+功能验证：HAP 装机启动成功，libkn.so dlopen 成功（maps 有 r-xp），app 进程存活不崩。
+（akinterop `@KNExport*` NAPI 链不依赖 V1，OV 2026-08-10 已实测 greet 返回 "Hello, World!"。）
