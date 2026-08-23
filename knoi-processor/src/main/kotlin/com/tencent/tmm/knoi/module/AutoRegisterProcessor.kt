@@ -76,8 +76,8 @@ fun genInitializeFun(
                 "ExperimentalNativeApi::class"
             ).build()
         ).addAnnotation(
-            AnnotationSpec.builder(ClassName("kotlin.native", "CName"))
-                .addMember("externName = %S", "com_tencent_tmm_knoi_initBridge").build()
+            AnnotationSpec.builder(ClassName("kotlin.native.internal", "ExportedBridge"))
+                .addMember("%S", "com_tencent_tmm_knoi_initBridge").build()
         )
     }
     val code =  """
@@ -120,8 +120,8 @@ fun genInitEnvFun(resolver: Resolver, fileSpec: FileSpec.Builder) {
             "ExperimentalForeignApi::class"
         ).addMember("ExperimentalNativeApi::class").build()
     ).addAnnotation(
-        AnnotationSpec.builder(ClassName("kotlin.native", "CName"))
-            .addMember("externName = %S", "com_tencent_tmm_knoi_initEnv").build()
+        AnnotationSpec.builder(ClassName("kotlin.native.internal", "ExportedBridge"))
+            .addMember("%S", "com_tencent_tmm_knoi_initEnv").build()
     )
     initEnvFun.addCode(
         """

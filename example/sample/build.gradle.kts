@@ -46,6 +46,7 @@ plugins {
             freeCompilerArgs += "-memory-model=experimental"
             freeCompilerArgs += "-Xbinary=gc=pmcs"
             freeCompilerArgs += "-Xbinary=sourceInfoType=libbacktrace"
+            freeCompilerArgs += "-Xbinary=cInterfaceMode=none"
         }
     }
 
@@ -57,6 +58,7 @@ plugins {
             }
         }
         val ohosArm64Main by getting {
+            dependencies { implementation(project(":knoi")); implementation(project(":knoi-annotation")) }
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-KBA-001")
             }
