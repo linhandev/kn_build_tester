@@ -7,9 +7,11 @@
 set -uo pipefail
 
 # Resolve worktree + isolated gradle home regardless of where the script is invoked from.
+# Gradle home lives INSIDE the worktree (.gradle-home), per dev-flow convention — not a sibling dir.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-export GRADLE_USER_HOME="$(dirname "$WT_ROOT")/$(basename "$WT_ROOT")-gradle_home"
+export GRADLE_USER_HOME="$WT_ROOT/.gradle-home"
+mkdir -p "$GRADLE_USER_HOME"
 
 GRADLE="./gradlew --no-daemon --console=plain"
 REPORT_ROOT="$WT_ROOT/build/reports/coverage"

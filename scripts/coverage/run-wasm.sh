@@ -33,7 +33,7 @@ WASM_MAP="$TEST_PKG/multiplatform-library-template-library-test.wasm.map"
 log "Step 2/4: locate Node 25"
 NODE25=""
 for d in "$GRADLE_USER_HOME/nodejs" "$HOME/.gradle/nodejs"; do
-  c=$(ls -d "$d"/node-v25.*-darwin-*/bin/node 2>/dev/null | head -1)
+  c=$(ls -d "$d"/node-v25.*-darwin-*/bin/node 2>/dev/null | head -1 || true)
   [ -n "$c" ] && NODE25="$c" && break
 done
 [ -n "$NODE25" ] || { err "Node 25 not found (gradle nodejs cache). Build wasmJsNodeTest with the pinned version=25.x first."; exit 1; }
